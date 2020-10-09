@@ -1,0 +1,187 @@
+// Copyright (c) 2020, Seth Berman (Instantiations, Inc). Please see the AUTHORS
+// file for details. All rights reserved. Use of this source code is governed by
+// a BSD-style license that can be found in the LICENSE file.
+
+import 'package:es_compression/src/common/buffers.dart';
+import 'package:test/test.dart';
+
+void main() {
+  CodecBuffer buffer;
+
+  test('Test CompressionBuffer default size', () {
+    buffer = CodecBuffer(16384);
+    expect(buffer.length, 16384);
+    expect(buffer.totalReadCount, 0);
+    expect(buffer.readCount, 0);
+    expect(buffer.writeCount, 0);
+  });
+
+  test('Test CompressionBuffer custom size', () {
+    buffer = CodecBuffer(65536);
+    expect(buffer.length, 65536);
+    expect(buffer.totalReadCount, 0);
+    expect(buffer.readCount, 0);
+    expect(buffer.writeCount, 0);
+  });
+
+  test('Test CompressionBuffer allocation', () {
+    buffer = CodecBuffer(16384);
+    expect(buffer.writeCount, 0);
+    buffer.incrementBytesWritten(0);
+    expect(buffer.writeCount, 0);
+    buffer.incrementBytesWritten(10);
+    expect(buffer.writeCount, 10);
+    expect(buffer.unwrittenCount, buffer.length - buffer.writeCount);
+    expect(buffer.readCount, 0);
+    buffer.incrementBytesWritten(buffer.unwrittenCount);
+    expect(buffer.writeCount, buffer.length);
+    expect(buffer.unwrittenCount, 0);
+    expect(buffer.readCount, 0);
+    expect(() => buffer.incrementBytesWritten(-1), throwsRangeError);
+    expect(
+        () => buffer.incrementBytesWritten(1),
+        throwsA(predicate((Error e) =>
+            e is StateError &&
+            e.message == 'illegal attempt to write 1 byte past the buffer')));
+    expect(
+        () => buffer.incrementBytesWritten(10),
+        throwsA(predicate((Error e) =>
+            e is StateError &&
+            e.message == 'illegal attempt to write 10 bytes past the buffer')));
+    expect(buffer.writeCount, buffer.length);
+  });
+
+  test('Test CompressionBuffer used', () {
+    buffer = CodecBuffer(16384);
+    expect(buffer.readCount, 0);
+    expect(buffer.totalReadCount, 0);
+    buffer.incrementBytesWritten(10);
+    expect(buffer.totalReadCount, 0);
+    expect(buffer.readCount, 0);
+    expect(buffer.unreadCount, 10);
+    buffer.incrementBytesRead(2);
+    expect(buffer.totalReadCount, 2);
+    expect(buffer.unreadCount, 8);
+    buffer.incrementBytesRead(buffer.unreadCount);
+    expect(buffer.totalReadCount, 10);
+    expect(buffer.unreadCount, 0);
+    expect(() => buffer.incrementBytesRead(-1), throwsRangeError);
+    expect(
+        () => buffer.incrementBytesRead(1),
+        throwsA(predicate((Error e) =>
+            e is StateError &&
+            e.message ==
+                'illegal attempt to read 1 byte more than was written')));
+    expect(
+        () => buffer.incrementBytesRead(10),
+        throwsA(predicate((Error e) =>
+            e is StateError &&
+            e.message ==
+                'illegal attempt to read 10 bytes more than was written')));
+    buffer.reset();
+    expect(buffer.totalReadCount, 10);
+    buffer.incrementBytesWritten(buffer.unwrittenCount);
+    buffer.incrementBytesRead(2);
+    expect(buffer.totalReadCount, 12);
+  });
+
+  test('Test CompressionBuffer end/full', () {
+    buffer = CodecBuffer(100);
+
+    // Initial state
+    expect(buffer.atEnd(), true);
+    expect(buffer.isFull(), false);
+    expect(buffer.atEndAndIsFull(), false);
+
+    // Allocate half the total, none used
+    buffer.incrementBytesWritten(50);
+    expect(buffer.atEnd(), false);
+    expect(buffer.isFull(), false);
+    expect(buffer.atEndAndIsFull(), false);
+
+    // Use up allocated region
+    buffer.incrementBytesRead(50);
+    expect(buffer.atEnd(), true);
+    expect(buffer.isFull(), false);
+    expect(buffer.atEndAndIsFull(), false);
+
+    // Allocated region is now the size of the buffer
+    buffer.incrementBytesWritten(buffer.unwrittenCount);
+    expect(buffer.atEnd(), false);
+    expect(buffer.isFull(), true);
+    expect(buffer.atEndAndIsFull(), false);
+
+    // Use up allocated region which is the entire buffer
+    buffer.incrementBytesRead(buffer.unreadCount);
+    expect(buffer.atEnd(), true);
+    expect(buffer.isFull(), true);
+    expect(buffer.atEndAndIsFull(), true);
+
+    // Reset the region markers
+    buffer.reset();
+    expect(buffer.atEnd(), true);
+    expect(buffer.isFull(), false);
+    expect(buffer.atEndAndIsFull(), false);
+  });
+
+  test('Test CompressionBuffer read/write stream apis', () {
+    buffer = CodecBuffer(10);
+
+    // Test next put
+    for(var i in List<int>.generate(10, (i) => i)) {
+      expect(buffer.nextPut(i), true);
+    }
+    expect(buffer.isFull(), true);
+    buffer.reset(hard: true);
+    for(var i in List<int>.generate(10, (i) => i)) {
+      expect(buffer.nextPut(i), true);
+    }
+
+    // Test next
+    buffer.reset();
+    buffer.incrementBytesWritten(10);
+    for(var i in List<int>.generate(10, (i) => i)) {
+      expect(buffer.next(), i);
+    }
+    expect(buffer.next(), -1);
+    expect(() => buffer.next(onEnd: () => throw StateError('onEnd')),
+        throwsStateError);
+
+    // Test nextAll
+    buffer.reset(hard: true);
+    for(var i in List<int>.generate(10, (i) => i)) {
+      expect(buffer.nextPut(i), true);
+    }
+    buffer.reset();
+    buffer.incrementBytesWritten(10);
+    expect(buffer.nextAll(10), List<int>.generate(10, (i) => i));
+
+    // Test nextAll upTo
+    buffer.reset(hard: true);
+    for(var i in List<int>.generate(10, (i) => i)) {
+      expect(buffer.nextPut(i), true);
+    }
+    buffer.reset();
+    buffer.incrementBytesWritten(10);
+    expect(buffer.nextAll(100, upTo: true), List<int>.generate(10, (i) => i));
+
+    // Test nextAll underflow/overflow
+    buffer.reset(hard: true);
+    for(var i in List<int>.generate(10, (i) => i)) {
+      expect(buffer.nextPut(i), true);
+    }
+    buffer.reset();
+    buffer.incrementBytesWritten(10);
+    expect(buffer.readCount, 0);
+    expect(buffer.writeCount, 10);
+    expect(() => buffer.nextAll(100), throwsRangeError);
+    expect(() => buffer.nextAll(-1), throwsRangeError);
+    expect(buffer.readCount, 0);
+    expect(buffer.writeCount, 10);
+  });
+
+  tearDown(() {
+    buffer?.release();
+    buffer = null;
+  });
+}
