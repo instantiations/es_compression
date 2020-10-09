@@ -18,3 +18,6 @@ doc/api/
 
 # Mac
 .DS_Store
+
+# VAST Platform Common Repo
+tool/blob_builder/common/

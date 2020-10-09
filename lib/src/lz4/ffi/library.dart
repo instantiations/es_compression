@@ -13,7 +13,7 @@ import 'types.dart';
 /// It has a series of mixins for making available constants, types and
 /// functions that are described in C header files.
 class Lz4Library with Lz4Constants, Lz4Functions, Lz4Types {
-  static Lz4Library _instance;
+  static final Lz4Library _instance = Lz4Library._();
 
   DynamicLibrary _libraryImpl;
 
@@ -26,7 +26,8 @@ class Lz4Library with Lz4Constants, Lz4Functions, Lz4Types {
   }
 
   Lz4Library._() {
-    _libraryImpl = DynamicLibrary.open('eslz440.dll');
+    // TODO: Have this configurable and platform-detectable
+    _libraryImpl = DynamicLibrary.open('lib/src/lz4/blobs/eslz4_c-win64.dll');
     resolveFunctions(_libraryImpl);
   }
 }
