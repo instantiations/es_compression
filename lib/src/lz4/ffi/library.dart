@@ -4,6 +4,8 @@
 
 import 'dart:ffi';
 
+import '../../common/ffi/openlibrary.dart';
+
 import 'constants.dart';
 import 'functions.dart';
 import 'types.dart';
@@ -12,13 +14,16 @@ import 'types.dart';
 ///
 /// It has a series of mixins for making available constants, types and
 /// functions that are described in C header files.
-class Lz4Library with Lz4Constants, Lz4Functions, Lz4Types {
+class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
   static final Lz4Library _instance = Lz4Library._();
 
   DynamicLibrary _libraryImpl;
 
   /// Lz4 Version Number
   int versionNumber;
+
+  @override
+  String get moduleId => 'lz4';
 
   /// Return the [Lz4Library] singleton library instance.
   factory Lz4Library() {
@@ -27,7 +32,8 @@ class Lz4Library with Lz4Constants, Lz4Functions, Lz4Types {
 
   Lz4Library._() {
     // TODO: Have this configurable and platform-detectable
-    _libraryImpl = DynamicLibrary.open('lib/src/lz4/blobs/eslz4_c-win64.dll');
+    _libraryImpl = openLibrary();
     resolveFunctions(_libraryImpl);
   }
+
 }

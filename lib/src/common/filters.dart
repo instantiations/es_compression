@@ -6,17 +6,16 @@ import 'dart:typed_data';
 
 import 'buffers.dart';
 
-/// Various states that a [CodecFilter] transition through
+/// Various states that a [CodecFilter] transition through.
 ///
 /// The codec filter is constructed with a default [closed] state.
 /// Then a transition to the [init] state is made after object construction
 /// Then a transition to the [processing] state is made after the call to
 /// [CodecFilter._initFilter].
 /// Then a transition to the [finalized] state is made on the last
-/// [CodecFilter.processed]
-/// call.
-/// Finally a transition to the [closed] state is made on [close] but before
-/// [CodecFilter.doClose] is called
+/// [CodecFilter.processed] call.
+/// Finally a transition to the [closed] state is made on [CodecFilter.close]
+/// but before [CodecFilter.doClose] is called.
 enum CodecFilterState {
   /// State after object construction, but before [processing].
   init,
@@ -32,13 +31,13 @@ enum CodecFilterState {
 }
 
 /// Subclasses of [CodecFilter] provide low-level interfaces to their
-/// algorithms.
+/// algorithms and direct the processing of data.
 ///
 /// A [CodecFilter] contains two buffers.
-/// An incoming buffer [_inputBuffer] to buffer incoming bytes and
-/// an output buffer [_outputBuffer] to store processed bytes.
+/// An buffer [_inputBuffer] to incoming bytes to process.
+/// an buffer [_outputBuffer] to for outgoing processed bytes.
 ///
-/// A [CodecFilter] also maintains a [_state] which can help
+/// A [CodecFilter] also maintains a [state] which can help
 /// implementations know what part of the lifecycle the filter is in
 /// (i.e. processing vs closed)
 abstract class CodecFilter<CR extends CodecResult> {
@@ -207,7 +206,11 @@ abstract class CodecFilter<CR extends CodecResult> {
         (_outputBuffer.unreadCount > 0);
   }
 
-  /// Default implementation for initializing the input/output buffers.
+  /// Initialize the filter.
+  ///
+  /// Subclass responsibility hook [doInit] is called which gives subclasses
+  /// a chance to init the buffers. For some algorithms, the size of the buffers
+  /// may depend on information from [bytes].
   ///
   /// The filter will transition from the [CodecFilterState.init] to the
   /// [CodecFilterState.processing] state after the call.

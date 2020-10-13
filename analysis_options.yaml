@@ -14,3 +14,8 @@ analyzer:
     missing_return: warning
     # allow having TODOs in the code
     todo: ignore
+
+linter:
+  rules:
+    # in conflict with effective-dart rules
+    avoid_types_on_closure_parameters: false

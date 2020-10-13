@@ -1,9 +1,12 @@
-## 0.1.0
+## 0.1.0 [In Progress]
 
 - Initial development release, created by Seth Berman [Instantiations, Inc](https://www.instantiations.com).
-- Implemented general codec framework.
-- Implemented LZ4 FFI bindings (https://github.com/lz4/lz4/tree/v1.9.2).
+- Implemented general codec framework and fast FFI read/write streamable buffers.
+- Implemented FFI bindings for [LZ4 v1.9.2](https://github.com/lz4/lz4/tree/v1.9.2).
 - Implemented LZ4 codec framework extensions.
 - Implemented [LZ4 benchmarks](benchmark/lz4_benchmark.dart)
 - Implemented [LZ4 examples](example/lz4_example.dart)
-- Implemented [escompress](bin/es_compress.dart) binary with lz4 integration
+- Implemented [escompress](bin/es_compress.dart) binary script with lz4 integration
+- Implemented shared library and LZ4 [Cmake build instructions](tool/blob_builder/CMakeLists.txt)
+- Providing prebuilt [Win64 LZ4 native shared library](lib/src/lz4/blobs/eslz4-win64.dll)
+- Implemented flexible library loading with [OpenLibrary](lib/src/common/ffi/openlibrary.dart) mixin

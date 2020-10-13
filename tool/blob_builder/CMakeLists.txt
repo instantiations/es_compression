@@ -10,18 +10,13 @@
 #     This file covers the build instructions for supported compression libraries.
 #
 #     The layout of this file is logically organized as follows
+#     - Windows Code Signing
 #     - Versioning
 #     - Options (i.e. Tests, Docs...)
 #     - Platform/Compiler related settings
-#     - Common Project Source directory prefixes
-#     - 3rd-party modules
-#     - Common build instructions
-#     - Per-platform build instructions
-#     - Per-app build instructions
-#     - Unit testing
-#     - Documentation
+#     - Per-module build instructions
 #
-#  Build Instrutions:
+#  Build Instructions:
 #
 #  Windows
 #     Visual Studio 19 64-bit
@@ -100,15 +95,17 @@ endif ()
 #------------------------------------------------------------------
 # Windows Code Signing
 #------------------------------------------------------------------
-if (Win32)
-    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/common/cmake/modules/CodeSign.cmake)
+if (WIN32)
+    #-- Instantiations Tools Repo. Only necessary for code-signing
+    set(INST_TOOLS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../common-devel)
+    if (EXISTS ${INST_TOOLS_DIR}/cmake/modules/CodeSign.cmake)
         #-- Set the default cmake build module path
         #-- the code_sign_target is used here along with certs
         #-- so this is not something that is pushed up into Github
         #-- However, anyone should still be able to build unsigned libs
         set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
-                ${CMAKE_CURRENT_SOURCE_DIR}/common/cmake/modules
-                ${CMAKE_CURRENT_SOURCE_DIR}/common/cmake/macros)
+                ${INST_TOOLS_DIR}/cmake/modules
+                ${INST_TOOLS_DIR}/cmake/macros)
 
         #-- Code Signing
         #-- option(SIGNCODE "Sign executables and dlls with digital certificate" ON)
@@ -139,7 +136,6 @@ set(LZ4_VERSION "${LZ4_VERSION_MAJOR}.${LZ4_VERSION_MINOR}.${LZ4_VERSION_MOD}")
 #------------------------------------------------------------------
 # Option Settings
 #------------------------------------------------------------------
-option(BUILD_TESTING "Build testsuite" ON)
 
 #------------------------------------------------------------------
 # Output Settings
@@ -267,6 +263,10 @@ elseif (MINGW)
 elseif (WIN32)
     message(WARNING "****** DEP & ASLR are not enabled for this windows build system")
 endif ()
+
+#-- Prefix to be used for all libraries.
+#-- Note: This is also referenced in es_compression:common/ffi/openlibrary.dart
+set(ES_PREFIX es)
 
 if (WIN32)
     set(ES_COMPRESSION_SUFFIX "win${ES_BITS}")

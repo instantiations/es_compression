@@ -1,6 +1,14 @@
+#*******************************************************************************
 # Copyright (c) 2020, Seth Berman (Instantiations, Inc). Please see the AUTHORS
 # file for details. All rights reserved. Use of this source code is governed by
 # a BSD-style license that can be found in the LICENSE file.
+#
+#  Contributors:
+#     Seth Berman - initial version
+#
+#  Description:
+#     This file covers the build instructions for the lz4 library.
+#*******************************************************************************
 
 #------------------------------------------------------------------
 # 3rd Party Module: LZ4
@@ -11,7 +19,8 @@ project(LZ4_BLOB C)
 # C Source Variables
 #------------------------------------------------------------------
 set(LZ4_PROJ_NAME lz4)
-set(LZ4_LIB_NAME ${LZ4_PROJ_NAME}_c)
+set(LZ4_LIB_NAME ${LZ4_PROJ_NAME})
+set(LZ4_FULL_LIB_NAME ${ES_PREFIX}${LZ4_LIB_NAME}-${ES_COMPRESSION_SUFFIX}${CMAKE_SHARED_LIBRARY_SUFFIX})
 
 include(FetchContent)
 
@@ -75,5 +84,5 @@ set_target_properties(${LZ4_LIB_NAME} PROPERTIES OUTPUT_NAME "${LZ4_LIB_NAME}-${
 #-- Copy the shared library to its appropriate blob location in the dart project
 add_custom_command(TARGET ${LZ4_LIB_NAME}
         POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/es${LZ4_LIB_NAME}-${ES_COMPRESSION_SUFFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
-        ${DART_LIB_DIR}/src/lz4/blobs/es${LZ4_LIB_NAME}-${ES_COMPRESSION_SUFFIX}${CMAKE_SHARED_LIBRARY_SUFFIX})
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/${LZ4_FULL_LIB_NAME}
+        ${DART_LIB_DIR}/src/${LZ4_PROJ_NAME}/blobs/${LZ4_FULL_LIB_NAME})
