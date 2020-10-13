@@ -38,18 +38,19 @@ if (NOT ${lcName}_POPULATED)
     # Fetch the content using previously declared details
     FetchContent_Populate(${LZ4_PROJ_NAME})
 endif ()
+set(SOURCE_DIR ${${lcName}_SOURCE_DIR})
 
 #-- Set the lz4 source files
 include_directories(${${lcName}_SOURCE_DIR}/lib)
 set(LZ4_SOURCES
-        ${${lcName}_SOURCE_DIR}/lib/lz4.h
-        ${${lcName}_SOURCE_DIR}/lib/lz4.c
-        ${${lcName}_SOURCE_DIR}/lib/lz4hc.h
-        ${${lcName}_SOURCE_DIR}/lib/lz4hc.c
-        ${${lcName}_SOURCE_DIR}/lib/lz4frame.h
-        ${${lcName}_SOURCE_DIR}/lib/lz4frame.c
-        ${${lcName}_SOURCE_DIR}/lib/xxhash.h
-        ${${lcName}_SOURCE_DIR}/lib/xxhash.c)
+        ${SOURCE_DIR}/lib/lz4.h
+        ${SOURCE_DIR}/lib/lz4.c
+        ${SOURCE_DIR}/lib/lz4hc.h
+        ${SOURCE_DIR}/lib/lz4hc.c
+        ${SOURCE_DIR}/lib/lz4frame.h
+        ${SOURCE_DIR}/lib/lz4frame.c
+        ${SOURCE_DIR}/lib/xxhash.h
+        ${SOURCE_DIR}/lib/xxhash.c)
 
 #-- Build the lz4 shared library
 if (WIN32)
@@ -69,7 +70,7 @@ if (WIN32)
 elseif (UNIX)
     #-- Required by Solaris
     set(CMAKE_C_FLAGS "-std=c99")
-    if ((CMAKE_SIZEOF_VOID_P MATCHES 8) AND NOT VM_64BIT)
+    if ((CMAKE_SIZEOF_VOID_P MATCHES 8) AND NOT ES_64BIT)
         # 32-bit binaries on 64-bit platform
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
     endif ()

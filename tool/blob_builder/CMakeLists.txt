@@ -23,36 +23,31 @@
 #     >mkdir build && cd build
 #     >cmake .. -G"Visual Studio 16 2019" -A x64
 #     >msbuild es_compression_blobs.sln /p:Configuration=Release /p:Platform=x64 /m
-#     >ctest -C "Release"
 #
 #     Visual Studio 19 32-bit
 #     >mkdir build && cd build
 #     >cmake .. -G"Visual Studio 16 2019" -A Win32
 #     >msbuild es_compression_blobs.sln /p:Configuration=Release /p:Platform=Win32 /m
-#     >ctest -C "Release"
 #
 #     Visual Studio 17 64-bit
 #     >mkdir build && cd build
 #     >cmake .. -G"Visual Studio 15 2017 Win64"
 #     >msbuild es_compression_blobs.sln /p:Configuration=Release /p:Platform=x64 /m
-#     >ctest -C "Release"
 #
 #     Visual Studio 17 32-bit
 #     >mkdir build && cd build
 #     >cmake .. -G"Visual Studio 15 2017"
 #     >msbuild es_compression_blobs.sln /p:Configuration=Release /p:Platform=Win32 /m
-#     >ctest -C "Release"
 #
 #     Mingw-w64
 #     >mkdir build && cd build
 #     >cmake .. -G"MinGW Makefiles"
-#     >mingw32-make docs
+#     >mingw32-make
 #
 #  Linux
 #     Linux 64-bit (or Linux 32-bit on a 32-bit Linux OS)
 #     >mkdir build && cd build
 #     >cmake .. -G"Unix Makefiles"
-#     >mingw32-make
 #     >make
 #
 #     Linux 32-bit (cross-compile on 64-bit machine)
@@ -126,12 +121,26 @@ endif ()
 string(TIMESTAMP ES_COMPRESSION_DATE "%m/%d/%y")
 string(TIMESTAMP ES_COMPRESSION_YEAR "%Y")
 
+#-- Brotli Version: 1.0.9
+set(BROTLI_VERSION_MAJOR 1)
+set(BROTLI_VERSION_MINOR 0)
+set(BROTLI_VERSION_MOD 9)
+#-- The period-delimited 3 position format (1.0.0)
+set(BROTLI_VERSION "${BROTLI_VERSION_MAJOR}.${BROTLI_VERSION_MINOR}.${BROTLI_VERSION_MOD}")
+
 #-- LZ4 Version: 1.9.2
 set(LZ4_VERSION_MAJOR 1)
 set(LZ4_VERSION_MINOR 9)
 set(LZ4_VERSION_MOD 2)
 #-- The period-delimited 3 position format (1.0.0)
 set(LZ4_VERSION "${LZ4_VERSION_MAJOR}.${LZ4_VERSION_MINOR}.${LZ4_VERSION_MOD}")
+
+#-- ZSTD Version: 1.4.5
+set(ZSTD_VERSION_MAJOR 1)
+set(ZSTD_VERSION_MINOR 4)
+set(ZSTD_VERSION_MOD 5)
+#-- The period-delimited 3 position format (1.0.0)
+set(ZSTD_VERSION "${ZSTD_VERSION_MAJOR}.${ZSTD_VERSION_MINOR}.${ZSTD_VERSION_MOD}")
 
 #------------------------------------------------------------------
 # Option Settings
@@ -275,14 +284,24 @@ elseif (UNIX AND NOT APPLE)
     if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         set(ES_COMPRESSION_SUFFIX "linux${ES_BITS}")
     else ()
-        message(FATAL_ERROR "${VM_TARGET_ARCH} is not supported")
+        message(FATAL_ERROR "target is not supported")
     endif ()
 elseif (APPLE)
     set(ES_COMPRESSION_SUFFIX "mac${ES_BITS}")
 endif ()
 
 #------------------------------------------------------------------
+# Brotli Library Build
+#------------------------------------------------------------------
+add_subdirectory(brotli)
+
+#------------------------------------------------------------------
 # LZ4 Library Build
 #------------------------------------------------------------------
 add_subdirectory(lz4)
+
+#------------------------------------------------------------------
+# Zstd (ZStandard) Library Build
+#------------------------------------------------------------------
+add_subdirectory(zstd)
 

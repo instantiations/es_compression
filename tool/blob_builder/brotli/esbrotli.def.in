@@ -1,0 +1,24 @@
+LIBRARY ${BROTLI_FULL_LIB_NAME}
+EXPORTS
+	BrotliDecoderCreateInstance
+	BrotliDecoderDecompress
+	BrotliDecoderDecompressStream
+	BrotliDecoderDestroyInstance
+	BrotliDecoderErrorString
+	BrotliDecoderGetErrorCode
+	BrotliDecoderHasMoreOutput
+	BrotliDecoderIsFinished
+	BrotliDecoderIsUsed
+	BrotliDecoderSetParameter
+	BrotliDecoderTakeOutput
+	BrotliDecoderVersion
+	BrotliEncoderCompress
+	BrotliEncoderCompressStream
+	BrotliEncoderCreateInstance
+	BrotliEncoderDestroyInstance
+	BrotliEncoderHasMoreOutput
+	BrotliEncoderIsFinished
+	BrotliEncoderMaxCompressedSize
+	BrotliEncoderSetParameter
+	BrotliEncoderTakeOutput
+	BrotliEncoderVersion
