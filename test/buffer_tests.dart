@@ -2,30 +2,37 @@
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
-import 'package:es_compression/src/common/buffers.dart';
+import 'package:es_compression/src/framework/buffers.dart';
+import 'package:es_compression/src/framework/dart/buffers.dart';
+import 'package:es_compression/src/framework/native/buffers.dart';
 import 'package:test/test.dart';
 
 void main() {
+  doTest('DartCodecBuffer', (length) => DartCodecBuffer(length));
+  doTest('NativeCodecBuffer', (length) => NativeCodecBuffer(length));
+}
+
+void doTest(String name, CodecBuffer Function(int length) newBuffer) {
   CodecBuffer buffer;
 
-  test('Test CompressionBuffer default size', () {
-    buffer = CodecBuffer(16384);
+  test('Test $name default size', () {
+    buffer = newBuffer(16384);
     expect(buffer.length, 16384);
     expect(buffer.totalReadCount, 0);
     expect(buffer.readCount, 0);
     expect(buffer.writeCount, 0);
   });
 
-  test('Test CompressionBuffer custom size', () {
-    buffer = CodecBuffer(65536);
+  test('Test $name custom size', () {
+    buffer = newBuffer(65536);
     expect(buffer.length, 65536);
     expect(buffer.totalReadCount, 0);
     expect(buffer.readCount, 0);
     expect(buffer.writeCount, 0);
   });
 
-  test('Test CompressionBuffer allocation', () {
-    buffer = CodecBuffer(16384);
+  test('Test $name allocation', () {
+    buffer = newBuffer(16384);
     expect(buffer.writeCount, 0);
     buffer.incrementBytesWritten(0);
     expect(buffer.writeCount, 0);
@@ -51,8 +58,8 @@ void main() {
     expect(buffer.writeCount, buffer.length);
   });
 
-  test('Test CompressionBuffer used', () {
-    buffer = CodecBuffer(16384);
+  test('Test $name used', () {
+    buffer = newBuffer(16384);
     expect(buffer.readCount, 0);
     expect(buffer.totalReadCount, 0);
     buffer.incrementBytesWritten(10);
@@ -85,8 +92,8 @@ void main() {
     expect(buffer.totalReadCount, 12);
   });
 
-  test('Test CompressionBuffer end/full', () {
-    buffer = CodecBuffer(100);
+  test('Test $name end/full', () {
+    buffer = newBuffer(100);
 
     // Initial state
     expect(buffer.atEnd(), true);
@@ -124,23 +131,23 @@ void main() {
     expect(buffer.atEndAndIsFull(), false);
   });
 
-  test('Test CompressionBuffer read/write stream apis', () {
-    buffer = CodecBuffer(10);
+  test('Test $name read/write stream apis', () {
+    buffer = newBuffer(10);
 
     // Test next put
-    for(var i in List<int>.generate(10, (i) => i)) {
+    for (var i in List<int>.generate(10, (i) => i)) {
       expect(buffer.nextPut(i), true);
     }
     expect(buffer.isFull(), true);
     buffer.reset(hard: true);
-    for(var i in List<int>.generate(10, (i) => i)) {
+    for (var i in List<int>.generate(10, (i) => i)) {
       expect(buffer.nextPut(i), true);
     }
 
     // Test next
     buffer.reset();
     buffer.incrementBytesWritten(10);
-    for(var i in List<int>.generate(10, (i) => i)) {
+    for (var i in List<int>.generate(10, (i) => i)) {
       expect(buffer.next(), i);
     }
     expect(buffer.next(), -1);
@@ -149,7 +156,7 @@ void main() {
 
     // Test nextAll
     buffer.reset(hard: true);
-    for(var i in List<int>.generate(10, (i) => i)) {
+    for (var i in List<int>.generate(10, (i) => i)) {
       expect(buffer.nextPut(i), true);
     }
     buffer.reset();
@@ -158,7 +165,7 @@ void main() {
 
     // Test nextAll upTo
     buffer.reset(hard: true);
-    for(var i in List<int>.generate(10, (i) => i)) {
+    for (var i in List<int>.generate(10, (i) => i)) {
       expect(buffer.nextPut(i), true);
     }
     buffer.reset();
@@ -167,7 +174,7 @@ void main() {
 
     // Test nextAll underflow/overflow
     buffer.reset(hard: true);
-    for(var i in List<int>.generate(10, (i) => i)) {
+    for (var i in List<int>.generate(10, (i) => i)) {
       expect(buffer.nextPut(i), true);
     }
     buffer.reset();

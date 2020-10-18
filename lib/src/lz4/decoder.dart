@@ -3,12 +3,14 @@
 // a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:math';
 
-import '../common/buffers.dart';
-import '../common/converters.dart';
-import '../common/filters.dart';
-import '../common/sinks.dart';
+import '../framework/buffers.dart';
+import '../framework/converters.dart';
+import '../framework/filters.dart';
+import '../framework/sinks.dart';
+import '../framework/native/buffers.dart';
 
 import 'ffi/constants.dart';
 import 'ffi/dispatcher.dart';
@@ -36,8 +38,10 @@ class _Lz4DecoderSink extends CodecSink {
       : super(sink, _Lz4DecompressFilter());
 }
 
-class _Lz4DecompressFilter extends CodecFilter<_Lz4DecompressionResult>
-    with Lz4DispatchErrorCheckerMixin {
+class _Lz4DecompressFilter extends CodecFilter<
+    Pointer<Uint8>,
+    NativeCodecBuffer,
+    _Lz4DecompressionResult> with Lz4DispatchErrorCheckerMixin {
   /// Dispatcher to make calls via FFI to lz4 shared library
   final Lz4Dispatcher _dispatcher = Lz4Dispatcher();
 
@@ -57,6 +61,12 @@ class _Lz4DecompressFilter extends CodecFilter<_Lz4DecompressionResult>
   @override
   Lz4Dispatcher get dispatcher => _dispatcher;
 
+  @override
+  CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(int length) {
+    final holder = CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer>(length);
+    return holder..bufferBuilderFunc = (length) => NativeCodecBuffer(length);
+  }
+
   /// Init the filter
   ///
   /// 1. Provide appropriate buffer lengths to codec builders
@@ -70,8 +80,8 @@ class _Lz4DecompressFilter extends CodecFilter<_Lz4DecompressionResult>
   /// 3. Write the lz4 header out to the compressed buffer
   @override
   int doInit(
-      CodecBufferHolder inputBufferHolder,
-      CodecBufferHolder outputBufferHolder,
+      CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> inputBufferHolder,
+      CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> outputBufferHolder,
       List<int> bytes,
       int start,
       int end) {
@@ -89,7 +99,7 @@ class _Lz4DecompressFilter extends CodecFilter<_Lz4DecompressionResult>
 
   @override
   _Lz4DecompressionResult doProcessing(
-      CodecBuffer inputBuffer, CodecBuffer outputBuffer) {
+      NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
     final result = _dispatcher.callLz4FDecompress(
         _ctx,
         outputBuffer.writePtr,
@@ -128,7 +138,7 @@ class _Lz4DecompressFilter extends CodecFilter<_Lz4DecompressionResult>
     _ctx = result[1] as Lz4Dctx;
   }
 
-  int _readFrameInfo(CodecBuffer encoderBuffer, {bool reset = false}) {
+  int _readFrameInfo(NativeCodecBuffer encoderBuffer, {bool reset = false}) {
     final result = _dispatcher.callLz4FGetFrameInfo(
         _ctx, encoderBuffer.readPtr, encoderBuffer.unreadCount);
     checkError(result[0] as int);

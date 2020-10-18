@@ -56,7 +56,7 @@
 #     >make
 #
 #*******************************************************************************/
-cmake_minimum_required(VERSION 3.0..3.13)
+cmake_minimum_required(VERSION 3.14)
 project(es_compression_blobs)
 message(STATUS "CMake version: " ${CMAKE_VERSION})
 message(STATUS "CMake system name: " ${CMAKE_SYSTEM_NAME})
@@ -92,7 +92,7 @@ endif ()
 #------------------------------------------------------------------
 if (WIN32)
     #-- Instantiations Tools Repo. Only necessary for code-signing
-    set(INST_TOOLS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../common-devel)
+    set(INST_TOOLS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/common)
     if (EXISTS ${INST_TOOLS_DIR}/cmake/modules/CodeSign.cmake)
         #-- Set the default cmake build module path
         #-- the code_sign_target is used here along with certs
@@ -145,6 +145,18 @@ set(ZSTD_VERSION "${ZSTD_VERSION_MAJOR}.${ZSTD_VERSION_MINOR}.${ZSTD_VERSION_MOD
 #------------------------------------------------------------------
 # Option Settings
 #------------------------------------------------------------------
+
+#-- Brotli Options
+option(BROTLI_BUILD "Should build brotli shared library" ON)
+option(BROTLI_INSTALL "Should install brotli shared library" ON)
+
+#-- LZ4 Options
+option(LZ4_BUILD "Should build lz4 shared library" ON)
+option(LZ4_INSTALL "Should install lz4 shared library" ON)
+
+#-- ZSTD Options
+option(ZSTD_BUILD "Should build zstd shared library" ON)
+option(ZSTD_INSTALL "Should install zstd shared library" ON)
 
 #------------------------------------------------------------------
 # Output Settings
@@ -274,7 +286,7 @@ elseif (WIN32)
 endif ()
 
 #-- Prefix to be used for all libraries.
-#-- Note: This is also referenced in es_compression:common/ffi/openlibrary.dart
+#-- Note: This is also referenced in es_compression:framework/native/openlibrary.dart
 set(ES_PREFIX es)
 
 if (WIN32)

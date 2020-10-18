@@ -10,6 +10,10 @@
 #     This file covers the build instructions for the lz4 library.
 #*******************************************************************************
 
+if (NOT LZ4_BUILD)
+    return()
+endif ()
+
 #------------------------------------------------------------------
 # 3rd Party Module: LZ4
 #------------------------------------------------------------------
@@ -83,7 +87,9 @@ set_target_properties(${LZ4_LIB_NAME} PROPERTIES PREFIX es)
 set_target_properties(${LZ4_LIB_NAME} PROPERTIES OUTPUT_NAME "${LZ4_LIB_NAME}-${ES_COMPRESSION_SUFFIX}")
 
 #-- Copy the shared library to its appropriate blob location in the dart project
-add_custom_command(TARGET ${LZ4_LIB_NAME}
-        POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/${LZ4_FULL_LIB_NAME}
-        ${DART_LIB_DIR}/src/${LZ4_PROJ_NAME}/blobs/${LZ4_FULL_LIB_NAME})
+if (LZ4_INSTALL)
+    add_custom_command(TARGET ${LZ4_LIB_NAME}
+            POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/${LZ4_FULL_LIB_NAME}
+            ${DART_LIB_DIR}/src/${LZ4_PROJ_NAME}/blobs/${LZ4_FULL_LIB_NAME})
+endif ()

@@ -2,25 +2,29 @@
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
-import 'dart:ffi';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:ffi/ffi.dart' as ffi;
-
-/// A streamable buffer used by codec algorithms.
+/// An abstract implementation of a streamable buffer useful for implementing
+/// codec algorithms.
+///
+/// # CodecBuffer<T>
+/// Type T is the "pointer" to the various memory locations in the buffer, such
+/// as the base, read and write ptr locations. T is usually [DartHeapPointer]
+/// from this library, or the ffi [Pointer] type. However, this can be user
+/// defined.
 ///
 /// # Writing:
-/// 0..[_writeOffset] contains the data that has been written to the buffer or
-/// [writeCount]. The remaining amount is [unwrittenCount].
-/// For decoding buffers, data written will be the decoded bytes
-/// to process during encoding, or the decoded bytes during decoding.
+/// 0..[writeCount] contains the data that has been written to the buffer.
+/// The remaining amount is [unwrittenCount].
+/// For decoding buffers, data written will be the decoded bytes to process
+/// during encoding, or the decoded bytes during decoding.
 /// For encoding buffers, data written will be the encoded bytes that is
 /// output from the encoding routine, or the external input during decoding.
 ///
 /// # Reading:
-/// 0..[_readOffset] contains the data that has already been read in the buffer
-/// or [readCount]. The remaining amount is [unreadCount].
+/// 0..[readCount] contains the data that has already been read in the buffer.
+/// The remaining amount is [unreadCount].
 /// For decoding buffers, read data is data that has been processed in the
 /// case of encoding, or bytes passed to the external output during decoding.
 /// For encoding buffers, data read will be the encoded bytes passed to
@@ -37,24 +41,14 @@ import 'package:ffi/ffi.dart' as ffi;
 /// and there are no bytes to read.
 /// The stream is considered to be [isFull] when [writeCount] == [length]
 /// and there is no more room to place additional bytes.
-class CodecBuffer {
-  /// Internal buffer of native bytes.
-  final Pointer<Uint8> _bytes;
+abstract class CodecBuffer<T> {
+  /// Creates a new codec buffer of [length].
+  CodecBuffer(this.length);
 
   /// Length of the internal buffer in bytes.
   ///
   /// [writeCount] + [unwrittenCount] == [length].
   final int length;
-
-  /// Defines the read cursor position in the buffer.
-  ///
-  /// This will always be <= the [writeCount] cursor position.
-  int _readOffset = 0;
-
-  /// Defines the write cursor position in the buffer.
-  ///
-  /// This will always be <= the [length] of the buffer.
-  int _writeOffset = 0;
 
   /// Accumulator of read bytes from previous [reset]s.
   ///
@@ -66,19 +60,16 @@ class CodecBuffer {
   /// [totalWriteCount] is this value + the current [writeCount].
   int _recordedWriteCount = 0;
 
-  /// Creates a new codec buffer of [length].
-  CodecBuffer(this.length) : _bytes = ffi.allocate<Uint8>(count: length);
-
   /// Return the number of bytes currently written to the buffer.
   ///
   /// The result will be <= [length].
-  int get writeCount => _writeOffset;
+  int writeCount = 0;
 
   /// Return the number of bytes the buffer still has available for writing.
   ///
   /// The result will be difference between the [writeCount] region of the
   /// buffer and the [length].
-  int get unwrittenCount => length - _writeOffset;
+  int get unwrittenCount => length - writeCount;
 
   /// Return the total number of [writeCount] since the last hard [reset].
   int get totalWriteCount => _recordedWriteCount + writeCount;
@@ -86,7 +77,7 @@ class CodecBuffer {
   /// Return total number of [readCount] within the buffer.
   ///
   /// The result will be <= the [writeCount] amount.
-  int get readCount => _readOffset;
+  int readCount = 0;
 
   /// Return the total number of [readCount] since the last hard [reset].
   int get totalReadCount => _recordedReadCount + readCount;
@@ -94,20 +85,20 @@ class CodecBuffer {
   /// Return total number of remaining bytes available to be read
   ///
   /// The result will be <= the [writeCount] amount.
-  int get unreadCount => _writeOffset - _readOffset;
+  int get unreadCount => writeCount - readCount;
 
   /// Return true if there are no [unwrittenCount] remaining, false otherwise.
   bool isFull() => unwrittenCount == 0;
 
   /// Return true if all [writeCount] have been read, false otherwise.
-  bool atEnd() => _readOffset == _writeOffset;
+  bool atEnd() => readCount == writeCount;
 
   /// Return true if all [writeCount] have been read and there are
   /// no remaining [unwrittenCount], false otherwise.
-  bool atEndAndIsFull() => _readOffset == length;
+  bool atEndAndIsFull() => readCount == length;
 
   /// Read and return the next byte.
-  /// The [_readOffset] will be incremented by 1.
+  /// The [readCount] will be incremented by 1.
   ///
   /// If there are no [unreadCount] left, then evaluate the optional
   /// [onEnd] function and return the result.
@@ -116,18 +107,22 @@ class CodecBuffer {
       ? onEnd != null
           ? onEnd()
           : -1
-      : _bytes[_readOffset++];
+      : doNext();
+
+  /// Subclass Responsibility: Read the next byte.
+  ///
+  /// An [atEnd] check has already been performed at this point.
+  int doNext();
 
   /// Read and answer a [List] containing up to the next [amount] of consecutive
   /// bytes.
   List<int> nextAll(int amount, {bool upTo = false}) {
-    var endOffset = _readOffset + amount;
+    var endOffset = readCount + amount;
     if (upTo != true) {
-      endOffset =
-          RangeError.checkValidRange(_readOffset, endOffset, _writeOffset);
+      endOffset = RangeError.checkValidRange(readCount, endOffset, writeCount);
     }
-    final readAmount = min(endOffset - _readOffset, unreadCount);
-    final result = readPtr.asTypedList(readAmount);
+    final readAmount = min(endOffset - readCount, unreadCount);
+    final result = readListView(readAmount);
     incrementBytesRead(readAmount);
     return result.toList(growable: false);
   }
@@ -141,7 +136,12 @@ class CodecBuffer {
       ? onEnd != null
           ? onEnd()
           : -1
-      : _bytes[_readOffset];
+      : doPeek();
+
+  /// Subclass Responsibility: Peek the next byte.
+  ///
+  /// An [atEnd] check has already been performed at this point.
+  int doPeek();
 
   /// Put the next byte into the buffer.
   ///
@@ -153,10 +153,16 @@ class CodecBuffer {
       onEnd?.call();
       return false;
     } else {
-      _bytes[_writeOffset++] = byte;
+      doNextPut(byte);
       return true;
     }
   }
+
+  /// Subclass Responsibility: Put the next byte.
+  ///
+  /// A bounds check has been performed and it is safe to add an extra byte
+  /// to the buffer.
+  void doNextPut(int byte);
 
   /// Put [bytes] into the buffer.
   ///
@@ -172,7 +178,7 @@ class CodecBuffer {
     start ??= 0;
     end = RangeError.checkValidRange(start, end, bytes.length);
     final putAmount = min(end - start, unwrittenCount);
-    final destination = writePtr.asTypedList(putAmount);
+    final destination = writeListView(putAmount);
     destination.setRange(0, putAmount, bytes, start);
     incrementBytesWritten(putAmount);
     return putAmount;
@@ -180,42 +186,39 @@ class CodecBuffer {
 
   /// Update the read position by [amount] bytes.
   ///
-  /// Bumps the internal [_readOffset] pointer by an [amount].
+  /// Bumps the internal [readCount] pointer by an [amount].
   /// If [amount] is negative, a [RangeError] is thrown.
   /// If the additional offset by an [amount] would be > [writeCount],
   /// a [StateError] is thrown.
   void incrementBytesRead(int amount) {
     RangeError.checkNotNegative(amount);
-    final nextRead = _readOffset + amount;
-    if (nextRead > _writeOffset) {
-      final overRead = nextRead - _writeOffset;
+    final nextRead = readCount + amount;
+    if (nextRead > writeCount) {
+      final overRead = nextRead - writeCount;
       final bytes = overRead == 1 ? 'byte' : 'bytes';
       throw StateError(
           'illegal attempt to read $overRead $bytes more than was written');
     } else {
-      _readOffset = nextRead;
+      readCount = nextRead;
     }
   }
 
   /// Update the write position by [amount] bytes.
   ///
-  /// Bumps the internal [_writeOffset] pointer by an [amount].
+  /// Bumps the internal [writeCount] pointer by an [amount].
   /// If [amount] is negative, a [RangeError] is thrown.
   /// If the additional write by an [amount] overflows
   /// the buffer, a [StateError] is thrown.
-  ///
-  /// An overflow may suggest that native memory was overwritten since updates
-  /// typically occur after a direct operation on the native buffer.
   void incrementBytesWritten(int amount) {
     RangeError.checkNotNegative(amount);
-    final nextWrite = _writeOffset + amount;
+    final nextWrite = writeCount + amount;
     if (nextWrite > length) {
       final overWritten = nextWrite - length;
       final bytes = overWritten == 1 ? 'byte' : 'bytes';
       throw StateError(
           'illegal attempt to write $overWritten $bytes past the buffer');
     } else {
-      _writeOffset = nextWrite;
+      writeCount = nextWrite;
     }
   }
 
@@ -228,8 +231,8 @@ class CodecBuffer {
   ///
   /// The length of the buffer does not change.
   void reset({bool hard = false}) {
-    _resetRead(hard);
-    _resetWrite(hard);
+    resetRead(hard);
+    resetWrite(hard);
   }
 
   /// Reset the read offsets in the buffer.
@@ -237,9 +240,9 @@ class CodecBuffer {
   /// If [hard] is true, reset the [_recordedReadCount] accumulator.
   /// If [hard] is false (default), add the current [readCount] to the
   /// [_recordedReadCount].
-  void _resetRead(bool hard) {
+  void resetRead(bool hard) {
     _recordedReadCount = hard ? 0 : _recordedReadCount + readCount;
-    _readOffset = 0;
+    readCount = 0;
   }
 
   /// Reset the write offsets in the buffer.
@@ -247,21 +250,31 @@ class CodecBuffer {
   /// If [hard] is true, reset the [_recordedWriteCount] accumulator.
   /// If [hard] is false (default), add the current [writeCount] to the
   /// [_recordedWriteCount].
-  void _resetWrite(bool hard) {
+  void resetWrite(bool hard) {
     _recordedWriteCount = hard ? 0 : _recordedWriteCount + writeCount;
-    _writeOffset = 0;
+    writeCount = 0;
   }
 
-  /// Return the native byte pointer to the [_buffer] base address.
-  Pointer<Uint8> get basePtr => _bytes;
+  /// Subclass Responsibility: Return the byte pointer to the memory at the
+  /// start of the buffer.
+  T get basePtr;
 
-  /// Return the native byte pointer to the memory location at the [writeCount]
-  /// offset from the [_buffer] base address.
-  Pointer<Uint8> get writePtr => _bytes.elementAt(_writeOffset);
+  /// Subclass Responsibility: Return the byte pointer to the memory at the
+  /// [writeCount] offset from the start of the buffer.
+  T get writePtr;
 
-  /// Return the native byte pointer to the memory location at the [readCount]
-  /// offset from the [_buffer] base address.
-  Pointer<Uint8> get readPtr => _bytes.elementAt(_readOffset);
+  /// Subclass Responsibility: Return the byte pointer to the memory at the
+  /// [readCount] offset from the start of the buffer.
+  T get readPtr;
+
+  /// Subclass Responsibility: base..[length] view of the buffer.
+  Uint8List baseListView(int length);
+
+  /// Subclass Responsibility: readAmount..[length] view of the buffer.
+  Uint8List readListView(int length);
+
+  /// Subclass Responsibility: writeAmount..[length] view of the buffer.
+  Uint8List writeListView(int length);
 
   /// Return the read contents of the buffer as a [List].
   ///
@@ -269,13 +282,13 @@ class CodecBuffer {
   /// read amount.
   /// If [copy] is true, then a copy of the bytes will be returned, otherwise
   /// a view of the bytes is returned (which may change since this is buffered)
-  /// If [reset] is true, the [_readOffset] will be set to 0.
-  /// If [hard] is true, the [recordedBytesRead] will also be set to 0.
+  /// If [reset] is true, the [readCount] will be set to 0.
+  /// If [hard] is true, the [_recordedReadCount] will also be set to 0.
   List<int> readBytes(
       {bool copy = true, bool reset = false, bool hard = false}) {
-    final listView = _bytes.asTypedList(readCount);
+    final listView = baseListView(readCount);
     final list = (copy == true) ? Uint8List.fromList(listView) : listView;
-    if (reset == true) _resetRead(hard);
+    if (reset == true) resetRead(hard);
     return list;
   }
 
@@ -285,25 +298,19 @@ class CodecBuffer {
   /// written amount.
   /// If [copy] is true, then a copy of the bytes will be returned, otherwise
   /// a view of the bytes is returned (which may change since this is buffered)
-  /// If [reset] is true, the [_writeOffset] will be set to 0.
+  /// If [reset] is true, the [writeCount] will be set to 0.
   /// If [hard] is true, the [_recordedWriteCount] will also be set to 0.
   List<int> writtenBytes(
       {bool copy = true, bool reset = false, bool hard = false}) {
-    final listView = _bytes.asTypedList(writeCount);
+    final listView = baseListView(writeCount);
     final list = (copy == true) ? Uint8List.fromList(listView) : listView;
-    if (reset == true) _resetWrite(hard);
+    if (reset == true) resetWrite(hard);
     return list;
   }
 
-  /// Free internal resources used by the buffer.
-  void release() {
-    if (_bytes != null) ffi.free(_bytes);
-  }
+  /// Subclass Responsibility: Free internal resources used by the buffer.
+  void release();
 }
-
-/// Function signature for a function that takes a [length] parameter
-/// and answers a [CodecBuffer]
-typedef codecBufferBuilderFunc = CodecBuffer Function(int length);
 
 /// Provides a simple buffer holder/builder with a customizable builder function
 /// [codecBufferBuilderFunc].
@@ -319,24 +326,21 @@ typedef codecBufferBuilderFunc = CodecBuffer Function(int length);
 /// A [CodecBufferHolder] may only construct one [CodecBuffer] so when
 /// [CodecBufferHolder.buffer] is sent multiple times, the same instance
 /// will be returned.
-class CodecBufferHolder {
-  /// Return the [CodecBuffer] with defined [length]
-  static CodecBuffer _defaultBuildBuffer(int length) => CodecBuffer(length);
+class CodecBufferHolder<T, CB extends CodecBuffer<T>> {
+  /// Buffer that was constructed.
+  CB _buffer;
 
   /// Length of the buffer to construct.
   int _length;
 
-  /// Buffer that was constructed.
-  CodecBuffer _buffer;
-
   /// Custom function which takes a length and answers a [CodecBuffer].
-  codecBufferBuilderFunc bufferBuilderFunc = _defaultBuildBuffer;
+  CB Function(int length) bufferBuilderFunc;
 
   /// Construct a new buffer holder with the specific length.
   CodecBufferHolder(this._length);
 
   /// Returns a constructed [CodecBuffer].
-  CodecBuffer get buffer => _buffer ??= bufferBuilderFunc(length);
+  CB get buffer => _buffer ??= bufferBuilderFunc(length);
 
   /// Returns buffer length (bytes) or a default value.
   int get length => _length ?? 16384;
@@ -357,9 +361,10 @@ class CodecBufferHolder {
   /// Return [:true:] if buffer is set, [:false:] otherwise.
   bool isBufferSet() => _buffer != null;
 
-  /// Release the memory for any existing buffer
+  /// Release the memory for any existing buffer if necessary.
   void release() {
     _buffer?.release();
     _buffer = null;
   }
 }
+

@@ -40,22 +40,23 @@ enum CodecFilterState {
 /// A [CodecFilter] also maintains a [state] which can help
 /// implementations know what part of the lifecycle the filter is in
 /// (i.e. processing vs closed)
-abstract class CodecFilter<CR extends CodecResult> {
+abstract class CodecFilter<T, CB extends CodecBuffer<T>,
+    CR extends CodecResult> {
   /// Buffer holder for the input buffer
-  final CodecBufferHolder _inputBufferHolder;
+  CodecBufferHolder<T, CB> _inputBufferHolder;
 
   /// Buffer holder for the output buffer
-  final CodecBufferHolder _outputBufferHolder;
+  CodecBufferHolder<T, CB> _outputBufferHolder;
 
   /// Buffers incoming bytes to be processed
-  CodecBuffer get _inputBuffer => _inputBufferHolder.buffer;
+  CB get _inputBuffer => _inputBufferHolder.buffer;
 
   /// Buffers outgoing bytes that have been processed
-  CodecBuffer get _outputBuffer => _outputBufferHolder.buffer;
+  CB get _outputBuffer => _outputBufferHolder.buffer;
 
   /// Queued data in case the call to [process] could not completely flush
   /// through the incoming data.
-  _InputData _toProcess = _InputData.empty;
+  _InputData<T> _toProcess = _InputData<T>.empty();
 
   /// State tracker for filters.
   CodecFilterState state = CodecFilterState.closed;
@@ -79,11 +80,13 @@ abstract class CodecFilter<CR extends CodecResult> {
   ///
   /// The filter will transition from the [CodecFilterState.closed] to the
   /// [CodecFilterState.init] state after the call.
-  CodecFilter({int inputBufferLength, int outputBufferLength})
-      : _inputBufferHolder = CodecBufferHolder(inputBufferLength),
-        _outputBufferHolder = CodecBufferHolder(outputBufferLength) {
+  CodecFilter({int inputBufferLength, int outputBufferLength}) {
     state = CodecFilterState.init;
+    _inputBufferHolder = newBufferHolder(inputBufferLength);
+    _outputBufferHolder = newBufferHolder(outputBufferLength);
   }
+
+  CodecBufferHolder<T, CB> newBufferHolder(int inputBufferLength);
 
   /// Close this filter if not already [closed].
   ///
@@ -107,7 +110,7 @@ abstract class CodecFilter<CR extends CodecResult> {
   void process(List<int> data, int start, int end) {
     if (init) start += _initFilter(data, start, end);
     start += _inputBuffer.nextPutAll(data, start, end);
-    _toProcess = _InputData(data, start, end);
+    _toProcess = _InputData<T>(data, start, end);
   }
 
   /// Return a chunk of processed data.
@@ -177,8 +180,8 @@ abstract class CodecFilter<CR extends CodecResult> {
 
   /// Perform the flush/finalize operation [op] adding bytes to [bytesBuilder].
   /// Return the number of bytes flushed/finalized
-  int _flushOrFinalizeOperation(final BytesBuilder bytesBuilder,
-      int Function(CodecBuffer outputBuffer) op) {
+  int _flushOrFinalizeOperation(
+      final BytesBuilder bytesBuilder, int Function(CB outputBuffer) op) {
     var numAllBytes = 0;
     if (processing) {
       _codeOrDecodeBuffer();
@@ -245,8 +248,8 @@ abstract class CodecFilter<CR extends CodecResult> {
   ///
   /// Return the number of bytes read from the [bytes].
   int doInit(
-      CodecBufferHolder inputBufferHolder,
-      CodecBufferHolder outputBufferHolder,
+      CodecBufferHolder<T, CB> inputBufferHolder,
+      CodecBufferHolder<T, CB> outputBufferHolder,
       List<int> bytes,
       int start,
       int end);
@@ -272,7 +275,7 @@ abstract class CodecFilter<CR extends CodecResult> {
   ///
   /// Return a [CodecResult] describing the number of bytes read/written during
   /// the processing routine.
-  CR doProcessing(CodecBuffer inputBuffer, CodecBuffer outputBuffer);
+  CR doProcessing(CB inputBuffer, CB outputBuffer);
 
   /// Subclass Responsibility: Perform algorithm-specific flush.
   ///
@@ -288,7 +291,7 @@ abstract class CodecFilter<CR extends CodecResult> {
   /// Callers should answer 0 if there is no additional data to flush.
   ///
   /// Return the number of bytes flushed (<= [outputBuffer.unwrittenCount])
-  int doFlush(CodecBuffer outputBuffer);
+  int doFlush(CB outputBuffer);
 
   /// Subclass Responsibility: Perform algorithm-specific finalization.
   ///
@@ -302,13 +305,14 @@ abstract class CodecFilter<CR extends CodecResult> {
   ///
   /// Return the number of bytes added for finalization
   /// (<= [outputBuffer.unwrittenCount]).
-  int doFinalize(CodecBuffer outputBuffer);
+  int doFinalize(CB outputBuffer);
 
   /// Subclass Responsibility: Tear-down the filter
   ///
   /// At this point, there should not be any processing operations.
   /// This is the place to release internal resources.
   void doClose();
+
 }
 
 /// Represents the result of encode/decode routines
@@ -329,10 +333,7 @@ class CodecResult {
 /// the incoming data. But if, due to buffer sizes, this could not happen then
 /// it is stored off as an [_InputData] to be handled at a later point before
 /// the filter closes.
-class _InputData {
-  /// Cache an empty [_InputData]
-  static final _InputData empty = _InputData._(const <int>[], 0, 0);
-
+class _InputData<T> {
   /// Input data to be processed.
   List<int> data;
 
@@ -347,11 +348,14 @@ class _InputData {
   /// with no unnecessary reference to [data]
   factory _InputData(List<int> data, int start, int end) {
     if (start >= end) {
-      return empty;
+      return _InputData<T>.empty();
     } else {
-      return _InputData._(data, start, end);
+      return _InputData<T>._(data, start, end);
     }
   }
+
+  /// Returns an empty [_InputData].
+  factory _InputData.empty() => _InputData<T>._(const <int>[], 0, 0);
 
   /// Internal Constructor
   _InputData._(this.data, this.start, this.end);
@@ -372,10 +376,10 @@ class _InputData {
   /// drainage on next time.
   /// If this [_InputData] is completely drained, [_InputData.empty] is answered
   /// which will lose the reference to [data].
-  _InputData drainTo(CodecBuffer buffer) {
+  _InputData<T> drainTo(CodecBuffer<T> buffer) {
     final newStart = start + buffer.nextPutAll(data, start, end);
     if (newStart == end) {
-      return empty;
+      return _InputData<T>.empty();
     } else {
       start = newStart;
       return this;

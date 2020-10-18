@@ -10,6 +10,10 @@
 #     This file covers the build instructions for the zstd (ZStandard) library.
 #*******************************************************************************
 
+if (NOT ZSTD_BUILD)
+    return()
+endif ()
+
 #------------------------------------------------------------------
 # 3rd Party Module: ZSTD
 #------------------------------------------------------------------
@@ -149,7 +153,9 @@ if (UNIX)
 endif ()
 
 #-- Copy the shared library to its appropriate blob location in the dart project
-add_custom_command(TARGET ${ZSTD_LIB_NAME}
-        POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/${ZSTD_FULL_LIB_NAME}
-        ${DART_LIB_DIR}/src/${ZSTD_PROJ_NAME}/blobs/${ZSTD_FULL_LIB_NAME})
+if (ZSTD_INSTALL)
+    add_custom_command(TARGET ${ZSTD_LIB_NAME}
+            POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/${ZSTD_FULL_LIB_NAME}
+            ${DART_LIB_DIR}/src/${ZSTD_PROJ_NAME}/blobs/${ZSTD_FULL_LIB_NAME})
+endif ()

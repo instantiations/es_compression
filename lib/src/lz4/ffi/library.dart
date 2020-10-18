@@ -4,7 +4,7 @@
 
 import 'dart:ffi';
 
-import '../../common/ffi/openlibrary.dart';
+import '../../framework/native/openlibrary.dart';
 
 import 'constants.dart';
 import 'functions.dart';
@@ -31,9 +31,7 @@ class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
   }
 
   Lz4Library._() {
-    // TODO: Have this configurable and platform-detectable
     _libraryImpl = openLibrary();
     resolveFunctions(_libraryImpl);
   }
-
 }

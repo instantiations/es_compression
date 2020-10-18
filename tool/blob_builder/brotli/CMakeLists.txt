@@ -16,6 +16,10 @@
 #     The modifications are for building one shared library instead of three.
 #*******************************************************************************
 
+if (NOT BROTLI_BUILD)
+    return()
+endif ()
+
 #------------------------------------------------------------------
 # 3rd Party Module: BROTLI
 #------------------------------------------------------------------
@@ -94,11 +98,11 @@ function(hex_to_dec HEXADECIMAL DECIMAL)
             math(EXPR _decimal "${_decimal} + 14")
         elseif (_digit STREQUAL "F")
             math(EXPR _decimal "${_decimal} + 15")
-        else()
+        else ()
             math(EXPR _decimal "${_decimal} + ${_digit}")
-        endif()
+        endif ()
         string(LENGTH "${_tail}" _tail_length)
-    endwhile()
+    endwhile ()
     set(${DECIMAL} ${_decimal} PARENT_SCOPE)
 endfunction(hex_to_dec)
 
@@ -125,20 +129,20 @@ mark_as_advanced(BROTLI_ABI_CURRENT BROTLI_ABI_REVISION BROTLI_ABI_AGE BROTLI_AB
 include(CheckFunctionExists)
 set(LIBM_LIBRARY)
 CHECK_FUNCTION_EXISTS(log2 LOG2_RES)
-if(NOT LOG2_RES)
+if (NOT LOG2_RES)
     set(orig_req_libs "${CMAKE_REQUIRED_LIBRARIES}")
     set(CMAKE_REQUIRED_LIBRARIES "${CMAKE_REQUIRED_LIBRARIES};m")
     CHECK_FUNCTION_EXISTS(log2 LOG2_LIBM_RES)
-    if(LOG2_LIBM_RES)
+    if (LOG2_LIBM_RES)
         set(LIBM_LIBRARY "m")
-    else()
+    else ()
         message(FATAL_ERROR "log2() not found")
-    endif()
+    endif ()
 
     set(CMAKE_REQUIRED_LIBRARIES "${orig_req_libs}")
     unset(LOG2_LIBM_RES)
     unset(orig_req_libs)
-endif()
+endif ()
 unset(LOG2_RES)
 
 set(BROTLI_INCLUDE_DIRS "${SOURCE_DIR}/c/include")
@@ -148,13 +152,13 @@ set(BROTLI_LIBRARIES_CORE brotlienc brotlidec brotlicommon)
 set(BROTLI_LIBRARIES ${BROTLI_LIBRARIES_CORE} ${LIBM_LIBRARY})
 mark_as_advanced(BROTLI_LIBRARIES)
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     add_definitions(-DOS_LINUX)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
     add_definitions(-DOS_FREEBSD)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     add_definitions(-DOS_MACOSX)
-endif()
+endif ()
 
 function(transform_sources_list INPUT_FILE OUTPUT_FILE)
     file(READ ${INPUT_FILE} TEXT)
@@ -168,7 +172,7 @@ endfunction()
 transform_sources_list("${SOURCE_DIR}/scripts/sources.lst" "${CMAKE_CURRENT_BINARY_DIR}/sources.lst.cmake")
 include("${CMAKE_CURRENT_BINARY_DIR}/sources.lst.cmake")
 
-if(WIN32)
+if (WIN32)
     #-- Configure windows sources
     configure_file(
             ${CMAKE_CURRENT_SOURCE_DIR}/esbrotli.rc.in
@@ -181,7 +185,7 @@ if(WIN32)
     set(BROTLI_RC_SOURCES ${BROTLI_RC_SOURCES}
             ${CMAKE_CURRENT_BINARY_DIR}/esbrotli.rc
             ${CMAKE_CURRENT_BINARY_DIR}/esbrotli.def)
-endif()
+endif ()
 
 include_directories(${SOURCE_DIR}/c/common)
 
@@ -200,7 +204,9 @@ set_target_properties(${BROTLI_LIB_NAME} PROPERTIES PREFIX es)
 set_target_properties(${BROTLI_LIB_NAME} PROPERTIES OUTPUT_NAME "${BROTLI_LIB_NAME}-${ES_COMPRESSION_SUFFIX}")
 
 #-- Copy the shared library to its appropriate blob location in the dart project
-add_custom_command(TARGET ${BROTLI_LIB_NAME}
-        POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/${BROTLI_FULL_LIB_NAME}
-        ${DART_LIB_DIR}/src/${BROTLI_PROJ_NAME}/blobs/${BROTLI_FULL_LIB_NAME})
+if (BROTLI_INSTALL)
+    add_custom_command(TARGET ${BROTLI_LIB_NAME}
+            POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/${BROTLI_FULL_LIB_NAME}
+            ${DART_LIB_DIR}/src/${BROTLI_PROJ_NAME}/blobs/${BROTLI_FULL_LIB_NAME})
+endif ()

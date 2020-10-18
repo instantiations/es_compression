@@ -3,12 +3,14 @@
 // a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:math';
 
-import '../common/buffers.dart';
-import '../common/converters.dart';
-import '../common/filters.dart';
-import '../common/sinks.dart';
+import '../framework/buffers.dart';
+import '../framework/converters.dart';
+import '../framework/filters.dart';
+import '../framework/sinks.dart';
+import '../framework/native/buffers.dart';
 
 import 'ffi/constants.dart';
 import 'ffi/dispatcher.dart';
@@ -110,7 +112,8 @@ class _Lz4EncoderSink extends CodecSink {
                 optimizeForDecompression));
 }
 
-class _Lz4CompressFilter extends CodecFilter<_Lz4EncodingResult>
+class _Lz4CompressFilter
+    extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer, _Lz4EncodingResult>
     with Lz4DispatchErrorCheckerMixin {
   /// Dispatcher to make calls via FFI to lz4 shared library
   final Lz4Dispatcher _dispatcher = Lz4Dispatcher();
@@ -148,6 +151,12 @@ class _Lz4CompressFilter extends CodecFilter<_Lz4EncodingResult>
   @override
   Lz4Dispatcher get dispatcher => _dispatcher;
 
+  @override
+  CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(int length) {
+    final holder = CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer>(length);
+    return holder..bufferBuilderFunc = (length) => NativeCodecBuffer(length);
+  }
+
   /// Init the filter
   ///
   /// 1. Provide appropriate buffer lengths to codec builders
@@ -161,8 +170,8 @@ class _Lz4CompressFilter extends CodecFilter<_Lz4EncodingResult>
   /// 3. Write the lz4 header out to the compressed buffer
   @override
   int doInit(
-      CodecBufferHolder inputBufferHolder,
-      CodecBufferHolder outputBufferHolder,
+      CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> inputBufferHolder,
+      CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> outputBufferHolder,
       List<int> bytes,
       int start,
       int end) {
@@ -182,7 +191,7 @@ class _Lz4CompressFilter extends CodecFilter<_Lz4EncodingResult>
   ///
   /// Return the number of bytes flushed.
   @override
-  int doFlush(CodecBuffer outputBuffer) {
+  int doFlush(NativeCodecBuffer outputBuffer) {
     return checkError(_dispatcher.callLz4FFlush(
         _ctx, outputBuffer.writePtr, outputBuffer.unwrittenCount, _options));
   }
@@ -194,7 +203,7 @@ class _Lz4CompressFilter extends CodecFilter<_Lz4EncodingResult>
   /// Return an [_Lz4EncodingResult] which describes the amount read/write
   @override
   _Lz4EncodingResult doProcessing(
-      CodecBuffer inputBuffer, CodecBuffer outputBuffer) {
+      NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
     final writtenCount = checkError(_dispatcher.callLz4FCompressUpdate(
         _ctx,
         outputBuffer.writePtr,
@@ -214,7 +223,7 @@ class _Lz4CompressFilter extends CodecFilter<_Lz4EncodingResult>
   /// length.
   /// A [StateError] is thrown if writing out the lz4 trailer fails.
   @override
-  int doFinalize(CodecBuffer outputBuffer) {
+  int doFinalize(NativeCodecBuffer outputBuffer) {
     final writeLength = outputBuffer.unwrittenCount;
     if (writeLength < 4 ||
         (_preferences.frameInfoContentChecksumFlag != 0 && writeLength < 8)) {
@@ -251,7 +260,7 @@ class _Lz4CompressFilter extends CodecFilter<_Lz4EncodingResult>
   /// A [StateError] is thrown if the encoding buffer is not big enough to
   /// hold at least the max size of an lz4 frame header
   /// A [StateError] is thrown if the lz4 frame header could not be written
-  void _writeHeader(CodecBuffer outputBuffer) {
+  void _writeHeader(NativeCodecBuffer outputBuffer) {
     if (outputBuffer.unwrittenCount < Lz4Constants.LZ4F_HEADER_SIZE_MAX) {
       StateError('buffer capacity < LZ4F_HEADER_SIZE_MAX '
           '($Lz4Constants.LZ4F_HEADER_SIZE_MAX bytes)');
