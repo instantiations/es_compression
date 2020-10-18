@@ -1,7 +1,9 @@
 ## 0.1.0 [In Progress]
 
 - Initial development release, created by Seth Berman [Instantiations, Inc](https://www.instantiations.com).
-- Implemented general codec framework and fast FFI read/write streamable buffers.
+- Implemented general codec framework.
+- Implemented FFI read/write streamable buffers.
+- Implemented Dart Heap read/write streamable buffers.
 - Implemented FFI bindings for [LZ4 v1.9.2](https://github.com/lz4/lz4/tree/v1.9.2).
 - Implemented LZ4 codec framework extensions.
 - Implemented [LZ4 benchmarks](benchmark/lz4_benchmark.dart)

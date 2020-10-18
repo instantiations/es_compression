@@ -5,10 +5,20 @@ import 'package:ffi/ffi.dart' as ffi;
 
 import '../buffers.dart';
 
+/// Implementation of a [CodecBuffer] backed by bytes allocated from the native
+/// OS heap.
+///
+/// The backing buffer is referenced by a [Pointer].
+/// There are base, read and write [DartHeapPointer]s required by the
+/// superclass which are also instances of [Pointer].
+///
+/// This buffer is designed to be used by codec algorithms that are implemented
+/// using Dart's ffi framework..
 class NativeCodecBuffer extends CodecBuffer<Pointer<Uint8>> {
-  /// Internal buffer of native bytes.
+  /// References the buffer to the native bytes.
   final Pointer<Uint8> _bytes;
 
+  /// Constructs a buffer that allocates [length] bytes from the native OS-heap.
   NativeCodecBuffer(int length)
       : _bytes = ffi.allocate<Uint8>(count: length),
         super(length);
@@ -41,15 +51,15 @@ class NativeCodecBuffer extends CodecBuffer<Pointer<Uint8>> {
 
   /// Read the next byte, increment the [readCount], return the byte read.
   @override
-  int doNext() => _bytes[readCount++];
+  int basicNext() => _bytes[readCount++];
 
   /// Return the next byte, do not increment the [readCount].
   @override
-  int doPeek() => _bytes[readCount];
+  int basicPeek() => _bytes[readCount];
 
   /// Put the next [byte] into the buffer.
   @override
-  void doNextPut(int byte) => basePtr[writeCount++] = byte;
+  void basicNextPut(int byte) => basePtr[writeCount++] = byte;
 
   /// Free internal resources used by the buffer.
   @override

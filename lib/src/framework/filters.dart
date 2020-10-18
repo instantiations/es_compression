@@ -33,6 +33,13 @@ enum CodecFilterState {
 /// Subclasses of [CodecFilter] provide low-level interfaces to their
 /// algorithms and direct the processing of data.
 ///
+/// Generics:
+/// The [CodecFilter] has both the [CodecBuffer] and the [CodecResult] as
+/// generic types.
+/// [P] defines the type to use for the [CodecBuffer]'s memory pointer.
+/// [CB] is the implementation type for an abstract [CodecBuffer] of type [P]
+/// [CR] is the implementation type for a [CodecResult]
+///
 /// A [CodecFilter] contains two buffers.
 /// An buffer [_inputBuffer] to incoming bytes to process.
 /// an buffer [_outputBuffer] to for outgoing processed bytes.
@@ -40,13 +47,13 @@ enum CodecFilterState {
 /// A [CodecFilter] also maintains a [state] which can help
 /// implementations know what part of the lifecycle the filter is in
 /// (i.e. processing vs closed)
-abstract class CodecFilter<T, CB extends CodecBuffer<T>,
+abstract class CodecFilter<P, CB extends CodecBuffer<P>,
     CR extends CodecResult> {
   /// Buffer holder for the input buffer
-  CodecBufferHolder<T, CB> _inputBufferHolder;
+  CodecBufferHolder<P, CB> _inputBufferHolder;
 
   /// Buffer holder for the output buffer
-  CodecBufferHolder<T, CB> _outputBufferHolder;
+  CodecBufferHolder<P, CB> _outputBufferHolder;
 
   /// Buffers incoming bytes to be processed
   CB get _inputBuffer => _inputBufferHolder.buffer;
@@ -56,7 +63,7 @@ abstract class CodecFilter<T, CB extends CodecBuffer<T>,
 
   /// Queued data in case the call to [process] could not completely flush
   /// through the incoming data.
-  _InputData<T> _toProcess = _InputData<T>.empty();
+  _InputData<P> _toProcess = _InputData<P>.empty();
 
   /// State tracker for filters.
   CodecFilterState state = CodecFilterState.closed;
@@ -86,7 +93,7 @@ abstract class CodecFilter<T, CB extends CodecBuffer<T>,
     _outputBufferHolder = newBufferHolder(outputBufferLength);
   }
 
-  CodecBufferHolder<T, CB> newBufferHolder(int inputBufferLength);
+  CodecBufferHolder<P, CB> newBufferHolder(int inputBufferLength);
 
   /// Close this filter if not already [closed].
   ///
@@ -110,7 +117,7 @@ abstract class CodecFilter<T, CB extends CodecBuffer<T>,
   void process(List<int> data, int start, int end) {
     if (init) start += _initFilter(data, start, end);
     start += _inputBuffer.nextPutAll(data, start, end);
-    _toProcess = _InputData<T>(data, start, end);
+    _toProcess = _InputData<P>(data, start, end);
   }
 
   /// Return a chunk of processed data.
@@ -248,8 +255,8 @@ abstract class CodecFilter<T, CB extends CodecBuffer<T>,
   ///
   /// Return the number of bytes read from the [bytes].
   int doInit(
-      CodecBufferHolder<T, CB> inputBufferHolder,
-      CodecBufferHolder<T, CB> outputBufferHolder,
+      CodecBufferHolder<P, CB> inputBufferHolder,
+      CodecBufferHolder<P, CB> outputBufferHolder,
       List<int> bytes,
       int start,
       int end);
@@ -312,10 +319,11 @@ abstract class CodecFilter<T, CB extends CodecBuffer<T>,
   /// At this point, there should not be any processing operations.
   /// This is the place to release internal resources.
   void doClose();
-
 }
 
-/// Represents the result of encode/decode routines
+/// Represents the result of encode/decode routines.
+///
+/// This is a generic type required by a [CodecFilter].
 class CodecResult {
   /// Number of bytes read by codec routine
   final int readCount;
@@ -329,6 +337,7 @@ class CodecResult {
 }
 
 /// An [_InputData] is a small wrapper around the ranged incoming data.
+///
 /// For many cases, the [CodecFilter.process] method will completely process
 /// the incoming data. But if, due to buffer sizes, this could not happen then
 /// it is stored off as an [_InputData] to be handled at a later point before

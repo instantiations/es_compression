@@ -107,18 +107,22 @@ abstract class CodecBuffer<T> {
       ? onEnd != null
           ? onEnd()
           : -1
-      : doNext();
+      : basicNext();
 
-  /// Subclass Responsibility: Read the next byte.
+  /// Subclass Responsibility: Consume and return the next byte.
   ///
   /// An [atEnd] check has already been performed at this point.
-  int doNext();
+  /// [readCount] should be incremented by 1 after this call.
+  int basicNext();
 
-  /// Read and answer a [List] containing up to the next [amount] of consecutive
-  /// bytes.
-  List<int> nextAll(int amount, {bool upTo = false}) {
+  /// Consume and answer a [List] containing up to the next [amount] of
+  /// consecutive bytes.
+  ///
+  /// If [upToAmount] is [:true:], then read as many bytes up to [amount], which
+  /// can be limited by the number of bytes written.
+  List<int> nextAll(int amount, {bool upToAmount = false}) {
     var endOffset = readCount + amount;
-    if (upTo != true) {
+    if (upToAmount != true) {
       endOffset = RangeError.checkValidRange(readCount, endOffset, writeCount);
     }
     final readAmount = min(endOffset - readCount, unreadCount);
@@ -136,12 +140,13 @@ abstract class CodecBuffer<T> {
       ? onEnd != null
           ? onEnd()
           : -1
-      : doPeek();
+      : basicPeek();
 
-  /// Subclass Responsibility: Peek the next byte.
+  /// Subclass Responsibility: Return the next byte without consuming it.
   ///
   /// An [atEnd] check has already been performed at this point.
-  int doPeek();
+  /// [readCount] should be the same before and after this call.
+  int basicPeek();
 
   /// Put the next byte into the buffer.
   ///
@@ -153,16 +158,17 @@ abstract class CodecBuffer<T> {
       onEnd?.call();
       return false;
     } else {
-      doNextPut(byte);
+      basicNextPut(byte);
       return true;
     }
   }
 
-  /// Subclass Responsibility: Put the next byte.
+  /// Subclass Responsibility: Put the next byte into the buffer.
   ///
   /// A bounds check has been performed and it is safe to add an extra byte
   /// to the buffer.
-  void doNextPut(int byte);
+  /// The [writeCount] should be incremented by 1.
+  void basicNextPut(int byte);
 
   /// Put [bytes] into the buffer.
   ///
@@ -260,20 +266,23 @@ abstract class CodecBuffer<T> {
   T get basePtr;
 
   /// Subclass Responsibility: Return the byte pointer to the memory at the
-  /// [writeCount] offset from the start of the buffer.
-  T get writePtr;
-
-  /// Subclass Responsibility: Return the byte pointer to the memory at the
   /// [readCount] offset from the start of the buffer.
   T get readPtr;
 
-  /// Subclass Responsibility: base..[length] view of the buffer.
+  /// Subclass Responsibility: Return the byte pointer to the memory at the
+  /// [writeCount] offset from the start of the buffer.
+  T get writePtr;
+
+  /// Subclass Responsibility: Return a [Uint8List] view on the buffer over the
+  /// range base..[length].
   Uint8List baseListView(int length);
 
-  /// Subclass Responsibility: readAmount..[length] view of the buffer.
+  /// Subclass Responsibility: Return a [Uint8List] view on the buffer over the
+  /// range [readCount]..[length].
   Uint8List readListView(int length);
 
-  /// Subclass Responsibility: writeAmount..[length] view of the buffer.
+  /// Subclass Responsibility: Return a [Uint8List] view on the buffer over the
+  /// range [writeCount]..[length].
   Uint8List writeListView(int length);
 
   /// Return the read contents of the buffer as a [List].

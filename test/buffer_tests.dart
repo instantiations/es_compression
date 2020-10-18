@@ -170,7 +170,7 @@ void doTest(String name, CodecBuffer Function(int length) newBuffer) {
     }
     buffer.reset();
     buffer.incrementBytesWritten(10);
-    expect(buffer.nextAll(100, upTo: true), List<int>.generate(10, (i) => i));
+    expect(buffer.nextAll(100, upToAmount: true), List<int>.generate(10, (i) => i));
 
     // Test nextAll underflow/overflow
     buffer.reset(hard: true);
