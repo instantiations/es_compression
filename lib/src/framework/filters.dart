@@ -196,8 +196,8 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>,
       do {
         numBytes = op(_outputBuffer);
         if (numBytes > 0) {
-          final bufferedBytes = _outputBuffer.writtenBytes(reset: true);
           _outputBuffer.incrementBytesWritten(numBytes);
+          final bufferedBytes = _outputBuffer.writtenBytes(reset: true);
           bytesBuilder.add(bufferedBytes);
           numAllBytes += numBytes;
         }

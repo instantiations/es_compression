@@ -16,11 +16,11 @@ import 'ffi/constants.dart';
 import 'ffi/dispatcher.dart';
 import 'ffi/types.dart';
 
-/// 64k default input buffer length
-const defaultInputBufferLength = 64 * 1024;
+/// ZSTD_BLOCKSIZE_MAX + ZSTD_blockHeaderSize;
+const defaultInputBufferLength = ZstdConstants.ZSTD_BLOCKSIZE_MAX + 3;
 
-/// The [Lz4Decoder] decoder is used by [Lz4Codec] to decompress lz4 data.
-class Lz4Decoder extends CodecConverter {
+/// The [ZstdDecoder] decoder is used by [ZstdCodec] to decompress zstd data.
+class ZstdDecoder extends CodecConverter {
   @override
   ByteConversionSink startChunkedConversion(Sink<List<int>> sink) {
     ByteConversionSink byteSink;
@@ -29,31 +29,24 @@ class Lz4Decoder extends CodecConverter {
     } else {
       byteSink = sink as ByteConversionSink;
     }
-    return _Lz4DecoderSink(byteSink);
+    return _ZstdDecoderSink(byteSink);
   }
 }
 
-class _Lz4DecoderSink extends CodecSink {
-  _Lz4DecoderSink(ByteConversionSink sink)
-      : super(sink, _Lz4DecompressFilter());
+class _ZstdDecoderSink extends CodecSink {
+  _ZstdDecoderSink(ByteConversionSink sink)
+      : super(sink, _ZstdDecompressFilter());
 }
 
-class _Lz4DecompressFilter
-    extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer, _Lz4DecodingResult> {
+class _ZstdDecompressFilter extends CodecFilter<Pointer<Uint8>,
+    NativeCodecBuffer, _ZstdDecodingResult> {
   /// Dispatcher to make calls via FFI to lz4 shared library
-  final Lz4Dispatcher _dispatcher = Lz4Dispatcher();
+  final ZstdDispatcher _dispatcher = ZstdDispatcher();
 
-  Lz4FrameInfo _frameInfo;
+  /// Native zstd context object
+  ZstdDStream _dStream;
 
-  /// Native lz4 context
-  Lz4Dctx _ctx;
-
-  /// Native lz4 decompress options
-  Lz4DecompressOptions _options;
-
-  _Lz4DecompressFilter() : super(inputBufferLength: defaultInputBufferLength) {
-    _options = _dispatcher.library.newDecompressOptions();
-  }
+  _ZstdDecompressFilter() : super(inputBufferLength: defaultInputBufferLength);
 
   @override
   CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
@@ -80,32 +73,34 @@ class _Lz4DecompressFilter
       List<int> bytes,
       int start,
       int end) {
-    _initContext();
-    inputBufferHolder.length = inputBufferHolder.isLengthSet()
-        ? max(inputBufferHolder.length, Lz4Constants.LZ4F_HEADER_SIZE_MAX)
-        : defaultInputBufferLength;
-    final numBytes = inputBufferHolder.buffer.nextPutAll(bytes, start, end);
-    if (numBytes > 0) _readFrameInfo(inputBufferHolder.buffer);
+    _initDStream();
+
+    if (!inputBufferHolder.isLengthSet()) {
+      inputBufferHolder.length = _dispatcher.callZstdDStreamInSize();
+    }
+
+    // Formula from 'ZSTD_DStreamOutSize'
+    final outputLength = _dispatcher.callZstdDStreamOutSize();
     outputBufferHolder.length = outputBufferHolder.isLengthSet()
-        ? max(outputBufferHolder.length, _frameInfo.blockSize)
-        : _frameInfo.blockSize;
-    return numBytes;
+        ? max(outputBufferHolder.length, outputLength)
+        : outputLength;
+
+    return 0;
   }
 
   @override
-  _Lz4DecodingResult doProcessing(
+  _ZstdDecodingResult doProcessing(
       NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
-    final result = _dispatcher.callLz4FDecompress(
-        _ctx,
+    final result = _dispatcher.callZstdDecompressStream(
+        _dStream,
         outputBuffer.writePtr,
         outputBuffer.unwrittenCount,
         inputBuffer.readPtr,
-        inputBuffer.unreadCount,
-        _options);
+        inputBuffer.unreadCount);
     final read = result[0];
     final written = result[1];
     final hint = result[2];
-    return _Lz4DecodingResult(read, written, hint);
+    return _ZstdDecodingResult(read, written, hint);
   }
 
   @override
@@ -121,43 +116,29 @@ class _Lz4DecompressFilter
   /// Release lz4 resources
   @override
   void doClose() {
-    _destroyContext();
-    _destroyFrameInfo();
+    _destroyDStream();
     _releaseDispatcher();
   }
 
-  void _initContext() {
-    _ctx = _dispatcher.callLz4FCreateDecompressionContext();
-  }
-
-  int _readFrameInfo(NativeCodecBuffer encoderBuffer, {bool reset = false}) {
-    final result = _dispatcher.callLz4FGetFrameInfo(
-        _ctx, encoderBuffer.readPtr, encoderBuffer.unreadCount);
-    _frameInfo = result[1] as Lz4FrameInfo;
-    final read = result[2] as int;
-    encoderBuffer.incrementBytesRead(read);
-    if (reset == true) _reset();
-    return read;
+  void _initDStream() {
+    final result = _dispatcher.callZstdCreateDStream();
+    if (result == nullptr) throw StateError('Could not allocate zstd context');
+    _dStream = result.ref;
+    _dispatcher.callZstdInitDStream(_dStream);
   }
 
   void _reset() {
-    if (_ctx != null) _dispatcher.callLz4FResetDecompressionContext(_ctx);
+    if (_dStream != null) _dispatcher.callZstdInitDStream(_dStream);
   }
 
-  void _destroyContext() {
-    if (_ctx != null) {
+  void _destroyDStream() {
+    if (_dStream != null) {
       try {
-        _dispatcher.callLz4FFreeDecompressionContext(_ctx);
+        _dispatcher.callZstdFreeDStream(_dStream);
       } finally {
-        _ctx = null;
+        _dStream = null;
       }
     }
-  }
-
-  /// Free the native memory from the allocated [_preferences].
-  void _destroyFrameInfo() {
-    _frameInfo?.free();
-    _frameInfo = null;
   }
 
   void _releaseDispatcher() {
@@ -165,12 +146,12 @@ class _Lz4DecompressFilter
   }
 }
 
-/// Result object for an Lz4 Decompression operation
-class _Lz4DecodingResult extends CodecResult {
+/// Result object for an Zstd Decompression operation
+class _ZstdDecodingResult extends CodecResult {
   /// How many 'srcSize' bytes expected to be decompressed for next call.
   /// When a frame is fully decoded, this will be 0.
   final int hint;
 
-  const _Lz4DecodingResult(int bytesRead, int bytesWritten, this.hint)
+  const _ZstdDecodingResult(int bytesRead, int bytesWritten, this.hint)
       : super(bytesRead, bytesWritten);
 }

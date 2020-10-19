@@ -90,6 +90,7 @@ class Lz4Encoder extends CodecConverter {
   }
 }
 
+/// LZ4 codec sink impl
 class _Lz4EncoderSink extends CodecSink {
   _Lz4EncoderSink._(
       ByteConversionSink sink,
@@ -112,9 +113,10 @@ class _Lz4EncoderSink extends CodecSink {
                 optimizeForDecompression));
 }
 
+/// This filter contains the implementation details for the usage of the native
+/// lz4 API bindings.
 class _Lz4CompressFilter
-    extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer, _Lz4EncodingResult>
-    with Lz4DispatchErrorCheckerMixin {
+    extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer, _Lz4EncodingResult> {
   /// Dispatcher to make calls via FFI to lz4 shared library
   final Lz4Dispatcher _dispatcher = Lz4Dispatcher();
 
@@ -136,8 +138,8 @@ class _Lz4CompressFilter
       int blockSize,
       bool optimizeForCompression})
       : super(inputBufferLength: defaultInputBufferLength) {
-    _options = dispatcher.library.newCompressOptions();
-    _preferences = dispatcher.library.newPreferences(
+    _options = _dispatcher.library.newCompressOptions();
+    _preferences = _dispatcher.library.newPreferences(
         level: level,
         fastAcceleration: fastAcceleration,
         contentChecksum: contentChecksum,
@@ -147,12 +149,9 @@ class _Lz4CompressFilter
         optimizeForCompression: optimizeForCompression);
   }
 
-  /// Lz4DispatchMixin: Answer lz4 dispatcher
   @override
-  Lz4Dispatcher get dispatcher => _dispatcher;
-
-  @override
-  CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(int length) {
+  CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
+      int length) {
     final holder = CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer>(length);
     return holder..bufferBuilderFunc = (length) => NativeCodecBuffer(length);
   }
@@ -176,7 +175,7 @@ class _Lz4CompressFilter
       int start,
       int end) {
     if (!inputBufferHolder.isLengthSet()) {
-      inputBufferHolder.length = _preferences.blockSize;
+      inputBufferHolder.length = defaultInputBufferLength;
     }
     outputBufferHolder.length = outputBufferHolder.isLengthSet()
         ? max(outputBufferHolder.length,
@@ -192,8 +191,8 @@ class _Lz4CompressFilter
   /// Return the number of bytes flushed.
   @override
   int doFlush(NativeCodecBuffer outputBuffer) {
-    return checkError(_dispatcher.callLz4FFlush(
-        _ctx, outputBuffer.writePtr, outputBuffer.unwrittenCount, _options));
+    return _dispatcher.callLz4FFlush(
+        _ctx, outputBuffer.writePtr, outputBuffer.unwrittenCount, _options);
   }
 
   /// Perform an lz4 encoding of [inputBuffer.unreadCount] bytes in
@@ -204,13 +203,13 @@ class _Lz4CompressFilter
   @override
   _Lz4EncodingResult doProcessing(
       NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
-    final writtenCount = checkError(_dispatcher.callLz4FCompressUpdate(
+    final writtenCount = _dispatcher.callLz4FCompressUpdate(
         _ctx,
         outputBuffer.writePtr,
         outputBuffer.unwrittenCount,
         inputBuffer.readPtr,
         inputBuffer.unreadCount,
-        _options));
+        _options);
     return _Lz4EncodingResult(inputBuffer.unreadCount, writtenCount);
   }
 
@@ -230,8 +229,8 @@ class _Lz4CompressFilter
       StateError(
           'buffer capacity is too small to properly finish the lz4 frame');
     }
-    final numBytes = checkError(_dispatcher.callLz4FCompressEnd(
-        _ctx, outputBuffer.writePtr, writeLength, _options));
+    final numBytes = _dispatcher.callLz4FCompressEnd(
+        _ctx, outputBuffer.writePtr, writeLength, _options);
     state = CodecFilterState.finalized;
     return numBytes;
   }
@@ -250,9 +249,7 @@ class _Lz4CompressFilter
   /// A [StateError] is thrown if the compression context could not be
   /// allocated.
   void _initContext() {
-    final result = _dispatcher.callLz4FCreateCompressionContext();
-    checkError(result[0] as int);
-    _ctx = result[1] as Lz4Cctx;
+    _ctx = _dispatcher.callLz4FCreateCompressionContext();
   }
 
   /// Write the lz4 frame header to the compressed buffer
@@ -265,16 +262,15 @@ class _Lz4CompressFilter
       StateError('buffer capacity < LZ4F_HEADER_SIZE_MAX '
           '($Lz4Constants.LZ4F_HEADER_SIZE_MAX bytes)');
     }
-    final numBytes = checkError(_dispatcher.callLz4FCompressBegin(_ctx,
-        outputBuffer.writePtr, outputBuffer.unwrittenCount, _preferences));
+    final numBytes = _dispatcher.callLz4FCompressBegin(
+        _ctx, outputBuffer.writePtr, outputBuffer.unwrittenCount, _preferences);
     outputBuffer.incrementBytesWritten(numBytes);
   }
 
   /// Return the maximum length of an lz4 block, given its uncompressed
   /// [uncompressedLength].
   int _lz4CompressBound(int uncompressedLength) {
-    return checkError(
-        _dispatcher.callLz4FCompressBound(uncompressedLength, _preferences));
+    return _dispatcher.callLz4FCompressBound(uncompressedLength, _preferences);
   }
 
   /// Free the native context
@@ -283,7 +279,7 @@ class _Lz4CompressFilter
   void _destroyContext() {
     if (_ctx != null) {
       try {
-        checkError(_dispatcher.callLz4FFreeCompressionContext(_ctx));
+        _dispatcher.callLz4FFreeCompressionContext(_ctx);
       } finally {
         _ctx = null;
       }

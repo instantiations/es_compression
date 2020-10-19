@@ -11,12 +11,11 @@ import 'library.dart';
 import 'types.dart';
 
 // ignore_for_file: public_member_api_docs
-class Lz4Dispatcher {
+class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
   static final Lz4Dispatcher _instance = Lz4Dispatcher._();
 
   /// Library accessor to the Lz4 shared lib.
   Lz4Library library;
-
 
   int versionNumber;
 
@@ -52,27 +51,28 @@ class Lz4Dispatcher {
     return library.lz4FGetErrorName(code);
   }
 
-  List callLz4FCreateCompressionContext(
+  Lz4Cctx callLz4FCreateCompressionContext(
       {int version = Lz4Constants.LZ4F_VERSION}) {
     final newCtxPtr = ffi.allocate<Pointer<Lz4Cctx>>();
-    final result = library.lz4FCreateCompressionContext(newCtxPtr, version);
+    checkError(library.lz4FCreateCompressionContext(newCtxPtr, version));
     final newCtx = newCtxPtr[0].ref;
     ffi.free(newCtxPtr);
-    return <dynamic>[result, newCtx];
+    return newCtx;
   }
 
   int callLz4FFreeCompressionContext(Lz4Cctx context) {
-    return library.lz4FFreeCompressionContext(context.addressOf);
+    return checkError(library.lz4FFreeCompressionContext(context.addressOf));
   }
 
   int callLz4FCompressBegin(Lz4Cctx context, Pointer<Uint8> destBuffer,
       int destSize, Lz4Preferences preferences) {
-    return library.lz4FCompressBegin(
-        context.addressOf, destBuffer, destSize, preferences.addressOf);
+    return checkError(library.lz4FCompressBegin(
+        context.addressOf, destBuffer, destSize, preferences.addressOf));
   }
 
   int callLz4FCompressBound(int srcSize, Lz4Preferences preferences) {
-    return library.lz4FCompressBound(srcSize, preferences.addressOf);
+    return checkError(
+        library.lz4FCompressBound(srcSize, preferences.addressOf));
   }
 
   int callLz4FCompressUpdate(
@@ -82,33 +82,33 @@ class Lz4Dispatcher {
       Pointer<Uint8> srcBuffer,
       int srcSize,
       Lz4CompressOptions options) {
-    return library.lz4FCompressUpdate(context.addressOf, destBuffer, destSize,
-        srcBuffer, srcSize, options.addressOf);
+    return checkError(library.lz4FCompressUpdate(context.addressOf, destBuffer,
+        destSize, srcBuffer, srcSize, options.addressOf));
   }
 
   int callLz4FFlush(Lz4Cctx context, Pointer<Uint8> destBuffer, int destSize,
       Lz4CompressOptions options) {
-    return library.lz4FFlush(
-        context.addressOf, destBuffer, destSize, options.addressOf);
+    return checkError(library.lz4FFlush(
+        context.addressOf, destBuffer, destSize, options.addressOf));
   }
 
   int callLz4FCompressEnd(Lz4Cctx context, Pointer<Uint8> destBuffer,
       int destSize, Lz4CompressOptions options) {
-    return library.lz4FCompressEnd(
-        context.addressOf, destBuffer, destSize, options.addressOf);
+    return checkError(library.lz4FCompressEnd(
+        context.addressOf, destBuffer, destSize, options.addressOf));
   }
 
-  List callLz4FCreateDecompressionContext(
+  Lz4Dctx callLz4FCreateDecompressionContext(
       {int version = Lz4Constants.LZ4F_VERSION}) {
     final newCtxPtr = ffi.allocate<Pointer<Lz4Dctx>>();
-    final result = library.lz4FCreateDecompressionContext(newCtxPtr, version);
+    checkError(library.lz4FCreateDecompressionContext(newCtxPtr, version));
     final newCtx = newCtxPtr[0].ref;
     ffi.free(newCtxPtr);
-    return <dynamic>[result, newCtx];
+    return newCtx;
   }
 
   int callLz4FFreeDecompressionContext(Lz4Dctx context) {
-    return library.lz4FFreeDecompressionContext(context.addressOf);
+    return checkError(library.lz4FFreeDecompressionContext(context.addressOf));
   }
 
   List callLz4FGetFrameInfo(
@@ -116,8 +116,8 @@ class Lz4Dispatcher {
     final frameInfo = library.newFrameInfo();
     final sizePtr = ffi.allocate<IntPtr>();
     sizePtr.value = compressedSize;
-    final result = library.lz4FGetFrameInfo(
-        context.addressOf, frameInfo.addressOf, srcBuffer, sizePtr);
+    final result = checkError(library.lz4FGetFrameInfo(
+        context.addressOf, frameInfo.addressOf, srcBuffer, sizePtr));
     final read = sizePtr.value;
     ffi.free(sizePtr);
     return <dynamic>[result, frameInfo, read];
@@ -136,12 +136,15 @@ class Lz4Dispatcher {
       Lz4DecompressOptions options) {
     _destSizePtr.value = destSize;
     _srcSizePtr.value = srcSize;
-    final hint = library.lz4FDecompress(context.addressOf, destBuffer,
-        _destSizePtr, srcBuffer, _srcSizePtr, options.addressOf);
+    final hint = checkError(library.lz4FDecompress(context.addressOf,
+        destBuffer, _destSizePtr, srcBuffer, _srcSizePtr, options.addressOf));
     final read = _srcSizePtr.value;
     final written = _destSizePtr.value;
     return <int>[read, written, hint];
   }
+
+  @override
+  Lz4Dispatcher get dispatcher => this;
 }
 
 /// A [Lz4DispatchErrorCheckerMixin] provides error handling capability for
