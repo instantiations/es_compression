@@ -112,6 +112,10 @@ if (WIN32)
             #-- Take no action
         ENDMACRO()
     endif ()
+else ()
+    MACRO(code_sign_target target)
+        #-- Take no action
+    ENDMACRO()
 endif ()
 
 #------------------------------------------------------------------

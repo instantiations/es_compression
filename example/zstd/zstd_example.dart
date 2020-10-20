@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:collection/collection.dart';
 import 'package:es_compression/zstd.dart';
 
 import '../utils/example_utils.dart';

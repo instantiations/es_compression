@@ -121,10 +121,6 @@ class _ZstdDecompressFilter extends CodecFilter<Pointer<Uint8>,
     _dispatcher.callZstdInitDStream(_dStream);
   }
 
-  void _reset() {
-    if (_dStream != null) _dispatcher.callZstdInitDStream(_dStream);
-  }
-
   void _destroyDStream() {
     if (_dStream != null) {
       try {

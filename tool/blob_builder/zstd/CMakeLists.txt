@@ -149,7 +149,7 @@ set_target_properties(${ZSTD_LIB_NAME} PROPERTIES PREFIX es)
 set_target_properties(${ZSTD_LIB_NAME} PROPERTIES OUTPUT_NAME "${ZSTD_LIB_NAME}-${ES_COMPRESSION_SUFFIX}")
 if (UNIX)
     find_package(Threads)
-    target_link_libraries(ZSTD_LIB_NAME ${CMAKE_THREAD_LIBS_INIT})
+    target_link_libraries(${ZSTD_LIB_NAME} ${CMAKE_THREAD_LIBS_INIT})
 endif ()
 
 #-- Copy the shared library to its appropriate blob location in the dart project
