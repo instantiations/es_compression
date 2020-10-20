@@ -83,11 +83,9 @@ class _ZstdCompressFilter extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer,
 
   /// Init the filter
   ///
-  /// 1. Provide appropriate buffer lengths to codec builders
+  /// Provide appropriate buffer lengths to codec builders
   /// [inputBufferHolder.length] decoding buffer length and
-  /// [outputBufferHolder.length] encoding buffer length
-  ///
-  /// 2. Allocate and setup the native zstd cStream
+  /// [outputBufferHolder.length] encoding buffer length.
   @override
   int doInit(
       CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> inputBufferHolder,
@@ -102,7 +100,7 @@ class _ZstdCompressFilter extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer,
     }
 
     // Formula from 'ZSTD_CStreamOutSize'
-    final outputLength = _dispatcher.callZstdCStreamOutSize();
+    final outputLength = _zstdCompressBound(inputBufferHolder.length);
     outputBufferHolder.length = outputBufferHolder.isLengthSet()
         ? max(outputBufferHolder.length, outputLength)
         : outputLength;

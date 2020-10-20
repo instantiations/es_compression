@@ -29,12 +29,12 @@ class ZstdDecoder extends CodecConverter {
     } else {
       byteSink = sink as ByteConversionSink;
     }
-    return _ZstdDecoderSink(byteSink);
+    return _ZstdDecoderSink._(byteSink);
   }
 }
 
 class _ZstdDecoderSink extends CodecSink {
-  _ZstdDecoderSink(ByteConversionSink sink)
+  _ZstdDecoderSink._(ByteConversionSink sink)
       : super(sink, _ZstdDecompressFilter());
 }
 
@@ -57,15 +57,9 @@ class _ZstdDecompressFilter extends CodecFilter<Pointer<Uint8>,
 
   /// Init the filter
   ///
-  /// 1. Provide appropriate buffer lengths to codec builders
-  /// [decBuilder.length] decoding buffer length and
-  /// [encBuilder.length] encoding buffer length
-  /// Ensure that the [encBuilder.length] is at least as large as the
-  /// maximum size of an lz4 block given the [decBuilder.length]
-  ///
-  /// 2. Allocate and setup the native lz4 context
-  ///
-  /// 3. Write the lz4 header out to the compressed buffer
+  /// Provide appropriate buffer lengths to codec builders
+  /// [inputBufferHolder.length] decoding buffer length and
+  /// [outputBufferHolder.length] encoding buffer length.
   @override
   int doInit(
       CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> inputBufferHolder,

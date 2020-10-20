@@ -4,13 +4,23 @@
 - Implemented general codec framework.
 - Implemented FFI read/write streamable buffers.
 - Implemented Dart Heap read/write streamable buffers.
-- Implemented FFI bindings for [LZ4 v1.9.2](https://github.com/lz4/lz4/tree/v1.9.2).
+- Implemented Brotli codec framework extensions.
 - Implemented LZ4 codec framework extensions.
-- Implemented [LZ4 benchmarks](benchmark/lz4_benchmark.dart)
-- Implemented [LZ4 examples](example/lz4_example.dart)
-- Implemented [escompress](bin/es_compress.dart) binary script with lz4 integration
-- Implemented shared library and LZ4 [Cmake build instructions](tool/blob_builder/CMakeLists.txt)
+- Implemented ZStandard (zstd) codec framework extensions.
+- Implemented [Brotli benchmarks](benchmark/brotli/brotli_benchmark.dart)
+- Implemented [LZ4 benchmarks](benchmark/lz4/lz4_benchmark.dart)
+- Implemented [Zstd benchmarks](benchmark/zstd/zstd_benchmark.dart)
+- Implemented [Brotli examples](example/brotli/brotli_example.dart)
+- Implemented [LZ4 examples](example/lz4/lz4_example.dart)
+- Implemented [Zstd examples](example/zstd/zstd_example.dart)
+- Implemented shared library and Brotli [Cmake build instructions](tool/blob_builder/brotli/CMakeLists.txt)
+- Implemented shared library and LZ4 [Cmake build instructions](tool/blob_builder/lz4/CMakeLists.txt)
+- Implemented shared library and Zstd [Cmake build instructions](tool/blob_builder/zstd/CMakeLists.txt)
+- Implemented FFI bindings for [Brotli v1.0.9](https://github.com/google/brotli/tree/v1.0.9).
+- Implemented FFI bindings for [LZ4 v1.9.2](https://github.com/lz4/lz4/tree/v1.9.2).
+- Implemented FFI bindings for [Zstd v1.4.5](https://github.com/facebook/zstd/tree/v1.4.5).
 - Provided prebuilt [Win64 Brotli native shared library](lib/src/brotli/blobs/esbrotli-win64.dll)
 - Provided prebuilt [Win64 LZ4 native shared library](lib/src/lz4/blobs/eslz4-win64.dll)
 - Provided prebuilt [Win64 Zstd (ZStandard) native shared library](lib/src/zstd/blobs/eszstd-win64.dll)
+- Implemented [escompress](bin/es_compress.dart) binary script with lz4 integration
 - Implemented flexible library loading with [OpenLibrary](lib/src/framework/native/openlibrary.dart) mixin

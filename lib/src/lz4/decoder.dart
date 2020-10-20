@@ -29,12 +29,12 @@ class Lz4Decoder extends CodecConverter {
     } else {
       byteSink = sink as ByteConversionSink;
     }
-    return _Lz4DecoderSink(byteSink);
+    return _Lz4DecoderSink._(byteSink);
   }
 }
 
 class _Lz4DecoderSink extends CodecSink {
-  _Lz4DecoderSink(ByteConversionSink sink)
+  _Lz4DecoderSink._(ByteConversionSink sink)
       : super(sink, _Lz4DecompressFilter());
 }
 
@@ -65,10 +65,10 @@ class _Lz4DecompressFilter
   /// Init the filter
   ///
   /// 1. Provide appropriate buffer lengths to codec builders
-  /// [decBuilder.length] decoding buffer length and
-  /// [encBuilder.length] encoding buffer length
-  /// Ensure that the [encBuilder.length] is at least as large as the
-  /// maximum size of an lz4 block given the [decBuilder.length]
+  /// [inputBufferHolder.length] decoding buffer length and
+  /// [outputBufferHolder.length] encoding buffer length
+  /// Ensure that the [outputBufferHolder.length] is at least as large as the
+  /// maximum size of an lz4 block given the [inputBufferHolder.length]
   ///
   /// 2. Allocate and setup the native lz4 context
   ///
