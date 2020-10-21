@@ -125,7 +125,7 @@ mixin OpenLibrary {
       extension = 'so';
     } else if (Platform.isMacOS) {
       os = 'mac';
-      extension = 'so';
+      extension = 'dylib';
     } else if (Platform.isWindows) {
       os = 'win';
       extension = 'dll';
