@@ -1,4 +1,4 @@
-// Copyright (c) 2020, Seth Berman (Instantiations, Inc). Please see the AUTHORS
+// Copyright (c) 2020, Instantiations, Inc. Please see the AUTHORS
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
@@ -97,12 +97,7 @@ class BrotliEncoder extends CodecConverter {
   /// the optimal sink to be passed as [sink] is a [ByteConversionSink].
   @override
   ByteConversionSink startChunkedConversion(Sink<List<int>> sink) {
-    ByteConversionSink byteSink;
-    if (sink is! ByteConversionSink) {
-      byteSink = ByteConversionSink.from(sink);
-    } else {
-      byteSink = sink as ByteConversionSink;
-    }
+    final byteSink = asByteSink(sink);
     return _BrotliEncoderSink._(
         byteSink,
         level,
@@ -297,14 +292,13 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
     _applyParameter(BrotliConstants.BROTLI_PARAM_QUALITY);
     _applyParameter(BrotliConstants.BROTLI_PARAM_MODE);
     _applyParameter(BrotliConstants.BROTLI_PARAM_LGWIN);
-    /*_applyParameter(BrotliConstants.BROTLI_PARAM_LARGE_WINDOW);
+    _applyParameter(BrotliConstants.BROTLI_PARAM_LARGE_WINDOW);
     _applyParameter(BrotliConstants.BROTLI_PARAM_LGBLOCK);
     _applyParameter(
         BrotliConstants.BROTLI_PARAM_DISABLE_LITERAL_CONTEXT_MODELING);
     _applyParameter(BrotliConstants.BROTLI_PARAM_NDIRECT);
     _applyParameter(BrotliConstants.BROTLI_PARAM_NPOSTFIX);
-    _applyParameter(BrotliConstants.BROTLI_PARAM_SIZE_HINT);*/
-
+    _applyParameter(BrotliConstants.BROTLI_PARAM_SIZE_HINT);
   }
 
   /// Free the native context

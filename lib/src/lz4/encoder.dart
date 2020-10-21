@@ -1,4 +1,4 @@
-// Copyright (c) 2020, Seth Berman (Instantiations, Inc). Please see the AUTHORS
+// Copyright (c) 2020, Instantiations, Inc. Please see the AUTHORS
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
@@ -79,14 +79,25 @@ class Lz4Encoder extends CodecConverter {
   /// the optimal sink to be passed as [sink] is a [ByteConversionSink].
   @override
   ByteConversionSink startChunkedConversion(Sink<List<int>> sink) {
-    ByteConversionSink byteSink;
-    if (sink is! ByteConversionSink) {
-      byteSink = ByteConversionSink.from(sink);
-    } else {
-      byteSink = sink as ByteConversionSink;
-    }
+    final byteSink = asByteSink(sink);
     return _Lz4EncoderSink._(byteSink, level, fastAcceleration, contentChecksum,
         blockChecksum, blockLinked, blockSize, optimizeForDecompression);
+  }
+
+  @override
+  bool performOneShotConversion(Sink<List<int>> sink, List<int> bytes) {
+    var byteSink = asByteSink(sink);
+    final encoderSink = _Lz4EncoderSink._(
+        byteSink,
+        level,
+        fastAcceleration,
+        contentChecksum,
+        blockChecksum,
+        blockLinked,
+        blockSize,
+        optimizeForDecompression);
+
+    return false;
   }
 }
 

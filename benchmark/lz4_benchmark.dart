@@ -1,4 +1,4 @@
-// Copyright (c) 2020, Seth Berman (Instantiations, Inc). Please see the AUTHORS
+// Copyright (c) 2020, Instantiations, Inc. Please see the AUTHORS
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
@@ -92,7 +92,7 @@ void main() {
   // Generate 100MB of seeded pseudo-random bytes to encode/decode
   final random = Random(tutoneConstant);
   final randomBytes =
-      List<int>.generate(100 * 1024 * 1024, (i) => random.nextInt(256));
+      List<int>.generate(1000 * 1024 * 1024, (i) => random.nextInt(256));
   final data = Lz4Data(Uint8List.fromList(randomBytes));
 
   Lz4EncodeBenchmark(data).report();
