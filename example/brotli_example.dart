@@ -8,7 +8,7 @@ import 'dart:math';
 
 import 'package:es_compression/brotli.dart';
 
-import '../utils/example_utils.dart';
+import 'utils/example_utils.dart';
 
 const randomByteCount = 256;
 const level = 0;
