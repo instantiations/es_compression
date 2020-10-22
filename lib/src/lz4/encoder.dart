@@ -83,22 +83,6 @@ class Lz4Encoder extends CodecConverter {
     return _Lz4EncoderSink._(byteSink, level, fastAcceleration, contentChecksum,
         blockChecksum, blockLinked, blockSize, optimizeForDecompression);
   }
-
-  @override
-  bool performOneShotConversion(Sink<List<int>> sink, List<int> bytes) {
-    var byteSink = asByteSink(sink);
-    final encoderSink = _Lz4EncoderSink._(
-        byteSink,
-        level,
-        fastAcceleration,
-        contentChecksum,
-        blockChecksum,
-        blockLinked,
-        blockSize,
-        optimizeForDecompression);
-
-    return false;
-  }
 }
 
 /// LZ4 codec sink impl

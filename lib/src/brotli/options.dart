@@ -39,7 +39,6 @@ abstract class BrotliOption {
   static const int minPostfixBits = 0;
 
   static const int maxPostfixBits = 3;
-
 }
 
 /// Validate the zstd compression level is within range.

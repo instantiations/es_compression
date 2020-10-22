@@ -22,7 +22,26 @@ void main() {
 
   test('Test Simple Zstd Encode/Decode', () {
     final data = 'MyDart';
-    final expected = [40, 181, 47, 253, 0, 88, 48, 0, 0, 77, 121, 68, 97, 114, 116, 1, 0, 0];
+    final expected = [
+      40,
+      181,
+      47,
+      253,
+      0,
+      88,
+      48,
+      0,
+      0,
+      77,
+      121,
+      68,
+      97,
+      114,
+      116,
+      1,
+      0,
+      0
+    ];
     final dataBytes = utf8.encode(data);
     final codec = ZstdCodec();
     final encoded = codec.encode(dataBytes);

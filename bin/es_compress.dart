@@ -36,7 +36,7 @@ const algorithms = {
 /// >dart es_compress.dart -h
 void main(List<String> arguments) {
   final argParser = _buildArgParser();
-  final argResults = _parseArguments(argParser, arguments);
+  final argResults = argParser.parse(arguments);
 
   if (argResults.arguments.isEmpty || argResults[helpArg] as bool == true) {
     print(argParser.usage);
@@ -61,15 +61,6 @@ void main(List<String> arguments) {
   }
 
   exitCode = 0;
-}
-
-/// Parse the arguments and return the parsed results
-ArgResults _parseArguments(ArgParser argParser, List<String> arguments) {
-  try {
-    return argParser.parse(arguments);
-  } catch (error) {
-    print(error);
-  }
 }
 
 /// Build and return a parser for the program arguments.

@@ -52,12 +52,12 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
   /// [ArgumentError]
   Lz4Codec(
       {this.level = Lz4Option.defaultLevel,
-        this.fastAcceleration = false,
-        this.contentChecksum = false,
-        this.blockChecksum = false,
-        this.blockLinked = true,
-        this.blockSize = Lz4Option.defaultBlockSize,
-        this.optimizeForDecompression = false}) {
+      this.fastAcceleration = false,
+      this.contentChecksum = false,
+      this.blockChecksum = false,
+      this.blockLinked = true,
+      this.blockSize = Lz4Option.defaultBlockSize,
+      this.optimizeForDecompression = false}) {
     validateLz4Level(level);
     validateLz4BlockSize(blockSize);
   }

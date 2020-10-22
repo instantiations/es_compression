@@ -1,4 +1,4 @@
-## 0.1.0 [In Progress]
+## 0.1.0
 
 - Initial development release, created by Seth Berman [Instantiations, Inc](https://www.instantiations.com).
 - Implemented general codec framework.
@@ -32,4 +32,4 @@
 - Implemented [Zstd examples](example/zstd_example.dart)
 - Implemented [Zstd benchmarks](benchmark/zstd_benchmark.dart)
 - Implemented [Zstd tests](test/zstd_tests.dart)
-- Implemented [escompress](bin/es_compress.dart) binary script with lz4, zstd, brotli integration
+- Implemented [escompress](bin/es_compress.dart) binary script with gzip, lz4, zstd, brotli integration

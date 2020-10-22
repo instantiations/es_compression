@@ -376,4 +376,3 @@ class CodecBufferHolder<T, CB extends CodecBuffer<T>> {
     _buffer = null;
   }
 }
-

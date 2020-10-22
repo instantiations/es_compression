@@ -92,7 +92,7 @@ void main() {
   // Generate 100MB of seeded pseudo-random bytes to encode/decode
   final random = Random(tutoneConstant);
   final randomBytes =
-  List<int>.generate(100 * 1024 * 1024, (i) => random.nextInt(256));
+      List<int>.generate(100 * 1024 * 1024, (i) => random.nextInt(256));
   final data = BrotliData(Uint8List.fromList(randomBytes));
 
   BrotliEncodeBenchmark(data).report();

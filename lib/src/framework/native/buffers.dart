@@ -67,4 +67,3 @@ class NativeCodecBuffer extends CodecBuffer<Pointer<Uint8>> {
     if (_bytes != null) ffi.free(_bytes);
   }
 }
-
