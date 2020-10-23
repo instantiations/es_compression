@@ -19,7 +19,10 @@ import 'ffi/types.dart';
 import 'options.dart';
 
 /// Default input buffer length
-const defaultInputBufferLength = 16 * 1024;
+const defaultInputBufferLength = 64 * 1024;
+
+/// Default output buffer length
+const defaultOutputBufferLength = 64 * 1024;
 
 /// The [BrotliEncoder] encoder is used by [BrotliCodec] to brotli compress data.
 class BrotliEncoder extends CodecConverter {
@@ -74,6 +77,12 @@ class BrotliEncoder extends CodecConverter {
   /// Encoder may change this value.
   final int directDistanceCodeCount;
 
+  /// Length in bytes of the buffer used for input data.
+  final int inputBufferLength;
+
+  /// Length in bytes of the buffer used for processed output data.
+  final int outputBufferLength;
+
   /// Construct an [BrotliEncoder] with the supplied parameters used by the Brotli
   /// encoder.
   ///
@@ -88,7 +97,9 @@ class BrotliEncoder extends CodecConverter {
       this.literalContextModeling = true,
       this.sizeHint = 0,
       this.largeWindow = false,
-      this.directDistanceCodeCount}) {
+      this.directDistanceCodeCount,
+      this.inputBufferLength = CodecBufferHolder.autoLength,
+      this.outputBufferLength = CodecBufferHolder.autoLength}) {
     validateBrotliLevel(level);
   }
 
@@ -108,7 +119,9 @@ class BrotliEncoder extends CodecConverter {
         literalContextModeling,
         sizeHint,
         largeWindow,
-        directDistanceCodeCount);
+        directDistanceCodeCount,
+        inputBufferLength,
+        outputBufferLength);
   }
 }
 
@@ -123,7 +136,9 @@ class _BrotliEncoderSink extends CodecSink {
       bool literalContextModeling,
       int sizeHint,
       bool largeWindow,
-      int directDistanceCodeCount)
+      int directDistanceCodeCount,
+      int inputBufferLength,
+      int outputBufferLength)
       : super(
             sink,
             _makeBrotliCompressFilter(
@@ -135,7 +150,9 @@ class _BrotliEncoderSink extends CodecSink {
                 literalContextModeling,
                 sizeHint,
                 largeWindow,
-                directDistanceCodeCount));
+                directDistanceCodeCount,
+                inputBufferLength,
+                outputBufferLength));
 }
 
 /// This filter contains the implementation details for the usage of the native
@@ -151,16 +168,20 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
   BrotliEncoderState _state;
 
   _BrotliCompressFilter(
-      {int level = BrotliOption.defaultLevel,
-      int mode = BrotliOption.defaultMode,
-      int windowBits = BrotliOption.defaultWindowBits,
-      int blockBits = 0,
+      {int level,
+      int mode,
+      int windowBits,
+      int blockBits,
       int postfixBits,
-      bool literalContextModeling = true,
-      int sizeHint = 0,
-      bool largeWindow = false,
-      int directDistanceCodeCount})
-      : super() {
+      bool literalContextModeling,
+      int sizeHint,
+      bool largeWindow,
+      int directDistanceCodeCount,
+      int inputBufferLength,
+      int outputBufferLength})
+      : super(
+            inputBufferLength: inputBufferLength,
+            outputBufferLength: outputBufferLength) {
     parameters[BrotliConstants.BROTLI_PARAM_MODE] = mode;
     parameters[BrotliConstants.BROTLI_PARAM_QUALITY] = level;
     parameters[BrotliConstants.BROTLI_PARAM_LGWIN] = windowBits;
@@ -170,7 +191,7 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
             ? BrotliConstants.BROTLI_TRUE
             : BrotliConstants.BROTLI_FALSE;
     parameters[BrotliConstants.BROTLI_PARAM_SIZE_HINT] = sizeHint;
-    parameters[BrotliConstants.BROTLI_PARAM_LARGE_WINDOW] = largeWindow == false
+    parameters[BrotliConstants.BROTLI_PARAM_LARGE_WINDOW] = largeWindow == true
         ? BrotliConstants.BROTLI_TRUE
         : BrotliConstants.BROTLI_FALSE;
     parameters[BrotliConstants.BROTLI_PARAM_NPOSTFIX] = postfixBits;
@@ -199,11 +220,11 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
     _initState();
 
     if (!inputBufferHolder.isLengthSet()) {
-      inputBufferHolder.length = 16 * 1024;
+      inputBufferHolder.length = defaultInputBufferLength;
     }
 
     // Formula from 'BROTLI_CStreamOutSize'
-    final outputLength = 32 * 1024;
+    final outputLength = defaultOutputBufferLength;
     outputBufferHolder.length = outputBufferHolder.isLengthSet()
         ? max(outputBufferHolder.length, outputLength)
         : outputLength;
@@ -331,7 +352,9 @@ CodecFilter _makeBrotliCompressFilter(
     bool literalContextModeling,
     int sizeHint,
     bool largeWindow,
-    int directDistanceCodeCount) {
+    int directDistanceCodeCount,
+    int inputBufferLength,
+    int outputBufferLength) {
   return _BrotliCompressFilter(
       level: level,
       mode: mode,
@@ -341,7 +364,9 @@ CodecFilter _makeBrotliCompressFilter(
       literalContextModeling: literalContextModeling,
       sizeHint: sizeHint,
       largeWindow: largeWindow,
-      directDistanceCodeCount: directDistanceCodeCount);
+      directDistanceCodeCount: directDistanceCodeCount,
+      inputBufferLength: inputBufferLength,
+      outputBufferLength: outputBufferLength);
 }
 
 /// Result object for an Brotli Encoding operation

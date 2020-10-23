@@ -1,4 +1,14 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
+
+const tutoneConstant = 8675309;
+
+/// Return a [List] of [length] random bytes
+List<int> generateRandomBytes(int length) {
+  final random = Random(tutoneConstant);
+  return List<int>.generate(length, (i) => random.nextInt(256));
+}
 
 /// Verify elements match in [list1] and [list2]
 bool verifyEquality(List<int> list1, List<int> list2) {

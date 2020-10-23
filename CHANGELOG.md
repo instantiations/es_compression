@@ -4,7 +4,7 @@
 - Implemented general codec framework.
 - Implemented FFI read/write streamable buffers.
 - Implemented Dart Heap read/write streamable buffers.
-- Implemented flexible library loading with [OpenLibrary](lib/src/framework/native/openlibrary.dart) mixin
+- Implemented flexible library loading with [OpenLibrary](lib/src/framework/native/open_library.dart) mixin
 - Implemented FFI bindings for [Brotli v1.0.9](https://github.com/google/brotli/tree/v1.0.9).
 - Implemented Brotli codec framework extensions (encoder/decoders).
 - Implemented shared library and Brotli [Cmake build instructions](tool/blob_builder/brotli/CMakeLists.txt)

@@ -4,7 +4,7 @@
 
 import 'dart:ffi';
 
-import '../../framework/native/openlibrary.dart';
+import '../../framework/native/open_library.dart';
 
 import 'constants.dart';
 import 'functions.dart';
@@ -17,11 +17,13 @@ import 'types.dart';
 class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
   static final Lz4Library _instance = Lz4Library._();
 
+  /// Dart native library object.
   DynamicLibrary _libraryImpl;
 
   /// Lz4 Version Number
   int versionNumber;
 
+  /// Unique id of this library module.
   @override
   String get moduleId => 'lz4';
 
@@ -30,6 +32,8 @@ class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
     return _instance;
   }
 
+  /// Internal constructor that opens the native shared library and resolves
+  /// all the functions.
   Lz4Library._() {
     _libraryImpl = openLibrary();
     resolveFunctions(_libraryImpl);

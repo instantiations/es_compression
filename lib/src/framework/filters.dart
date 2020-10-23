@@ -157,9 +157,11 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>,
   /// placed in the output buffer
   CR _codeOrDecode() {
     final result = doProcessing(_inputBuffer, _outputBuffer);
-    _inputBuffer.incrementBytesRead(result.readCount);
+    if (result.adjustBufferCounts) {
+      _inputBuffer.incrementBytesRead(result.readCount);
+      _outputBuffer.incrementBytesWritten(result.writeCount);
+    }
     if (_inputBuffer.atEnd()) _inputBuffer.reset();
-    _outputBuffer.incrementBytesWritten(result.writeCount);
     return result;
   }
 
@@ -331,9 +333,14 @@ class CodecResult {
   /// Number of bytes written by codec routine
   final int writeCount;
 
+  /// The read/write buffer counts will be incremented by the
+  /// [readCount] and [writeCount]
+  final bool adjustBufferCounts;
+
   /// Construct a [CodecResult] that defines the number of bytes that were
   /// read and written by a Codec routine.
-  const CodecResult(this.readCount, this.writeCount);
+  const CodecResult(this.readCount, this.writeCount,
+      {this.adjustBufferCounts = true});
 }
 
 /// An [_InputData] is a small wrapper around the ranged incoming data.

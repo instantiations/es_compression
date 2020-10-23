@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:es_compression/zstd.dart';
+import 'package:es_compression/zstd_io.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
@@ -16,7 +16,7 @@ void main() {
     final codec = ZstdCodec();
     final encoded = codec.encode(dataBytes);
     expect(const ListEquality<int>().equals(encoded, header), true);
-    final decoded = zstd.decode(encoded);
+    final decoded = codec.decode(encoded);
     expect(const ListEquality<int>().equals(dataBytes, decoded), true);
   });
 
@@ -46,7 +46,7 @@ void main() {
     final codec = ZstdCodec();
     final encoded = codec.encode(dataBytes);
     expect(const ListEquality<int>().equals(encoded, expected), true);
-    final decoded = zstd.decode(encoded);
+    final decoded = codec.decode(encoded);
     expect(const ListEquality<int>().equals(dataBytes, decoded), true);
   });
 }

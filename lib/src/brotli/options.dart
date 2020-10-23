@@ -41,7 +41,7 @@ abstract class BrotliOption {
   static const int maxPostfixBits = 3;
 }
 
-/// Validate the zstd compression level is within range.
+/// Validate the brotli compression level is within range.
 void validateBrotliLevel(int level) {
   if (BrotliOption.minLevel > level || BrotliOption.maxLevel < level) {
     throw RangeError.range(level, BrotliOption.minLevel, BrotliOption.maxLevel);

@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import '../../framework.dart';
 import 'decoder.dart';
 import 'encoder.dart';
 import 'options.dart';
@@ -45,6 +46,12 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
   /// **Note: This option will be ignored if [level] < 9**
   final bool optimizeForDecompression;
 
+  /// Length in bytes of the buffer used for input data.
+  final int inputBufferLength;
+
+  /// Length in bytes of the buffer used for processed output data.
+  final int outputBufferLength;
+
   /// Construct an [Lz4Codec] that is configured with the following parameters.
   ///
   /// Default values are provided for unspecified parameters.
@@ -57,7 +64,9 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
       this.blockChecksum = false,
       this.blockLinked = true,
       this.blockSize = Lz4Option.defaultBlockSize,
-      this.optimizeForDecompression = false}) {
+      this.optimizeForDecompression = false,
+      this.inputBufferLength = CodecBufferHolder.autoLength,
+      this.outputBufferLength = CodecBufferHolder.autoLength}) {
     validateLz4Level(level);
     validateLz4BlockSize(blockSize);
   }
@@ -69,7 +78,9 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
         blockChecksum = false,
         blockLinked = true,
         blockSize = Lz4Option.defaultBlockSize,
-        optimizeForDecompression = false;
+        optimizeForDecompression = false,
+        inputBufferLength = CodecBufferHolder.autoLength,
+        outputBufferLength = CodecBufferHolder.autoLength;
 
   @override
   Converter<List<int>, List<int>> get encoder => Lz4Encoder(
@@ -79,10 +90,14 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
       blockChecksum: blockChecksum,
       blockLinked: blockLinked,
       blockSize: blockSize,
-      optimizeForDecompression: optimizeForDecompression);
+      optimizeForDecompression: optimizeForDecompression,
+      inputBufferLength: inputBufferLength,
+      outputBufferLength: outputBufferLength);
 
   @override
-  Converter<List<int>, List<int>> get decoder => Lz4Decoder();
+  Converter<List<int>, List<int>> get decoder => Lz4Decoder(
+      inputBufferLength: inputBufferLength,
+      outputBufferLength: outputBufferLength);
 }
 
 /// An instance of the default implementation of the [Lz4Codec].

@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:es_compression/lz4.dart';
+import 'package:es_compression/lz4_io.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
@@ -16,7 +16,7 @@ void main() {
     final codec = Lz4Codec(contentChecksum: true);
     final encoded = codec.encode(dataBytes);
     expect(const ListEquality<int>().equals(encoded, header), true);
-    final decoded = lz4.decode(encoded);
+    final decoded = codec.decode(encoded);
     expect(const ListEquality<int>().equals(dataBytes, decoded), true);
   });
 

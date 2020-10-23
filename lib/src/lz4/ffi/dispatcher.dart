@@ -11,33 +11,40 @@ import 'library.dart';
 import 'types.dart';
 
 // ignore_for_file: public_member_api_docs
-class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
-  static final Lz4Dispatcher _instance = Lz4Dispatcher._();
 
+/// The [Lz4Dispatcher] prepares arguments intended for FFI calls and instructs
+/// the [Lz4Library] which native call to make.
+///
+/// Impl: To cut down on FFI malloc/free and native heap fragmentation, the
+/// native src/dest size pointers are pre-allocated.
+class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
   /// Library accessor to the Lz4 shared lib.
   Lz4Library library;
 
+  /// Version number of the shared library.
   int versionNumber;
+
+  /// For safety to prevent double free.
+  bool released = false;
 
   // These 2 Used in decompression routine to cut down on alloc/free
   final Pointer<IntPtr> _srcSizePtr = ffi.allocate<IntPtr>();
   final Pointer<IntPtr> _destSizePtr = ffi.allocate<IntPtr>();
 
-  /// Return the [Lz4Dispatcher] singleton instance
-  factory Lz4Dispatcher() {
-    return _instance;
-  }
-
-  Lz4Dispatcher._() {
+  /// Construct the [Lz4Dispatcher].
+  Lz4Dispatcher() {
     library = Lz4Library();
     versionNumber = callLz4VersionNumber();
   }
 
-  /// Release any temporary resources.
-  ///
-  /// The [Lz4Dispatcher] is a singleton instance, so care must be taken in
-  /// what resources will be released.
-  void release() {}
+  /// Release native resources.
+  void release() {
+    if(released == false) {
+      ffi.free(_srcSizePtr);
+      ffi.free(_destSizePtr);
+      released = true;
+    }
+  }
 
   int callLz4VersionNumber() {
     return library.lz4VersionNumber();

@@ -16,21 +16,39 @@ import 'ffi/constants.dart';
 import 'ffi/dispatcher.dart';
 import 'ffi/types.dart';
 
-/// 64k default input buffer length
+import 'codec.dart';
+
+/// Default input buffer length
 const defaultInputBufferLength = 64 * 1024;
+
+/// Default output buffer length
+const defaultOutputBufferLength = CodecBufferHolder.autoLength;
 
 /// The [Lz4Decoder] decoder is used by [Lz4Codec] to decompress lz4 data.
 class Lz4Decoder extends CodecConverter {
+  /// Length in bytes of the buffer used for input data.
+  final int inputBufferLength;
+
+  /// Length in bytes of the buffer used for processed output data.
+  final int outputBufferLength;
+
+  /// Construct an [Lz4Decoder]
+  Lz4Decoder(
+      {this.inputBufferLength = defaultInputBufferLength,
+      this.outputBufferLength = defaultOutputBufferLength});
+
   @override
   ByteConversionSink startChunkedConversion(Sink<List<int>> sink) {
     final byteSink = asByteSink(sink);
-    return _Lz4DecoderSink._(byteSink);
+    return _Lz4DecoderSink._(byteSink, inputBufferLength, outputBufferLength);
   }
 }
 
 class _Lz4DecoderSink extends CodecSink {
-  _Lz4DecoderSink._(ByteConversionSink sink)
-      : super(sink, _Lz4DecompressFilter());
+  _Lz4DecoderSink._(
+      ByteConversionSink sink, int inputBufferLength, int outputBufferLength)
+      : super(
+            sink, _Lz4DecompressFilter(inputBufferLength, outputBufferLength));
 }
 
 class _Lz4DecompressFilter
@@ -38,6 +56,7 @@ class _Lz4DecompressFilter
   /// Dispatcher to make calls via FFI to lz4 shared library
   final Lz4Dispatcher _dispatcher = Lz4Dispatcher();
 
+  /// Native lz4 frame info
   Lz4FrameInfo _frameInfo;
 
   /// Native lz4 context
@@ -46,7 +65,11 @@ class _Lz4DecompressFilter
   /// Native lz4 decompress options
   Lz4DecompressOptions _options;
 
-  _Lz4DecompressFilter() : super(inputBufferLength: defaultInputBufferLength) {
+  /// Construct the [_Lz4DecompressFilter] with the defined buffer lengths.
+  _Lz4DecompressFilter(int inputBufferLength, int outputBufferLength)
+      : super(
+            inputBufferLength: inputBufferLength,
+            outputBufferLength: outputBufferLength) {
     _options = _dispatcher.library.newDecompressOptions();
   }
 

@@ -10,33 +10,40 @@ import 'package:ffi/ffi.dart' as ffi;
 import 'library.dart';
 
 // ignore_for_file: public_member_api_docs
-class ZstdDispatcher with ZstdDispatchErrorCheckerMixin {
-  static final ZstdDispatcher _instance = ZstdDispatcher._();
 
+/// The [ZstdDispatcher] prepares arguments intended for FFI calls and instructs
+/// the [ZstdLibrary] which native call to make.
+///
+/// Impl: To cut down on FFI malloc/free and native heap fragmentation, the
+/// native in/out buffer pointers are pre-allocated.
+class ZstdDispatcher with ZstdDispatchErrorCheckerMixin {
   /// Library accessor to the Zstd shared lib.
   ZstdLibrary library;
 
+  /// Version number of the shared library.
   int versionNumber;
+
+  /// For safety to prevent double free.
+  bool released = false;
 
   // These 2 Used in decompression routine to cut down on alloc/free
   final ZstdInBuffer _inBuffer = ffi.allocate<ZstdInBuffer>().ref;
   final ZstdOutBuffer _outBuffer = ffi.allocate<ZstdOutBuffer>().ref;
 
-  /// Return the [ZstdDispatcher] singleton instance
-  factory ZstdDispatcher() {
-    return _instance;
-  }
-
-  ZstdDispatcher._() {
+  /// Construct the [ZstdDispatcher].
+  ZstdDispatcher() {
     library = ZstdLibrary();
     versionNumber = callZstdVersionNumber();
   }
 
-  /// Release any temporary resources.
-  ///
-  /// The [ZstdDispatcher] is a singleton instance, so care must be taken in
-  /// what resources will be released.
-  void release() {}
+  /// Release native resources.
+  void release() {
+    if (released == false) {
+      ffi.free(_inBuffer.addressOf);
+      ffi.free(_outBuffer.addressOf);
+      released = true;
+    }
+  }
 
   int callZstdCompressBound(int srcSize) =>
       checkError(library.zstdCompressBound(srcSize));

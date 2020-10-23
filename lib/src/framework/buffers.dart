@@ -103,11 +103,10 @@ abstract class CodecBuffer<T> {
   /// If there are no [unreadCount] left, then evaluate the optional
   /// [onEnd] function and return the result.
   /// If no function is provided, then return -1.
-  int next({int Function() onEnd}) => atEnd()
-      ? onEnd != null
-          ? onEnd()
-          : -1
-      : basicNext();
+  int next({int Function() onEnd}) {
+    if (atEnd() == false) return basicNext();
+    return onEnd?.call() ?? -1;
+  }
 
   /// Subclass Responsibility: Consume and return the next byte.
   ///
@@ -136,11 +135,10 @@ abstract class CodecBuffer<T> {
   /// If there are no [unwrittenCount] left, then evaluate the optional
   /// [onEnd] function and return the result.
   /// If no function is provided, then return -1.
-  int peek({int Function() onEnd}) => atEnd()
-      ? onEnd != null
-          ? onEnd()
-          : -1
-      : basicPeek();
+  int peek({int Function() onEnd}) {
+    if (atEnd() == false) return basicPeek();
+    return onEnd?.call() ?? -1;
+  }
 
   /// Subclass Responsibility: Return the next byte without consuming it.
   ///
@@ -336,6 +334,9 @@ abstract class CodecBuffer<T> {
 /// [CodecBufferHolder.buffer] is sent multiple times, the same instance
 /// will be returned.
 class CodecBufferHolder<T, CB extends CodecBuffer<T>> {
+
+  static const autoLength = -1;
+
   /// Buffer that was constructed.
   CB _buffer;
 
@@ -365,7 +366,7 @@ class CodecBufferHolder<T, CB extends CodecBuffer<T>> {
   }
 
   /// Return [:true:] if length is set, [:false:] otherwise.
-  bool isLengthSet() => _length != null;
+  bool isLengthSet() => _length != -1;
 
   /// Return [:true:] if buffer is set, [:false:] otherwise.
   bool isBufferSet() => _buffer != null;

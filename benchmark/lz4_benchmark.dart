@@ -8,7 +8,7 @@ import 'dart:typed_data';
 
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:collection/collection.dart';
-import 'package:es_compression/lz4.dart';
+import 'package:es_compression/lz4_io.dart';
 
 /// An [Lz4EncodeBenchmark] calls [Lz4Codec.encode] on the incoming data
 /// supplied by [Lz4Data].
@@ -92,7 +92,7 @@ void main() {
   // Generate 100MB of seeded pseudo-random bytes to encode/decode
   final random = Random(tutoneConstant);
   final randomBytes =
-      List<int>.generate(1000 * 1024 * 1024, (i) => random.nextInt(256));
+      List<int>.generate(100 * 1024 * 1024, (i) => random.nextInt(256));
   final data = Lz4Data(Uint8List.fromList(randomBytes));
 
   Lz4EncodeBenchmark(data).report();

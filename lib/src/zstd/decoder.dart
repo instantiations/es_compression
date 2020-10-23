@@ -19,29 +19,48 @@ import 'ffi/types.dart';
 /// ZSTD_BLOCKSIZE_MAX + ZSTD_blockHeaderSize;
 const defaultInputBufferLength = ZstdConstants.ZSTD_BLOCKSIZE_MAX + 3;
 
+/// Default output buffer length
+const defaultOutputBufferLength = CodecBufferHolder.autoLength;
+
 /// The [ZstdDecoder] decoder is used by [ZstdCodec] to decompress zstd data.
 class ZstdDecoder extends CodecConverter {
+  /// Length in bytes of the buffer used for input data.
+  final int inputBufferLength;
+
+  /// Length in bytes of the buffer used for processed output data.
+  final int outputBufferLength;
+
+  /// Construct an [ZstdDecoder]
+  ZstdDecoder(
+      {this.inputBufferLength = defaultInputBufferLength,
+      this.outputBufferLength = defaultOutputBufferLength});
+
   @override
   ByteConversionSink startChunkedConversion(Sink<List<int>> sink) {
     final byteSink = asByteSink(sink);
-    return _ZstdDecoderSink._(byteSink);
+    return _ZstdDecoderSink._(byteSink, inputBufferLength, outputBufferLength);
   }
 }
 
 class _ZstdDecoderSink extends CodecSink {
-  _ZstdDecoderSink._(ByteConversionSink sink)
-      : super(sink, _ZstdDecompressFilter());
+  _ZstdDecoderSink._(
+      ByteConversionSink sink, int inputBufferLength, int outputBufferLength)
+      : super(
+            sink, _ZstdDecompressFilter(inputBufferLength, outputBufferLength));
 }
 
 class _ZstdDecompressFilter extends CodecFilter<Pointer<Uint8>,
     NativeCodecBuffer, _ZstdDecodingResult> {
-  /// Dispatcher to make calls via FFI to lz4 shared library
+  /// Dispatcher to make calls via FFI to zstd shared library
   final ZstdDispatcher _dispatcher = ZstdDispatcher();
 
   /// Native zstd context object
   ZstdDStream _dStream;
 
-  _ZstdDecompressFilter() : super(inputBufferLength: defaultInputBufferLength);
+  _ZstdDecompressFilter(int inputBufferLength, int outputBufferLength)
+      : super(
+            inputBufferLength: inputBufferLength,
+            outputBufferLength: outputBufferLength);
 
   @override
   CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
@@ -102,7 +121,7 @@ class _ZstdDecompressFilter extends CodecFilter<Pointer<Uint8>,
     return 0;
   }
 
-  /// Release lz4 resources
+  /// Release zstd resources
   @override
   void doClose() {
     _destroyDStream();

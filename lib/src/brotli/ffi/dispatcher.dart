@@ -11,15 +11,24 @@ import 'constants.dart';
 import 'library.dart';
 
 // ignore_for_file: public_member_api_docs
-class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
-  static final BrotliDispatcher _instance = BrotliDispatcher._();
 
+/// The [BrotliDispatcher] prepares arguments intended for FFI calls and instructs
+/// the [BrotliLibrary] which native call to make.
+///
+/// Impl: To cut down on FFI malloc/free and native heap fragmentation, the
+/// native pointers for brotli compress/decompress functions are pre-allocated.
+class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   /// Library accessor to the Brotli shared lib.
   BrotliLibrary library;
 
+  /// Version number of the encoder (part) of the shared library.
   int encoderVersionNumber;
 
+  /// Version number of the decoder (part) of the shared library.
   int decoderVersionNumber;
+
+  /// For safety to prevent double free.
+  bool released;
 
   // These are used in codec routines to cut down on alloc/free
   final Pointer<Pointer<Uint8>> nextInPtr = ffi.allocate<Pointer<Uint8>>();
@@ -29,21 +38,22 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   final Pointer<IntPtr> bufferLengthPtr = ffi.allocate<IntPtr>();
 
   /// Return the [BrotliDispatcher] singleton instance
-  factory BrotliDispatcher() {
-    return _instance;
-  }
-
-  BrotliDispatcher._() {
+  BrotliDispatcher() {
     library = BrotliLibrary();
     encoderVersionNumber = callBrotliEncoderVersion();
     decoderVersionNumber = callBrotliDecoderVersion();
   }
 
-  /// Release any temporary resources.
-  ///
-  /// The [BrotliDispatcher] is a singleton instance, so care must be taken in
-  /// what resources will be released.
-  void release() {}
+  /// Release native resources.
+  void release() {
+    if(released == false) {
+      ffi.free(nextInPtr);
+      ffi.free(nextOutPtr);
+      ffi.free(availableInPtr);
+      ffi.free(availableOutPtr);
+      ffi.free(bufferLengthPtr);
+    }
+  }
 
   int callBrotliEncoderVersion() => library.brotliEncoderVersion();
 
@@ -171,7 +181,7 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
 /// A [BrotliDispatchErrorCheckerMixin] provides error handling capability for
 /// APIs in the native Brotli library.
 mixin BrotliDispatchErrorCheckerMixin {
-  /// Dispatcher to make calls via FFI to zstd shared library
+  /// Dispatcher to make calls via FFI to brotli shared library
   BrotliDispatcher get dispatcher;
 
   /// This function wraps brotli calls and throws a [StateError] if [code]

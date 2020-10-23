@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import '../../framework.dart';
 import 'decoder.dart';
 import 'encoder.dart';
 import 'options.dart';
@@ -66,6 +67,12 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
   /// of content.
   final bool ringBufferReallocation;
 
+  /// Length in bytes of the buffer used for input data.
+  final int inputBufferLength;
+
+  /// Length in bytes of the buffer used for processed output data.
+  final int outputBufferLength;
+
   /// Construct an [BrotliCodec] that is configured with the following parameters.
   ///
   /// Default values are provided for unspecified parameters.
@@ -81,7 +88,9 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
       this.sizeHint = 0,
       this.largeWindow = false,
       this.directDistanceCodeCount,
-      this.ringBufferReallocation = true}) {
+      this.ringBufferReallocation = true,
+      this.inputBufferLength = CodecBufferHolder.autoLength,
+      this.outputBufferLength = CodecBufferHolder.autoLength}) {
     validateBrotliLevel(level);
   }
 
@@ -95,7 +104,9 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
         sizeHint = 0,
         largeWindow = false,
         directDistanceCodeCount = null,
-        ringBufferReallocation = true;
+        ringBufferReallocation = true,
+        inputBufferLength = CodecBufferHolder.autoLength,
+        outputBufferLength = CodecBufferHolder.autoLength;
 
   @override
   Converter<List<int>, List<int>> get encoder => BrotliEncoder(
@@ -107,11 +118,16 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
       literalContextModeling: literalContextModeling,
       sizeHint: sizeHint,
       largeWindow: largeWindow,
-      directDistanceCodeCount: directDistanceCodeCount);
+      directDistanceCodeCount: directDistanceCodeCount,
+      inputBufferLength: inputBufferLength,
+      outputBufferLength: outputBufferLength);
 
   @override
   Converter<List<int>, List<int>> get decoder => BrotliDecoder(
-      ringBufferReallocation: ringBufferReallocation, largeWindow: largeWindow);
+      ringBufferReallocation: ringBufferReallocation,
+      largeWindow: largeWindow,
+      inputBufferLength: inputBufferLength,
+      outputBufferLength: outputBufferLength);
 }
 
 /// An instance of the default implementation of the [BrotliCodec].

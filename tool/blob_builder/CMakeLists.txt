@@ -290,7 +290,7 @@ elseif (WIN32)
 endif ()
 
 #-- Prefix to be used for all libraries.
-#-- Note: This is also referenced in es_compression:framework/native/openlibrary.dart
+#-- Note: This is also referenced in es_compression:framework/native/open_library.dart
 set(ES_PREFIX es)
 
 if (WIN32)

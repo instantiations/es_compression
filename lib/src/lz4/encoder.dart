@@ -16,10 +16,15 @@ import 'ffi/constants.dart';
 import 'ffi/dispatcher.dart';
 import 'ffi/types.dart';
 
+import 'codec.dart';
 import 'options.dart';
 
-/// 64k default input buffer length
+/// Default input buffer length
 const defaultInputBufferLength = 64 * 1024;
+
+/// Default output buffer length
+const defaultOutputBufferLength = CodecBufferHolder.autoLength;
+
 
 /// The [Lz4Encoder] encoder is used by [Lz4Codec] to lz4 compress data.
 class Lz4Encoder extends CodecConverter {
@@ -57,6 +62,12 @@ class Lz4Encoder extends CodecConverter {
   /// **Note: This option will be ignored if [level] < 9**
   final bool optimizeForDecompression;
 
+  /// Length in bytes of the buffer used for input data.
+  final int inputBufferLength;
+
+  /// Length in bytes of the buffer used for processed output data.
+  final int outputBufferLength;
+
   /// Construct an [Lz4Encoder] with the supplied parameters used by the Lz4
   /// encoder.
   ///
@@ -69,7 +80,9 @@ class Lz4Encoder extends CodecConverter {
       this.blockChecksum = false,
       this.blockLinked = true,
       this.blockSize = Lz4Option.defaultBlockSize,
-      this.optimizeForDecompression = false}) {
+      this.optimizeForDecompression = false,
+      this.inputBufferLength = defaultInputBufferLength,
+      this.outputBufferLength = defaultOutputBufferLength}) {
     validateLz4Level(level);
     validateLz4BlockSize(blockSize);
   }
@@ -80,8 +93,17 @@ class Lz4Encoder extends CodecConverter {
   @override
   ByteConversionSink startChunkedConversion(Sink<List<int>> sink) {
     final byteSink = asByteSink(sink);
-    return _Lz4EncoderSink._(byteSink, level, fastAcceleration, contentChecksum,
-        blockChecksum, blockLinked, blockSize, optimizeForDecompression);
+    return _Lz4EncoderSink._(
+        byteSink,
+        level,
+        fastAcceleration,
+        contentChecksum,
+        blockChecksum,
+        blockLinked,
+        blockSize,
+        optimizeForDecompression,
+        inputBufferLength,
+        outputBufferLength);
   }
 }
 
@@ -95,7 +117,9 @@ class _Lz4EncoderSink extends CodecSink {
       bool blockChecksum,
       bool blockLinked,
       int blockSize,
-      bool optimizeForDecompression)
+      bool optimizeForDecompression,
+      int inputBufferLength,
+      int outputBufferLength)
       : super(
             sink,
             _makeLz4CompressFilter(
@@ -105,7 +129,9 @@ class _Lz4EncoderSink extends CodecSink {
                 blockChecksum,
                 blockLinked,
                 blockSize,
-                optimizeForDecompression));
+                optimizeForDecompression,
+                inputBufferLength,
+                outputBufferLength));
 }
 
 /// This filter contains the implementation details for the usage of the native
@@ -131,8 +157,12 @@ class _Lz4CompressFilter
       bool blockChecksum,
       bool blockLinked,
       int blockSize,
-      bool optimizeForCompression})
-      : super(inputBufferLength: defaultInputBufferLength) {
+      bool optimizeForCompression,
+      int inputBufferLength,
+      int outputBufferLength})
+      : super(
+            inputBufferLength: inputBufferLength,
+            outputBufferLength: outputBufferLength) {
     _options = _dispatcher.library.newCompressOptions();
     _preferences = _dispatcher.library.newPreferences(
         level: level,
@@ -308,7 +338,9 @@ CodecFilter _makeLz4CompressFilter(
     bool blockChecksum,
     bool blockLinked,
     int blockSize,
-    bool optimizeForCompression) {
+    bool optimizeForCompression,
+    int inputBufferLength,
+    int outputBufferLength) {
   return _Lz4CompressFilter(
       level: level,
       fastAcceleration: fastAcceleration,
@@ -316,7 +348,9 @@ CodecFilter _makeLz4CompressFilter(
       blockChecksum: blockChecksum,
       blockLinked: blockLinked,
       blockSize: blockSize,
-      optimizeForCompression: optimizeForCompression);
+      optimizeForCompression: optimizeForCompression,
+      inputBufferLength: inputBufferLength,
+      outputBufferLength: outputBufferLength);
 }
 
 /// Result object for an Lz4 Encoding operation

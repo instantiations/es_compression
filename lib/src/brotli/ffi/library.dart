@@ -4,7 +4,7 @@
 
 import 'dart:ffi';
 
-import '../../framework/native/openlibrary.dart';
+import '../../framework/native/open_library.dart';
 
 import 'constants.dart';
 import 'functions.dart';
@@ -18,8 +18,10 @@ class BrotliLibrary
     with OpenLibrary, BrotliConstants, BrotliFunctions, BrotliTypes {
   static final BrotliLibrary _instance = BrotliLibrary._();
 
+  /// Dart native library object.
   DynamicLibrary _libraryImpl;
 
+  /// Unique id of this library module.
   @override
   String get moduleId => 'brotli';
 
@@ -28,6 +30,8 @@ class BrotliLibrary
     return _instance;
   }
 
+  /// Internal constructor that opens the native shared library and resolves
+  /// all the functions.
   BrotliLibrary._() {
     _libraryImpl = openLibrary();
     resolveFunctions(_libraryImpl);

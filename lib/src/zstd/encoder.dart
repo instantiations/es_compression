@@ -21,6 +21,9 @@ import 'options.dart';
 /// Default input buffer length
 const defaultInputBufferLength = ZstdConstants.ZSTD_BLOCKSIZE_MAX;
 
+/// Default output buffer length
+const defaultOutputBufferLength = CodecBufferHolder.autoLength;
+
 /// The [ZstdEncoder] encoder is used by [ZstdCodec] to zstd compress data.
 class ZstdEncoder extends CodecConverter {
   /// The compression-[level] can be set in the range of
@@ -28,12 +31,21 @@ class ZstdEncoder extends CodecConverter {
   /// with [ZstdOption.defaultLevel] being the default compression level.
   final int level;
 
+  /// Length in bytes of the buffer used for input data.
+  final int inputBufferLength;
+
+  /// Length in bytes of the buffer used for processed output data.
+  final int outputBufferLength;
+
   /// Construct an [ZstdEncoder] with the supplied parameters used by the Zstd
   /// encoder.
   ///
   /// Validation will be performed which may result in a [RangeError] or
   /// [ArgumentError]
-  ZstdEncoder({this.level = ZstdOption.defaultLevel}) {
+  ZstdEncoder(
+      {this.level = ZstdOption.defaultLevel,
+      this.inputBufferLength = defaultInputBufferLength,
+      this.outputBufferLength = defaultOutputBufferLength}) {
     validateZstdLevel(level);
   }
 
@@ -43,13 +55,18 @@ class ZstdEncoder extends CodecConverter {
   @override
   ByteConversionSink startChunkedConversion(Sink<List<int>> sink) {
     final byteSink = asByteSink(sink);
-    return _ZstdEncoderSink._(byteSink, level);
+    return _ZstdEncoderSink._(
+        byteSink, level, inputBufferLength, outputBufferLength);
   }
 }
 
 class _ZstdEncoderSink extends CodecSink {
-  _ZstdEncoderSink._(ByteConversionSink sink, int level)
-      : super(sink, _makeZstdCompressFilter(level));
+  _ZstdEncoderSink._(ByteConversionSink sink, int level, int inputBufferLength,
+      int outputBufferLength)
+      : super(
+            sink,
+            _makeZstdCompressFilter(
+                level, inputBufferLength, outputBufferLength));
 }
 
 /// This filter contains the implementation details for the usage of the native
@@ -65,9 +82,12 @@ class _ZstdCompressFilter extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer,
   /// Native zstd context object
   ZstdCStream _cStream;
 
-  _ZstdCompressFilter({int level = ZstdOption.defaultLevel})
+  _ZstdCompressFilter(
+      {int level, int inputBufferLength, int outputBufferLength})
       : level = level,
-        super(inputBufferLength: defaultInputBufferLength);
+        super(
+            inputBufferLength: inputBufferLength,
+            outputBufferLength: outputBufferLength);
 
   @override
   CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
@@ -186,8 +206,12 @@ class _ZstdCompressFilter extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer,
 
 /// Construct a new zstd filter which is configured with the options
 /// provided
-CodecFilter _makeZstdCompressFilter(int level) {
-  return _ZstdCompressFilter(level: level);
+CodecFilter _makeZstdCompressFilter(
+    int level, int inputBufferLength, int outputBufferLength) {
+  return _ZstdCompressFilter(
+      level: level,
+      inputBufferLength: inputBufferLength,
+      outputBufferLength: outputBufferLength);
 }
 
 /// Result object for an Zstd Encoding operation

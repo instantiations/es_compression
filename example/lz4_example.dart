@@ -4,24 +4,20 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
-import 'package:es_compression/lz4.dart';
+import 'package:es_compression/lz4_io.dart';
 
 import 'utils/example_utils.dart';
 
 const randomByteCount = 256;
 const level = -1;
-const tutoneConstant = 8675309;
 
 /// This program demonstrates an lz4 encode/decode of random bytes.
 ///
 /// The [exitCode] of this script is 0 if the decoded bytes match the original,
 /// otherwise the [exitCode] is -1.
 void main() {
-  final random = Random(tutoneConstant);
-  final randomBytes =
-      List<int>.generate(randomByteCount, (i) => random.nextInt(256));
+  final randomBytes = generateRandomBytes(randomByteCount);
   final codec = Lz4Codec(level: level);
 
   // One-shot encode/decode

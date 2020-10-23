@@ -6,7 +6,6 @@
 
 /// Contains required constants referenced by the following header files:
 /// *lz4.h*
-/// *lz4frame.h*
 mixin Lz4Constants {
   // HEADER FILE: lz4.h
   static const LZ4_MAX_INPUT_SIZE = 0x7E000000;

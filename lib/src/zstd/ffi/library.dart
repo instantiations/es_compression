@@ -4,7 +4,7 @@
 
 import 'dart:ffi';
 
-import '../../framework/native/openlibrary.dart';
+import '../../framework/native/open_library.dart';
 
 import 'constants.dart';
 import 'functions.dart';
@@ -17,11 +17,13 @@ import 'types.dart';
 class ZstdLibrary with OpenLibrary, ZstdConstants, ZstdFunctions, ZstdTypes {
   static final ZstdLibrary _instance = ZstdLibrary._();
 
+  /// Dart native library object.
   DynamicLibrary _libraryImpl;
 
   /// Zstd Version Number
   int versionNumber;
 
+  /// Unique id of this library module.
   @override
   String get moduleId => 'zstd';
 
@@ -30,6 +32,8 @@ class ZstdLibrary with OpenLibrary, ZstdConstants, ZstdFunctions, ZstdTypes {
     return _instance;
   }
 
+  /// Internal constructor that opens the native shared library and resolves
+  /// all the functions.
   ZstdLibrary._() {
     _libraryImpl = openLibrary();
     resolveFunctions(_libraryImpl);

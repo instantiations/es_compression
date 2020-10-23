@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:es_compression/brotli.dart';
+import 'package:es_compression/brotli_io.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 

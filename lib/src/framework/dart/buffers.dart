@@ -99,7 +99,7 @@ class DartHeapPointer {
   /// Return a typed list view on the byte data in the range
   /// [offset]..([offset] + [amount]).
   Uint8List asTypedList(int amount) =>
-      Uint8List.sublistView(_bytes, offset, amount);
+      Uint8List.sublistView(_bytes, offset, offset + amount);
 
   /// Get a byte in the buffer relative to the current [offset] position.
   int operator [](int index) => _bytes[offset + index];

@@ -15,6 +15,12 @@ import 'ffi/constants.dart';
 import 'ffi/dispatcher.dart';
 import 'ffi/types.dart';
 
+/// Default input buffer length
+const defaultInputBufferLength = 64 * 1024;
+
+/// Default output buffer length
+const defaultOutputBufferLength = CodecBufferHolder.autoLength;
+
 /// The [BrotliDecoder] decoder is used by [BrotliCodec] to decompress brotli data.
 class BrotliDecoder extends CodecConverter {
   /// Flag the determines if "canny" ring buffer allocation is enabled.
@@ -28,11 +34,21 @@ class BrotliDecoder extends CodecConverter {
   /// Default: [:false:]
   final bool largeWindow;
 
+  /// Length in bytes of the buffer used for input data.
+  final int inputBufferLength;
+
+  /// Length in bytes of the buffer used for processed output data.
+  final int outputBufferLength;
+
   /// Construct an [BrotliDecoder] with the supplied parameters.
   ///
   /// Validation will be performed which may result in a [RangeError] or
   /// [ArgumentError]
-  BrotliDecoder({this.ringBufferReallocation = true, this.largeWindow = false});
+  BrotliDecoder(
+      {this.ringBufferReallocation = true,
+      this.largeWindow = false,
+      this.inputBufferLength = CodecBufferHolder.autoLength,
+      this.outputBufferLength = CodecBufferHolder.autoLength});
 
   @override
   ByteConversionSink startChunkedConversion(Sink<List<int>> sink) {
@@ -92,6 +108,12 @@ class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
       int start,
       int end) {
     _initState();
+    if (!inputBufferHolder.isLengthSet()) {
+      inputBufferHolder.length = defaultInputBufferLength;
+    }
+    if (!outputBufferHolder.isLengthSet()) {
+      outputBufferHolder.length = defaultOutputBufferLength;
+    }
     return 0;
   }
 
@@ -120,7 +142,7 @@ class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
     return 0;
   }
 
-  /// Release lz4 resources
+  /// Release brotli resources
   @override
   void doClose() {
     _destroyState();
