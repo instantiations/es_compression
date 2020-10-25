@@ -8,7 +8,7 @@ import 'dart:typed_data';
 
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:collection/collection.dart';
-import 'package:es_compression/brotli_io.dart';
+import 'package:es_compression/brotli.dart';
 
 /// An [BrotliEncodeBenchmark] calls [BrotliCodec.encode] on the incoming data
 /// supplied by [BrotliData].

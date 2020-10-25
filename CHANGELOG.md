@@ -1,4 +1,4 @@
-## 0.9.0
+## 0.1.0
 
 - Initial development release, created by Seth Berman [Instantiations, Inc](https://www.instantiations.com).
 - Implemented general codec framework.
@@ -13,7 +13,7 @@
 - Provided prebuilt [Mac64 Brotli native shared library](lib/src/brotli/blobs/esbrotli-mac64.dylib)
 - Implemented [Brotli examples](example/brotli_example.dart)
 - Implemented [Brotli benchmarks](benchmark/brotli_benchmark.dart)
-- Implemented [Brotli tests](test/brotli_tests.dart)
+- Implemented [Brotli tests](test/brotli_test.dart)
 - Implemented FFI bindings for [LZ4 v1.9.2](https://github.com/lz4/lz4/tree/v1.9.2).
 - Implemented LZ4 codec framework extensions (encoder/decoders).
 - Implemented shared library and LZ4 [Cmake build instructions](tool/blob_builder/lz4/CMakeLists.txt)
@@ -22,7 +22,7 @@
 - Provided prebuilt [Mac64 LZ4 native shared library](lib/src/lz4/blobs/eslz4-mac64.dylib)
 - Implemented [LZ4 examples](example/lz4_example.dart)
 - Implemented [LZ4 benchmarks](benchmark/lz4_benchmark.dart)
-- Implemented [LZ4 tests](test/lz4_tests.dart)
+- Implemented [LZ4 tests](test/lz4_test.dart)
 - Implemented FFI bindings for [Zstd v1.4.5](https://github.com/facebook/zstd/tree/v1.4.5).
 - Implemented ZStandard (zstd) codec framework extensions (encoder/decoders).
 - Implemented shared library and Zstd [Cmake build instructions](tool/blob_builder/zstd/CMakeLists.txt)
@@ -31,5 +31,6 @@
 - Provided prebuilt [Mac64 Zstd native shared library](lib/src/zstd/blobs/eszstd-mac64.dylib)
 - Implemented [Zstd examples](example/zstd_example.dart)
 - Implemented [Zstd benchmarks](benchmark/zstd_benchmark.dart)
-- Implemented [Zstd tests](test/zstd_tests.dart)
+- Implemented [Zstd tests](test/zstd_test.dart)
 - Implemented [escompress](bin/es_compress.dart) binary script with gzip, lz4, zstd, brotli integration
+- Implemented [Compression framework examples](example/rle_example.dart)

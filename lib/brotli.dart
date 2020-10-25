@@ -2,12 +2,12 @@
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
-/// Lz4 encoder and decoder using a fast FFI-based implementation.
+/// Brotli encoder and decoder using a fast FFI-based implementation.
 ///
 /// To use this library in your code:
 /// ```
-/// import 'package:es_compression/lz4_io.dart';
+/// import 'package:es_compression/brotli.dart';
 /// ```
-library lz4_io;
+library brotli;
 
-export 'src/lz4/codec.dart';
+export 'src/brotli/codec.dart';

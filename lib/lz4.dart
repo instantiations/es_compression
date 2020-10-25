@@ -2,10 +2,12 @@
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
-/// Zstd (ZStandard) encoder and decoder using a fast FFI-based implementation.
+/// Lz4 encoder and decoder using a fast FFI-based implementation.
 ///
 /// To use this library in your code:
 /// ```
-/// import 'package:es_compression/zstd_io.dart';
+/// import 'package:es_compression/lz4.dart';
 /// ```
-export 'src/zstd/codec.dart';
+library lz4;
+
+export 'src/lz4/codec.dart';

@@ -6,9 +6,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:es_compression/lz4_io.dart';
-import 'package:es_compression/brotli_io.dart';
-import 'package:es_compression/zstd_io.dart';
+import 'package:es_compression/lz4.dart';
+import 'package:es_compression/brotli.dart';
+import 'package:es_compression/zstd.dart';
 
 const encodeArg = 'encode';
 const decodeArg = 'decode';

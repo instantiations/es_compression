@@ -34,13 +34,22 @@ const Set<String> _supported = {'linux64', 'mac64', 'win64'};
 /// The user has the capability to inject an environment variable with either
 /// the location of the shared library, or a directory that should contain the
 /// shared library with the name using the rules defined above.
+/// This is done by providing the [moduleId]_LIBRARY_NAME envvar with the path
+/// to the shared library.
 mixin OpenLibrary {
   /// Mixer Responsibility: Return the module id for path resolution.
   String get moduleId;
 
-  /// Open the shared library whose path is resolved by the mixer [moduleId].
-  DynamicLibrary openLibrary() {
-    return DynamicLibrary.open(_libraryFilePath());
+  /// Open the shared library whose path is resolved either by the supplied
+  /// [path] or by the mixer [moduleId].
+  ///
+  /// IOS Platform just assumes the process its resolvable by global symbols.
+  /// Android platform should have either [path] provided or must define the
+  /// [moduleId]_LIBRARY_NAME envvar with the path
+  DynamicLibrary openLibrary({String path}) {
+    return Platform.isIOS
+        ? DynamicLibrary.process()
+        : DynamicLibrary.open(path ?? _libraryFilePath());
   }
 
   /// Return a [String] describing the shared library path.

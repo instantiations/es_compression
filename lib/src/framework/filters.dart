@@ -242,14 +242,19 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>,
 
   /// Subclass Responsibility: Init the filter
   ///
-  /// Some algorithms, such as decoders, will need to read from the initial
-  /// [bytes] in order to read header information before processing data should
-  /// begin. The framework needs to be able to detect how much was read from
-  /// [bytes] and the caller should be prepared to return this value.
+  /// Some algorithms, such as decoders, will need to read header information
+  /// from the initial [bytes] before processing data should begin.
+  /// This information may be needed to appropriately size the output buffer.
+  /// This is why a [CodecBufferHolder] is provided instead of the
+  /// [CodecBuffer] itself. It gives implementers a chance to provide
+  /// appropriate constraints on the input/output buffer sizes BEFORE the
+  /// buffers are created.
   ///
   /// Other algorithms, such as encoders, can use this hook to write initial
   /// header information to the [outputBufferHolder.buffer].
   ///
+  /// The framework needs to be able to detect how much was read from
+  /// [bytes] and the caller should return this value.
   /// If [bytes] does not need to be read, then return 0.
   ///
   /// Afterwards, this filter will transition from the [CodecFilterState.init]

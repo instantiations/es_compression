@@ -8,7 +8,7 @@ import 'dart:typed_data';
 
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:collection/collection.dart';
-import 'package:es_compression/lz4_io.dart';
+import 'package:es_compression/lz4.dart';
 
 /// An [Lz4EncodeBenchmark] calls [Lz4Codec.encode] on the incoming data
 /// supplied by [Lz4Data].

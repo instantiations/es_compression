@@ -2,12 +2,12 @@
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
-/// Brotli encoder and decoder using a fast FFI-based implementation.
+/// Zstd (ZStandard) encoder and decoder using a fast FFI-based implementation.
 ///
 /// To use this library in your code:
 /// ```
-/// import 'package:es_compression/brotli_io.dart';
+/// import 'package:es_compression/zstd.dart';
 /// ```
-library brotli_io;
+library zstd;
 
-export 'src/brotli/codec.dart';
+export 'src/zstd/codec.dart';

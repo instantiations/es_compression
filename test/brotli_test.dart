@@ -4,56 +4,30 @@
 
 import 'dart:convert';
 
-import 'package:es_compression/lz4_io.dart';
+import 'package:es_compression/brotli.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('Test Empty Lz4 Encode/Decode', () {
+  test('Test Empty Brotli Encode/Decode', () {
     final data = '';
-    final header = [4, 34, 77, 24, 68, 64, 94, 0, 0, 0, 0, 5, 93, 204, 2];
+    final header = [107, 0, 3];
     final dataBytes = utf8.encode(data);
-    final codec = Lz4Codec(contentChecksum: true);
+    final codec = BrotliCodec();
     final encoded = codec.encode(dataBytes);
     expect(const ListEquality<int>().equals(encoded, header), true);
-    final decoded = codec.decode(encoded);
+    final decoded = brotli.decode(encoded);
     expect(const ListEquality<int>().equals(dataBytes, decoded), true);
   });
 
-  test('Test Simple Lz4 Encode/Decode', () {
+  test('Test Simple Brotli Encode/Decode', () {
     final data = 'MyDart';
-    final expected = [
-      4,
-      34,
-      77,
-      24,
-      68,
-      64,
-      94,
-      6,
-      0,
-      0,
-      128,
-      77,
-      121,
-      68,
-      97,
-      114,
-      116,
-      0,
-      0,
-      0,
-      0,
-      216,
-      176,
-      253,
-      223
-    ];
+    final expected = [139, 2, 128, 77, 121, 68, 97, 114, 116, 3];
     final dataBytes = utf8.encode(data);
-    final codec = Lz4Codec(contentChecksum: true);
+    final codec = BrotliCodec();
     final encoded = codec.encode(dataBytes);
     expect(const ListEquality<int>().equals(encoded, expected), true);
-    final decoded = lz4.decode(encoded);
+    final decoded = brotli.decode(encoded);
     expect(const ListEquality<int>().equals(dataBytes, decoded), true);
   });
 }

@@ -4,49 +4,56 @@
 
 import 'dart:convert';
 
-import 'package:es_compression/zstd_io.dart';
+import 'package:es_compression/lz4.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('Test Empty Zstd Encode/Decode', () {
+  test('Test Empty Lz4 Encode/Decode', () {
     final data = '';
-    final header = [40, 181, 47, 253, 0, 88, 1, 0, 0];
+    final header = [4, 34, 77, 24, 68, 64, 94, 0, 0, 0, 0, 5, 93, 204, 2];
     final dataBytes = utf8.encode(data);
-    final codec = ZstdCodec();
+    final codec = Lz4Codec(contentChecksum: true);
     final encoded = codec.encode(dataBytes);
     expect(const ListEquality<int>().equals(encoded, header), true);
     final decoded = codec.decode(encoded);
     expect(const ListEquality<int>().equals(dataBytes, decoded), true);
   });
 
-  test('Test Simple Zstd Encode/Decode', () {
+  test('Test Simple Lz4 Encode/Decode', () {
     final data = 'MyDart';
     final expected = [
-      40,
-      181,
-      47,
-      253,
+      4,
+      34,
+      77,
+      24,
+      68,
+      64,
+      94,
+      6,
       0,
-      88,
-      48,
       0,
-      0,
+      128,
       77,
       121,
       68,
       97,
       114,
       116,
-      1,
       0,
-      0
+      0,
+      0,
+      0,
+      216,
+      176,
+      253,
+      223
     ];
     final dataBytes = utf8.encode(data);
-    final codec = ZstdCodec();
+    final codec = Lz4Codec(contentChecksum: true);
     final encoded = codec.encode(dataBytes);
     expect(const ListEquality<int>().equals(encoded, expected), true);
-    final decoded = codec.decode(encoded);
+    final decoded = lz4.decode(encoded);
     expect(const ListEquality<int>().equals(dataBytes, decoded), true);
   });
 }

@@ -5,14 +5,14 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:es_compression/brotli_io.dart';
+import 'package:es_compression/brotli.dart';
 
 import 'utils/example_utils.dart';
 
 const randomByteCount = 256;
 const level = 0;
 
-/// This program demonstrates an zstd encode/decode of random bytes.
+/// This program demonstrates a brotli encode/decode of random bytes.
 ///
 /// The [exitCode] of this script is 0 if the decoded bytes match the original,
 /// otherwise the [exitCode] is -1.

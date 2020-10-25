@@ -5,7 +5,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:es_compression/lz4_io.dart';
+import 'package:es_compression/lz4.dart';
 
 import 'utils/example_utils.dart';
 

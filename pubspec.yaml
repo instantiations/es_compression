@@ -1,6 +1,6 @@
 name: es_compression
 description: Compression framework providing FFI implementations for Brotli, Lz4, Zstd with ready-to-use prebuilt binaries for Win/Linux/Mac.
-version: 0.9.0
+version: 0.1.0
 homepage: https://www.instantiations.com
 issue_tracker: https://github.com/instantiations/es_compression/issues
 repository: https://github.com/instantiations/es_compression
