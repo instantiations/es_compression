@@ -86,3 +86,4 @@ They will be reviewed and addressed on a best-effort basis by [Instantiations, I
 
 [tracker]: https://github.com/instantiations/es_compression/issues
 [VAST Platform]: https://www.instantiations.com/products/vasmalltalk/index.html
+[Instantiations, Inc]: https://www.instantiations.com
