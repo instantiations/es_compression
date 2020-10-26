@@ -31,9 +31,10 @@ void main() {
 
   // One-shot encode/decode
   final encoded = runLengthCodec.encode(bytes);
-  verifyEquality(utf8.encode('1a2b3c4d5e9f2f'), encoded);
+  verifyEquality(utf8.encode('1a2b3c4d5e9f2f'), encoded,
+      header: 'Verify encoding output');
   final decoded = runLengthCodec.decode(encoded);
-  final oneShotResult = verifyEquality(bytes, decoded);
+  final oneShotResult = verifyEquality(bytes, decoded, header: 'One-shot: ');
 
   // Streaming encode/decode
   // Split bytes into 10 buckets
@@ -46,7 +47,7 @@ void main() {
     buffer.addAll(data);
     return buffer;
   }).then((decoded) {
-    final streamResult = verifyEquality(bytes, decoded);
+    final streamResult = verifyEquality(bytes, decoded, header: 'Streaming: ');
     exitCode = (oneShotResult == true && streamResult == true) ? 0 : -1;
   });
 }
@@ -85,8 +86,7 @@ class RunLengthEncoderFilter
   @override
   CodecBufferHolder<DartHeapPointer, DartCodecBuffer> newBufferHolder(
       int length) {
-    final holder = CodecBufferHolder<DartHeapPointer, DartCodecBuffer>(length);
-    return holder..bufferBuilderFunc = (length) => DartCodecBuffer(length);
+    return DartCodecBufferHolder(length);
   }
 
   @override
@@ -159,8 +159,7 @@ class RunLengthDecoderFilter
   @override
   CodecBufferHolder<DartHeapPointer, DartCodecBuffer> newBufferHolder(
       int length) {
-    final holder = CodecBufferHolder<DartHeapPointer, DartCodecBuffer>(length);
-    return holder..bufferBuilderFunc = (length) => DartCodecBuffer(length);
+    return DartCodecBufferHolder(length);
   }
 
   @override

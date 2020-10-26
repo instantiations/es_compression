@@ -16,7 +16,11 @@ import 'types.dart';
 /// functions that are described in C header files.
 class BrotliLibrary
     with OpenLibrary, BrotliConstants, BrotliFunctions, BrotliTypes {
-  static final BrotliLibrary _instance = BrotliLibrary._();
+  /// Library path the user can define to override normal resolution.
+  static String userDefinedLibraryPath;
+
+  static final BrotliLibrary _instance =
+      BrotliLibrary._(userDefinedLibraryPath);
 
   /// Dart native library object.
   DynamicLibrary _libraryImpl;
@@ -32,8 +36,9 @@ class BrotliLibrary
 
   /// Internal constructor that opens the native shared library and resolves
   /// all the functions.
-  BrotliLibrary._() {
-    _libraryImpl = openLibrary();
+  BrotliLibrary._(String libraryPath) {
+    _libraryImpl =
+        libraryPath == null ? openLibrary() : openLibrary(path: libraryPath);
     resolveFunctions(_libraryImpl);
   }
 }

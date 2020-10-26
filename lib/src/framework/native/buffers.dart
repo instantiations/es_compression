@@ -67,3 +67,11 @@ class NativeCodecBuffer extends CodecBuffer<Pointer<Uint8>> {
     if (_bytes != null) ffi.free(_bytes);
   }
 }
+
+/// [CodecBufferHolder] for constructing [NativeCodecBuffer] instances.
+class NativeCodecBufferHolder
+    extends CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> {
+  NativeCodecBufferHolder(int length) : super(length) {
+    bufferBuilderFunc = (length) => NativeCodecBuffer(length);
+  }
+}

@@ -9,6 +9,13 @@ import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test('Test Lz4 Version Number', () {
+    final codec = Lz4Codec();
+    final bindingVersion = '1.9.2';
+    expect(codec.bindingVersion.toString(), bindingVersion);
+    expect(codec.libraryVersion.toString(), bindingVersion);
+  });
+
   test('Test Empty Lz4 Encode/Decode', () {
     final data = '';
     final header = [4, 34, 77, 24, 68, 64, 94, 0, 0, 0, 0, 5, 93, 204, 2];

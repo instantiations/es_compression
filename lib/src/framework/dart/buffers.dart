@@ -107,3 +107,11 @@ class DartHeapPointer {
   /// Set a byte in the buffer relative to the current [offset] position.
   operator []=(int index, int value) => _bytes[offset + index] = value;
 }
+
+/// [CodecBufferHolder] for constructing [DartCodecBuffer] instances.
+class DartCodecBufferHolder
+    extends CodecBufferHolder<DartHeapPointer, DartCodecBuffer> {
+  DartCodecBufferHolder(int length) : super(length) {
+    bufferBuilderFunc = (length) => DartCodecBuffer(length);
+  }
+}

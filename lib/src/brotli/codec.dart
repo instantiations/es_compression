@@ -7,6 +7,8 @@ import 'dart:convert';
 import '../../framework.dart';
 import 'decoder.dart';
 import 'encoder.dart';
+import 'ffi/dispatcher.dart';
+import 'ffi/library.dart';
 import 'options.dart';
 
 /// The [BrotliCodec] encodes/decodes raw bytes using the Brotli algorithm
@@ -73,6 +75,17 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
   /// Length in bytes of the buffer used for processed output data.
   final int outputBufferLength;
 
+  /// Return the base binding version this binding code was developed for.
+  BrotliVersion get bindingVersion => BrotliVersion(0x1000009);
+
+  /// Return the encoder library version.
+  BrotliVersion get encoderVersion =>
+      BrotliVersion(BrotliDispatcher().encoderVersionNumber);
+
+  /// Return the decoder library version.
+  BrotliVersion get decoderVersion =>
+      BrotliVersion(BrotliDispatcher().decoderVersionNumber);
+
   /// Construct an [BrotliCodec] that is configured with the following parameters.
   ///
   /// Default values are provided for unspecified parameters.
@@ -90,8 +103,10 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
       this.directDistanceCodeCount,
       this.ringBufferReallocation = true,
       this.inputBufferLength = CodecBufferHolder.autoLength,
-      this.outputBufferLength = CodecBufferHolder.autoLength}) {
+      this.outputBufferLength = CodecBufferHolder.autoLength,
+      String libraryPath}) {
     validateBrotliLevel(level);
+    if (libraryPath != null) BrotliLibrary.userDefinedLibraryPath = libraryPath;
   }
 
   const BrotliCodec._default()
@@ -132,3 +147,24 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
 
 /// An instance of the default implementation of the [BrotliCodec].
 const BrotliCodec brotli = BrotliCodec._default();
+
+/// Helper class to decode the version number returned from the brotli FFI
+/// library.
+class BrotliVersion {
+  /// Encoded version number from brotli.
+  final int versionNumber;
+
+  const BrotliVersion(this.versionNumber);
+
+  /// Return the major element of the version.
+  int get major => versionNumber >> 24;
+
+  /// Return the minor element of the version.
+  int get minor => (versionNumber >> 12) & 0xFFF;
+
+  /// Return the patch element of the version.
+  int get patch => versionNumber & 0xFFF;
+
+  @override
+  String toString() => '$major.$minor.$patch';
+}

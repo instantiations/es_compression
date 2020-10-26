@@ -334,7 +334,6 @@ abstract class CodecBuffer<T> {
 /// [CodecBufferHolder.buffer] is sent multiple times, the same instance
 /// will be returned.
 class CodecBufferHolder<T, CB extends CodecBuffer<T>> {
-
   static const autoLength = -1;
 
   /// Buffer that was constructed.

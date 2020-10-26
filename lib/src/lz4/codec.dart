@@ -7,7 +7,9 @@ import 'dart:convert';
 import '../../framework.dart';
 import 'decoder.dart';
 import 'encoder.dart';
+import 'ffi/dispatcher.dart';
 import 'options.dart';
+import 'ffi/library.dart';
 
 /// The [Lz4Codec] encodes raw bytes to Lz4 compressed bytes and decodes Lz4
 /// compressed bytes to raw bytes using the Lz4 frame format
@@ -52,6 +54,12 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
   /// Length in bytes of the buffer used for processed output data.
   final int outputBufferLength;
 
+  /// Return the base binding version this binding code was developed for.
+  Lz4Version get bindingVersion => Lz4Version(10902);
+
+  /// Return the actual library version of the shared library.
+  Lz4Version get libraryVersion => Lz4Version(Lz4Dispatcher().versionNumber);
+
   /// Construct an [Lz4Codec] that is configured with the following parameters.
   ///
   /// Default values are provided for unspecified parameters.
@@ -66,9 +74,11 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
       this.blockSize = Lz4Option.defaultBlockSize,
       this.optimizeForDecompression = false,
       this.inputBufferLength = CodecBufferHolder.autoLength,
-      this.outputBufferLength = CodecBufferHolder.autoLength}) {
+      this.outputBufferLength = CodecBufferHolder.autoLength,
+      String libraryPath}) {
     validateLz4Level(level);
     validateLz4BlockSize(blockSize);
+    if (libraryPath != null) Lz4Library.userDefinedLibraryPath = libraryPath;
   }
 
   const Lz4Codec._default()
@@ -102,3 +112,24 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
 
 /// An instance of the default implementation of the [Lz4Codec].
 const Lz4Codec lz4 = Lz4Codec._default();
+
+/// Helper class to decode the version number returned from the lz4 FFI
+/// library.
+class Lz4Version {
+  /// Encoded version number from lz4.
+  final int versionNumber;
+
+  const Lz4Version(this.versionNumber);
+
+  /// Return the major element of the version.
+  int get major => versionNumber ~/ (100 * 100);
+
+  /// Return the minor element of the version.
+  int get minor => (versionNumber ~/ 100) - 100;
+
+  /// Return the patch element of the version.
+  int get patch => versionNumber - (major * (100 * 100)) - (minor * 100);
+
+  @override
+  String toString() => '$major.$minor.$patch';
+}

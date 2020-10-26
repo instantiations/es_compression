@@ -9,6 +9,14 @@ import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test('Test Brotli Version Number', () {
+    final codec = BrotliCodec();
+    final bindingVersion = '1.0.9';
+    expect(codec.bindingVersion.toString(), bindingVersion);
+    expect(codec.encoderVersion.toString(), bindingVersion);
+    expect(codec.decoderVersion.toString(), bindingVersion);
+  });
+
   test('Test Empty Brotli Encode/Decode', () {
     final data = '';
     final header = [107, 0, 3];

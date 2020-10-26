@@ -29,8 +29,14 @@ const algorithms = {
 /// Usage Example: Encode a file
 /// >dart es_compress.dart -e -i"inputFile.txt" -o"outputFile.lz4" -alz4 -l-1
 ///
+/// Or if the output file extension is the same name as the algorithm:
+/// >dart es_compress.dart -i"inputFile.txt" -o"outputFile.lz4" -l-1
+///
 /// Usage Example: Decode a file
 /// >dart es_compress.dart -d -i"inputFile.lz4" -o"outputFile.txt" -alz4
+///
+/// Or if the input file extension is the same name as the algorithm:
+/// >dart es_compress.dart -i"inputFile.lz4" -o"outputFile.txt"
 ///
 /// Usage Example: Print help
 /// >dart es_compress.dart -h
@@ -41,26 +47,66 @@ void main(List<String> arguments) {
   if (argResults.arguments.isEmpty || argResults[helpArg] as bool == true) {
     print(argParser.usage);
   } else {
-    final algorithm = argResults[algorithmArg] as String;
-    final inputPath = argResults[inputFileArg] as String;
-    final outputPath = argResults[outputFileArg] as String;
+    final algorithm =
+        argResults[algorithmArg] as String ?? _guessAlgorithm(argResults);
+    final input = _toFile(argResults[inputFileArg]);
+    final output = _toFile(argResults[outputFileArg], mustExist: false);
     final level = argResults[levelArg] as String;
-    var encode = argResults[encodeArg] as bool;
-    if (argResults[decodeArg] as bool == true) encode = false;
-
-    final input = File(inputPath);
-    if (input.existsSync() == false) {
-      throw Exception('Input file does not exist: $inputPath');
-    }
+    var encode = _shouldEncode(argResults);
     final inputBytes = input.readAsBytesSync();
     final codec = _selectCodec(algorithm, level);
     final coder = (encode == true) ? codec.encoder : codec.decoder;
     final bytes = coder.convert(inputBytes);
-    final outputFile = File(outputPath);
-    outputFile.writeAsBytesSync(bytes);
+    output.writeAsBytesSync(bytes);
   }
 
   exitCode = 0;
+}
+
+/// Return true if encoding, false if decoding.
+///
+/// First try and determine based on the command line parameters.
+/// If missing, then guess based off the file extension.
+bool _shouldEncode(ArgResults argResults) {
+  if (argResults[encodeArg] as bool == true) return true;
+  if (argResults[decodeArg] as bool == true) return false;
+
+  // Guess based on file extension
+  final input = _toFile(argResults[inputFileArg]);
+  if (algorithms.keys.any((ext) => input.path.endsWith(ext))) return false;
+  final output = _toFile(argResults[outputFileArg], mustExist: false);
+  if (algorithms.keys.any((ext) => output.path.endsWith(ext))) return true;
+  return false;
+}
+
+/// Guess the algorithm to use based off the file extension of the
+/// input/output
+String _guessAlgorithm(ArgResults argResults) {
+  // Guess based on file extension
+  final input = _toFile(argResults[inputFileArg]);
+  var algo = algorithms.keys
+      .firstWhere((ext) => input.path.endsWith(ext), orElse: () => null);
+  if (algo != null) return algo;
+
+  final output = _toFile(argResults[outputFileArg], mustExist: false);
+  algo = algorithms.keys
+      .firstWhere((ext) => output.path.endsWith(ext), orElse: () => null);
+  if (algo != null) return algo;
+
+  return null;
+}
+
+/// Convert the [path] to a [File].
+/// Ensure that the file exists if [mustExist] is [:true:]
+File _toFile(dynamic path, {bool mustExist = true}) {
+  if (path is! String) {
+    throw Exception('File is not defined');
+  }
+  final file = File(path as String);
+  if (mustExist && file.existsSync() == false) {
+    throw Exception('File does not exist: $path');
+  }
+  return file;
 }
 
 /// Build and return a parser for the program arguments.

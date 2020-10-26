@@ -15,7 +15,10 @@ import 'types.dart';
 /// It has a series of mixins for making available constants, types and
 /// functions that are described in C header files.
 class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
-  static final Lz4Library _instance = Lz4Library._();
+  /// Library path the user can define to override normal resolution.
+  static String userDefinedLibraryPath;
+
+  static final Lz4Library _instance = Lz4Library._(userDefinedLibraryPath);
 
   /// Dart native library object.
   DynamicLibrary _libraryImpl;
@@ -34,8 +37,9 @@ class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
 
   /// Internal constructor that opens the native shared library and resolves
   /// all the functions.
-  Lz4Library._() {
-    _libraryImpl = openLibrary();
+  Lz4Library._(String libraryPath) {
+    _libraryImpl =
+        libraryPath == null ? openLibrary() : openLibrary(path: libraryPath);
     resolveFunctions(_libraryImpl);
   }
 }

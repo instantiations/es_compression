@@ -9,6 +9,13 @@ import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test('Test Zstd Version Number', () {
+    final codec = ZstdCodec();
+    final bindingVersion = '1.4.5';
+    expect(codec.bindingVersion.toString(), bindingVersion);
+    expect(codec.libraryVersion.toString(), bindingVersion);
+  });
+
   test('Test Empty Zstd Encode/Decode', () {
     final data = '';
     final header = [40, 181, 47, 253, 0, 88, 1, 0, 0];

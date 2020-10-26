@@ -46,7 +46,7 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
 
   /// Release native resources.
   void release() {
-    if(released == false) {
+    if (released == false) {
       ffi.free(nextInPtr);
       ffi.free(nextOutPtr);
       ffi.free(availableInPtr);

@@ -91,8 +91,7 @@ class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
   @override
   CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
       int length) {
-    final holder = CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer>(length);
-    return holder..bufferBuilderFunc = (length) => NativeCodecBuffer(length);
+    return NativeCodecBufferHolder(length);
   }
 
   /// Init the filter

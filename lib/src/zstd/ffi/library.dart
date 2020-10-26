@@ -15,7 +15,10 @@ import 'types.dart';
 /// It has a series of mixins for making available constants, types and
 /// functions that are described in C header files.
 class ZstdLibrary with OpenLibrary, ZstdConstants, ZstdFunctions, ZstdTypes {
-  static final ZstdLibrary _instance = ZstdLibrary._();
+  /// Library path the user can define to override normal resolution.
+  static String userDefinedLibraryPath;
+
+  static final ZstdLibrary _instance = ZstdLibrary._(userDefinedLibraryPath);
 
   /// Dart native library object.
   DynamicLibrary _libraryImpl;
@@ -34,8 +37,9 @@ class ZstdLibrary with OpenLibrary, ZstdConstants, ZstdFunctions, ZstdTypes {
 
   /// Internal constructor that opens the native shared library and resolves
   /// all the functions.
-  ZstdLibrary._() {
-    _libraryImpl = openLibrary();
+  ZstdLibrary._(String libraryPath) {
+    _libraryImpl =
+        libraryPath == null ? openLibrary() : openLibrary(path: libraryPath);
     resolveFunctions(_libraryImpl);
   }
 }

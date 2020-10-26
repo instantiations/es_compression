@@ -39,7 +39,7 @@ class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
 
   /// Release native resources.
   void release() {
-    if(released == false) {
+    if (released == false) {
       ffi.free(_srcSizePtr);
       ffi.free(_destSizePtr);
       released = true;

@@ -25,7 +25,6 @@ const defaultInputBufferLength = 64 * 1024;
 /// Default output buffer length
 const defaultOutputBufferLength = CodecBufferHolder.autoLength;
 
-
 /// The [Lz4Encoder] encoder is used by [Lz4Codec] to lz4 compress data.
 class Lz4Encoder extends CodecConverter {
   /// The compression-[level] can be set in the range of `0..16`, with
@@ -177,8 +176,7 @@ class _Lz4CompressFilter
   @override
   CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
       int length) {
-    final holder = CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer>(length);
-    return holder..bufferBuilderFunc = (length) => NativeCodecBuffer(length);
+    return NativeCodecBufferHolder(length);
   }
 
   /// Init the filter

@@ -20,10 +20,13 @@ void main() {
   final randomBytes = generateRandomBytes(randomByteCount);
   final codec = ZstdCodec(level: level);
 
+  print('Zstd Encoder Version: ${codec.libraryVersion}');
+
   // One-shot encode/decode
   final encoded = codec.encode(randomBytes);
   final decoded = codec.decode(encoded);
-  final oneShotResult = verifyEquality(randomBytes, decoded);
+  final oneShotResult =
+      verifyEquality(randomBytes, decoded, header: 'One-shot: ');
 
   // Streaming encode/decode
   // Split the random bytes into 10 buckets
@@ -36,7 +39,8 @@ void main() {
     buffer.addAll(data);
     return buffer;
   }).then((decoded) {
-    final streamResult = verifyEquality(randomBytes, decoded);
+    final streamResult =
+        verifyEquality(randomBytes, decoded, header: 'Streaming: ');
     exitCode = (oneShotResult == true && streamResult == true) ? 0 : -1;
   });
 }

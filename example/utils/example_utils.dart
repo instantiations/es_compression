@@ -11,9 +11,11 @@ List<int> generateRandomBytes(int length) {
 }
 
 /// Verify elements match in [list1] and [list2]
-bool verifyEquality(List<int> list1, List<int> list2) {
+bool verifyEquality(List<int> list1, List<int> list2, {String header = ''}) {
   final bytesMatch = const ListEquality<int>().equals(list1, list2);
-  (bytesMatch == true) ? print('bytes match!') : print('bytes do not match!');
+  (bytesMatch == true)
+      ? print('$header: bytes match!')
+      : print('$header: bytes do not match!');
   return bytesMatch;
 }
 

@@ -34,3 +34,4 @@
 - Implemented [Zstd tests](test/zstd_test.dart)
 - Implemented [escompress](bin/es_compress.dart) binary script with gzip, lz4, zstd, brotli integration
 - Implemented [Compression framework examples](example/rle_example.dart)
+- Implemented version objects for each codec that allow the user to easily see what library was bound to.
