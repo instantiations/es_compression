@@ -58,8 +58,9 @@ typedef Lz4FCompressFrameDart = int Function(
 /// File: *lz4frame.h*
 /// LZ4FLIB_API size_t LZ4F_compressFrameBound(
 ///    size_t srcSize, const LZ4F_preferences_t* preferencesPtr);
-typedef Lz4FCompressFrameBoundNative = IntPtr Function(IntPtr, Pointer<Void>);
-typedef Lz4FCompressFrameBoundDart = int Function(int, Pointer<Void>);
+typedef Lz4FCompressFrameBoundNative = IntPtr Function(
+    IntPtr, Pointer<Lz4Preferences>);
+typedef Lz4FCompressFrameBoundDart = int Function(int, Pointer<Lz4Preferences>);
 
 /// File: *lz4frame.h*
 /// LZ4FLIB_API size_t LZ4F_compressUpdate(LZ4F_cctx* cctx,
@@ -166,6 +167,7 @@ mixin Lz4Functions {
   Lz4FFreeCompressionContextDart lz4FFreeCompressionContext;
   Lz4FCompressBeginDart lz4FCompressBegin;
   Lz4FCompressBoundDart lz4FCompressBound;
+  Lz4FCompressFrameBoundDart lz4FCompressFrameBound;
   Lz4FCompressUpdateDart lz4FCompressUpdate;
   Lz4FCompressEndDart lz4FCompressEnd;
   Lz4FFlushDart lz4FFlush;
@@ -197,6 +199,9 @@ mixin Lz4Functions {
     lz4FCompressBound =
         library.lookupFunction<Lz4FCompressBoundNative, Lz4FCompressBoundDart>(
             'LZ4F_compressBound');
+    lz4FCompressFrameBound = library.lookupFunction<
+        Lz4FCompressFrameBoundNative,
+        Lz4FCompressFrameBoundDart>('LZ4F_compressFrameBound');
     lz4FCompressUpdate = library.lookupFunction<Lz4FCompressUpdateNative,
         Lz4FCompressUpdateDart>('LZ4F_compressUpdate');
     lz4FCompressEnd =

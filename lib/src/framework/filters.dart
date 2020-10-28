@@ -131,14 +131,14 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>,
   /// data.
   List<int> processed({bool flush = true, bool end = false}) {
     if (!processing) return null;
-    if (!end && !_hasMoreToProcess()) return null;
+    if (!end && !hasMoreToProcess()) return null;
     final builder = BytesBuilder(copy: false);
     if (_outputBuffer.unreadCount > 0) {
       final bufferedBytes = _outputBuffer.writtenBytes(reset: true);
       builder.add(bufferedBytes);
     } else {
       if (_toProcess.isNotEmpty) _toProcess = _toProcess.drainTo(_inputBuffer);
-      _codeOrDecodeBuffer();
+      _codeOrDecode();
       final bufferedBytes = _outputBuffer.writtenBytes(reset: true);
       builder.add(bufferedBytes);
       if (flush == true) _flush(builder);
@@ -147,21 +147,27 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>,
     return builder.takeBytes();
   }
 
-  /// Process any unprocessed bytes sitting in the input buffer.
-  void _codeOrDecodeBuffer() {
-    if (_inputBuffer.unreadCount != 0) _codeOrDecode();
+  /// Return [:true:] if there is more data to process, [:false:] otherwise.
+  ///
+  /// There is more to process if data is remaining in either buffer to be read.
+  /// There is more to process if a non-empty [_InputData] exists.
+  bool hasMoreToProcess() {
+    return _toProcess.isNotEmpty ||
+        (_inputBuffer.unreadCount > 0) ||
+        (_outputBuffer.unreadCount > 0);
   }
 
   /// Perform a coder/decoder routine where the bytes from the incoming buffer
   /// are processed by the algorithm and the resulting processed bytes are
   /// placed in the output buffer
   CR _codeOrDecode() {
-    final result = doProcessing(_inputBuffer, _outputBuffer);
+    final result =
+        doProcessing(_checkBuffer(_inputBuffer), _checkBuffer(_outputBuffer));
     if (result.adjustBufferCounts) {
       _inputBuffer.incrementBytesRead(result.readCount);
       _outputBuffer.incrementBytesWritten(result.writeCount);
     }
-    if (_inputBuffer.atEnd()) _inputBuffer.reset();
+    if (_checkBuffer(_inputBuffer).atEnd()) _inputBuffer.reset();
     return result;
   }
 
@@ -193,13 +199,14 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>,
       final BytesBuilder bytesBuilder, int Function(CB outputBuffer) op) {
     var numAllBytes = 0;
     if (processing) {
-      _codeOrDecodeBuffer();
+      _codeOrDecode();
       var numBytes = 0;
       do {
-        numBytes = op(_outputBuffer);
+        numBytes = op(_checkBuffer(_outputBuffer));
         if (numBytes > 0) {
           _outputBuffer.incrementBytesWritten(numBytes);
-          final bufferedBytes = _outputBuffer.writtenBytes(reset: true);
+          final bufferedBytes =
+              _checkBuffer(_outputBuffer).writtenBytes(reset: true);
           bytesBuilder.add(bufferedBytes);
           numAllBytes += numBytes;
         }
@@ -208,14 +215,12 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>,
     return numAllBytes;
   }
 
-  /// Return [:true:] if there is more data to process, [:false:] otherwise.
-  ///
-  /// There is more to process if data is remaining in either buffer to be read.
-  /// There is more to process if a non-empty [_InputData] exists.
-  bool _hasMoreToProcess() {
-    return _toProcess.isNotEmpty ||
-        (_inputBuffer.unreadCount > 0) ||
-        (_outputBuffer.unreadCount > 0);
+  /// Throw [StateError] if buffer has been freed.
+  CB _checkBuffer(CB buffer) {
+    if (!buffer.isAvailable()) {
+      throw StateError('buffer not available');
+    }
+    return buffer;
   }
 
   /// Initialize the filter.

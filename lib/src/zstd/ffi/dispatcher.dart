@@ -17,11 +17,23 @@ import 'library.dart';
 /// Impl: To cut down on FFI malloc/free and native heap fragmentation, the
 /// native in/out buffer pointers are pre-allocated.
 class ZstdDispatcher with ZstdDispatchErrorCheckerMixin {
+  /// Answer the version number of the library.
+  static int get versionNumber {
+    try {
+      final dispatcher = ZstdDispatcher();
+      final versionNumber = dispatcher._versionNumber;
+      dispatcher.release();
+      return versionNumber;
+    } catch (error) {
+      return 0;
+    }
+  }
+
   /// Library accessor to the Zstd shared lib.
   ZstdLibrary library;
 
   /// Version number of the shared library.
-  int versionNumber;
+  int _versionNumber;
 
   /// For safety to prevent double free.
   bool released = false;
@@ -33,7 +45,7 @@ class ZstdDispatcher with ZstdDispatchErrorCheckerMixin {
   /// Construct the [ZstdDispatcher].
   ZstdDispatcher() {
     library = ZstdLibrary();
-    versionNumber = callZstdVersionNumber();
+    _versionNumber = callZstdVersionNumber();
   }
 
   /// Release native resources.

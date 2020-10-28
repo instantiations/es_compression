@@ -74,6 +74,12 @@ class DartCodecBuffer extends CodecBuffer<DartHeapPointer> {
   @override
   int basicPeek() => basePtr[readCount];
 
+  /// Always true
+  @override
+  bool isAvailable() {
+    return true;
+  }
+
   /// No action required.
   @override
   void release() {}

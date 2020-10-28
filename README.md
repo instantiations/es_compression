@@ -1,5 +1,6 @@
 ## Description
-Compression framework providing FFI implementations for Brotli, Lz4, Zstd with ready-to-use prebuilt binaries for Win/Linux/Mac.
+Compression framework for Dart providing FFI implementations for Brotli, Lz4, Zstd with ready-to-use prebuilt binaries
+for Win/Linux/Mac.
 
 This work is an inspired port of the *Unified Compression Framework* from the [VAST Platform] (VA Smalltalk) language
 and development environment.
@@ -157,7 +158,6 @@ See the comments for the mixin `OpenLibrary` in the [library loader];
 | `brotli`   | BROTLI_LIBRARY_PATH   |
 | `lz4`      | LZ4_LIBRARY_PATH      |
 | `zstd`     | ZSTD_LIBRARY_PATH     |
-
 
 ## Features and bugs
 Please file feature requests and bugs at the [issue tracker][tracker].\

@@ -18,14 +18,38 @@ import 'library.dart';
 /// Impl: To cut down on FFI malloc/free and native heap fragmentation, the
 /// native pointers for brotli compress/decompress functions are pre-allocated.
 class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
+  /// Answer the encoder version number of the library.
+  static int get encoderVersionNumber {
+    try {
+      final dispatcher = BrotliDispatcher();
+      final versionNumber = dispatcher._encoderVersionNumber;
+      dispatcher.release();
+      return versionNumber;
+    } catch (error) {
+      return 0;
+    }
+  }
+
+  /// Answer the decoder version number of the library.
+  static int get decoderVersionNumber {
+    try {
+      final dispatcher = BrotliDispatcher();
+      final versionNumber = dispatcher._decoderVersionNumber;
+      dispatcher.release();
+      return versionNumber;
+    } catch (error) {
+      return 0;
+    }
+  }
+
   /// Library accessor to the Brotli shared lib.
   BrotliLibrary library;
 
   /// Version number of the encoder (part) of the shared library.
-  int encoderVersionNumber;
+  int _encoderVersionNumber;
 
   /// Version number of the decoder (part) of the shared library.
-  int decoderVersionNumber;
+  int _decoderVersionNumber;
 
   /// For safety to prevent double free.
   bool released;
@@ -40,8 +64,8 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   /// Return the [BrotliDispatcher] singleton instance
   BrotliDispatcher() {
     library = BrotliLibrary();
-    encoderVersionNumber = callBrotliEncoderVersion();
-    decoderVersionNumber = callBrotliDecoderVersion();
+    _encoderVersionNumber = callBrotliEncoderVersion();
+    _decoderVersionNumber = callBrotliDecoderVersion();
   }
 
   /// Release native resources.
@@ -122,12 +146,23 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
         BrotliConstants.BROTLI_TRUE;
   }
 
+  bool callBrotliDecoderIsFinished(BrotliDecoderState state) {
+    return library.brotliDecoderIsFinished(state.addressOf) ==
+        BrotliConstants.BROTLI_TRUE;
+  }
+
+  bool callBrotliDecoderHasMoreOutput(BrotliDecoderState state) {
+    return library.brotliDecoderHasMoreOutput(state.addressOf) ==
+        BrotliConstants.BROTLI_TRUE;
+  }
+
   List<int> callBrotliDecoderDecompressStream(
       BrotliDecoderState state,
       int availableIn,
       Pointer<Uint8> nextIn,
       int availableOut,
       Pointer<Uint8> nextOut) {
+    const cFunctionName = 'BrotliDecoderDecompressStream';
     nextInPtr.value = nextIn;
     availableInPtr.value = availableIn;
     nextOutPtr.value = nextOut;
@@ -135,8 +170,22 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
 
     final result = library.brotliDecoderDecompressStream(state.addressOf,
         availableInPtr, nextInPtr, availableOutPtr, nextOutPtr, nullptr);
-    if (result == BrotliConstants.BROTLI_DECODER_RESULT_ERROR) {
-      throw StateError('BrotliDecoderDecompressStream');
+
+    final remainingIn = availableInPtr.value;
+    switch (result) {
+      case BrotliConstants.BROTLI_DECODER_RESULT_SUCCESS:
+        if (remainingIn > 0) {
+          throw StateError('$cFunctionName failed. Excessive input');
+        }
+        break;
+      case BrotliConstants.BROTLI_DECODER_RESULT_ERROR:
+        throw StateError('$cFunctionName failed. error code: '
+            '${callBrotliDecoderGetErrorCode(state)}');
+        break;
+      case BrotliConstants.BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT:
+        break;
+      case BrotliConstants.BROTLI_DECODER_NEEDS_MORE_INPUT:
+        break;
     }
 
     return <int>[

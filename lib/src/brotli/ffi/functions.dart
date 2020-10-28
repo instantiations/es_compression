@@ -17,11 +17,21 @@ typedef BrotliDecoderCreateInstanceNative = Pointer<BrotliDecoderState>
 typedef BrotliDecoderCreateInstanceDart = Pointer<BrotliDecoderState> Function(
     Pointer<Void>, Pointer<Void>, Pointer<Void>);
 
+/// File: *decoder.h*
+/// BROTLI_DEC_API BrotliDecoderResult BrotliDecoderDecompress(
+///     size_t encoded_size,
+///     const uint8_t encoded_buffer[BROTLI_ARRAY_PARAM(encoded_size)],
+///     size_t* decoded_size,
+///     uint8_t decoded_buffer[BROTLI_ARRAY_PARAM(*decoded_size)]);
 typedef BrotliDecoderDecompressNative = Int32 Function(
     Pointer<Void>, Pointer<Void>, Pointer<Void>, Pointer<Void>);
 typedef BrotliDecoderDecompressDart = int Function(
     Pointer<Void>, Pointer<Void>, Pointer<Void>, Pointer<Void>);
 
+/// File: *decoder.h*
+/// BROTLI_DEC_API BrotliDecoderResult BrotliDecoderDecompressStream(
+///   BrotliDecoderState* state, size_t* available_in, const uint8_t** next_in,
+///   size_t* available_out, uint8_t** next_out, size_t* total_out);
 typedef BrotliDecoderDecompressStreamNative = Int32 Function(
     Pointer<BrotliDecoderState>,
     Pointer<IntPtr>,
@@ -58,14 +68,25 @@ typedef BrotliDecoderGetErrorCodeNative = Int32 Function(
 typedef BrotliDecoderGetErrorCodeDart = int Function(
     Pointer<BrotliDecoderState>);
 
-typedef BrotliDecoderHasMoreOutputNative = Int32 Function(Pointer<Void>);
-typedef BrotliDecoderHasMoreOutputDart = int Function(Pointer<Void>);
+/// File: *decode.h*
+/// BROTLI_DEC_API BROTLI_BOOL BrotliDecoderHasMoreOutput(
+///     const BrotliDecoderState* state);
+typedef BrotliDecoderHasMoreOutputNative = Int32 Function(
+    Pointer<BrotliDecoderState>);
+typedef BrotliDecoderHasMoreOutputDart = int Function(
+    Pointer<BrotliDecoderState>);
 
-typedef BrotliDecoderIsFinishedNative = Int32 Function(Pointer<Void>);
-typedef BrotliDecoderIsFinishedDart = int Function(Pointer<Void>);
+/// File: *decode.h*
+/// BROTLI_DEC_API BROTLI_BOOL BrotliDecoderIsFinished(
+///     const BrotliDecoderState* state);
+typedef BrotliDecoderIsFinishedNative = Int32 Function(
+    Pointer<BrotliDecoderState>);
+typedef BrotliDecoderIsFinishedDart = int Function(Pointer<BrotliDecoderState>);
 
-typedef BrotliDecoderIsUsedNative = Int32 Function(Pointer<Void>);
-typedef BrotliDecoderIsUsedDart = int Function(Pointer<Void>);
+/// File: *decode.h*
+/// BROTLI_DEC_API BROTLI_BOOL BrotliDecoderIsUsed(const BrotliDecoderState* state);
+typedef BrotliDecoderIsUsedNative = Int32 Function(Pointer<BrotliDecoderState>);
+typedef BrotliDecoderIsUsedDart = int Function(Pointer<BrotliDecoderState>);
 
 /// File: *decode.h*
 /// BROTLI_DEC_API BROTLI_BOOL BrotliDecoderSetParameter(
@@ -83,9 +104,17 @@ typedef BrotliDecoderTakeOutputNative = Pointer<Uint8> Function(
 typedef BrotliDecoderTakeOutputDart = Pointer<Uint8> Function(
     Pointer<BrotliDecoderState>, Pointer<IntPtr>);
 
+/// File: *decode.h*
+/// BROTLI_DEC_API uint32_t BrotliDecoderVersion(void);
 typedef BrotliDecoderVersionNative = Uint32 Function();
 typedef BrotliDecoderVersionDart = int Function();
 
+/// File: *encode.h*
+/// BROTLI_ENC_API BROTLI_BOOL BrotliEncoderCompress(
+///     int quality, int lgwin, BrotliEncoderMode mode, size_t input_size,
+///     const uint8_t input_buffer[BROTLI_ARRAY_PARAM(input_size)],
+///     size_t* encoded_size,
+///     uint8_t encoded_buffer[BROTLI_ARRAY_PARAM(*encoded_size)]);
 typedef BrotliEncoderCompressNative = Int32 Function(Int32, Int32, Int32,
     Pointer<Void>, Pointer<Void>, Pointer<Void>, Pointer<Void>);
 typedef BrotliEncoderCompressDart = int Function(
@@ -137,6 +166,8 @@ typedef BrotliEncoderIsFinishedNative = Int32 Function(
     Pointer<BrotliEncoderState>);
 typedef BrotliEncoderIsFinishedDart = int Function(Pointer<BrotliEncoderState>);
 
+/// File: *encode.h*
+/// BROTLI_ENC_API size_t BrotliEncoderMaxCompressedSize(size_t input_size);
 typedef BrotliEncoderMaxCompressedSizeNative = Pointer<Void> Function(
     Pointer<Void>);
 typedef BrotliEncoderMaxCompressedSizeDart = Pointer<Void> Function(

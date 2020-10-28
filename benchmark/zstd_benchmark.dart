@@ -3,12 +3,13 @@
 // a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:collection/collection.dart';
+import 'package:es_compression/framework.dart';
 import 'package:es_compression/zstd.dart';
+
+import 'utils/benchmark_utils.dart';
 
 /// An [ZstdEncodeBenchmark] calls [ZstdCodec.encode] on the incoming data
 /// supplied by [ZstdData].
@@ -21,9 +22,15 @@ class ZstdEncodeBenchmark extends BenchmarkBase {
   final ZstdCodec codec;
   List<int> encoded;
 
-  ZstdEncodeBenchmark(this.data)
-      : codec = ZstdCodec(level: -1),
-        super('zstd encode()');
+  ZstdEncodeBenchmark(this.data,
+      {ScoreEmitter emitter = const PrintEmitter(),
+      int inputBufferLength = CodecBufferHolder.autoLength,
+      int outputBufferLength = CodecBufferHolder.autoLength})
+      : codec = ZstdCodec(
+            level: -1,
+            inputBufferLength: inputBufferLength,
+            outputBufferLength: outputBufferLength),
+        super('zstd encode()', emitter: emitter);
 
   @override
   void warmup() {
@@ -52,9 +59,15 @@ class ZstdDecodeBenchmark extends BenchmarkBase {
   final ZstdCodec codec;
   List<int> decoded;
 
-  ZstdDecodeBenchmark(this.data)
-      : codec = ZstdCodec(level: -1),
-        super('zstd decode()');
+  ZstdDecodeBenchmark(this.data,
+      {ScoreEmitter emitter = const PrintEmitter(),
+      int inputBufferLength = CodecBufferHolder.autoLength,
+      int outputBufferLength = CodecBufferHolder.autoLength})
+      : codec = ZstdCodec(
+            level: -1,
+            inputBufferLength: inputBufferLength,
+            outputBufferLength: outputBufferLength),
+        super('zstd decode()', emitter: emitter);
 
   @override
   void warmup() {
@@ -80,8 +93,6 @@ class ZstdData {
   ZstdData(this.bytes);
 }
 
-const tutoneConstant = 8675309;
-
 /// Benchmark: Zstd Encoding/Decoding of seeded random data.
 ///
 /// Encoding/Decoding must actually work for the benchmark to be useful.
@@ -89,15 +100,30 @@ const tutoneConstant = 8675309;
 /// Verify this and report success (0) if good, failure (-1) if the bytes
 /// don't match.
 void main() {
-  // Generate 100MB of seeded pseudo-random bytes to encode/decode
-  final random = Random(tutoneConstant);
-  final randomBytes =
-      List<int>.generate(100 * 1024 * 1024, (i) => random.nextInt(256));
-  final data = ZstdData(Uint8List.fromList(randomBytes));
+  const dataLength = 1000 * 1024 * 1024;
+  print('generating $dataLength bytes of random data');
+  final bytes = generateRandomBytes(dataLength);
+  final emitter = CodecPerformanceEmitter(bytes.length);
 
-  ZstdEncodeBenchmark(data).report();
-  ZstdDecodeBenchmark(data).report();
+  print('Zstd encode/decode ${bytes.length} bytes of random data.');
+  var data = ZstdData(bytes);
+  ZstdEncodeBenchmark(data, emitter: emitter).report();
+  print(
+      'compression ratio: ${compressionRatio(bytes.length, data.bytes.length)}');
+  ZstdDecodeBenchmark(data, emitter: emitter).report();
+  var bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
+  if (bytesMatch != true) exit(-1);
 
-  final bytesMatch = const ListEquality<int>().equals(randomBytes, data.bytes);
-  exitCode = (bytesMatch == true) ? 0 : -1;
+  print('');
+  print('generating ${bytes.length} bytes of constant data');
+  bytes.fillRange(0, bytes.length, 1);
+
+  print('Zstd encode/decode ${bytes.length} bytes of constant data.');
+  data = ZstdData(bytes);
+  ZstdEncodeBenchmark(data, emitter: emitter).report();
+  print(
+      'compression ratio: ${compressionRatio(bytes.length, data.bytes.length)}');
+  ZstdDecodeBenchmark(data, emitter: emitter).report();
+  bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
+  if (bytesMatch != true) exit(-1);
 }

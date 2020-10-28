@@ -49,16 +49,24 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
   final bool optimizeForDecompression;
 
   /// Length in bytes of the buffer used for input data.
+  ///
+  /// Note: This is a preferred value. There are algorithm specific
+  /// constraints that may need to coerce this value to a required minimum or
+  /// maximum.
   final int inputBufferLength;
 
   /// Length in bytes of the buffer used for processed output data.
+  ///
+  /// Note: This is a preferred value. There are algorithm specific
+  /// constraints that may need to coerce this value to a required minimum or
+  /// maximum.
   final int outputBufferLength;
 
   /// Return the base binding version this binding code was developed for.
   Lz4Version get bindingVersion => Lz4Version(10902);
 
   /// Return the actual library version of the shared library.
-  Lz4Version get libraryVersion => Lz4Version(Lz4Dispatcher().versionNumber);
+  Lz4Version get libraryVersion => Lz4Version(Lz4Dispatcher.versionNumber);
 
   /// Construct an [Lz4Codec] that is configured with the following parameters.
   ///
@@ -110,9 +118,6 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
       outputBufferLength: outputBufferLength);
 }
 
-/// An instance of the default implementation of the [Lz4Codec].
-const Lz4Codec lz4 = Lz4Codec._default();
-
 /// Helper class to decode the version number returned from the lz4 FFI
 /// library.
 class Lz4Version {
@@ -133,3 +138,6 @@ class Lz4Version {
   @override
   String toString() => '$major.$minor.$patch';
 }
+
+/// An instance of the default implementation of the [Lz4Codec].
+const Lz4Codec lz4 = Lz4Codec._default();

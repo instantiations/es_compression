@@ -70,9 +70,17 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
   final bool ringBufferReallocation;
 
   /// Length in bytes of the buffer used for input data.
+  ///
+  /// Note: This is a preferred value. There are algorithm specific
+  /// constraints that may need to coerce this value to a required minimum or
+  /// maximum.
   final int inputBufferLength;
 
   /// Length in bytes of the buffer used for processed output data.
+  ///
+  /// Note: This is a preferred value. There are algorithm specific
+  /// constraints that may need to coerce this value to a required minimum or
+  /// maximum.
   final int outputBufferLength;
 
   /// Return the base binding version this binding code was developed for.
@@ -80,11 +88,11 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
 
   /// Return the encoder library version.
   BrotliVersion get encoderVersion =>
-      BrotliVersion(BrotliDispatcher().encoderVersionNumber);
+      BrotliVersion(BrotliDispatcher.encoderVersionNumber);
 
   /// Return the decoder library version.
   BrotliVersion get decoderVersion =>
-      BrotliVersion(BrotliDispatcher().decoderVersionNumber);
+      BrotliVersion(BrotliDispatcher.decoderVersionNumber);
 
   /// Construct an [BrotliCodec] that is configured with the following parameters.
   ///
@@ -106,6 +114,9 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
       this.outputBufferLength = CodecBufferHolder.autoLength,
       String libraryPath}) {
     validateBrotliLevel(level);
+    validateBrotliWindowBits(windowBits);
+    validateBrotliBlockBits(blockBits);
+    validateBrotliPostfixBits(postfixBits);
     if (libraryPath != null) BrotliLibrary.userDefinedLibraryPath = libraryPath;
   }
 
@@ -145,9 +156,6 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
       outputBufferLength: outputBufferLength);
 }
 
-/// An instance of the default implementation of the [BrotliCodec].
-const BrotliCodec brotli = BrotliCodec._default();
-
 /// Helper class to decode the version number returned from the brotli FFI
 /// library.
 class BrotliVersion {
@@ -168,3 +176,6 @@ class BrotliVersion {
   @override
   String toString() => '$major.$minor.$patch';
 }
+
+/// An instance of the default implementation of the [BrotliCodec].
+const BrotliCodec brotli = BrotliCodec._default();

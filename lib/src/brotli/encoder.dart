@@ -22,7 +22,7 @@ import 'options.dart';
 const defaultInputBufferLength = 64 * 1024;
 
 /// Default output buffer length
-const defaultOutputBufferLength = 64 * 1024;
+const defaultOutputBufferLength = defaultInputBufferLength;
 
 /// The [BrotliEncoder] encoder is used by [BrotliCodec] to brotli compress data.
 class BrotliEncoder extends CodecConverter {
@@ -101,6 +101,9 @@ class BrotliEncoder extends CodecConverter {
       this.inputBufferLength = CodecBufferHolder.autoLength,
       this.outputBufferLength = CodecBufferHolder.autoLength}) {
     validateBrotliLevel(level);
+    validateBrotliWindowBits(windowBits);
+    validateBrotliBlockBits(blockBits);
+    validateBrotliPostfixBits(postfixBits);
   }
 
   /// Start a chunked conversion using the options given to the [BrotliEncoder]
@@ -165,7 +168,7 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
   final List<int> parameters = List<int>(10);
 
   /// Native brotli context object
-  BrotliEncoderState _state;
+  BrotliEncoderState _brotliState;
 
   _BrotliCompressFilter(
       {int level,
@@ -231,22 +234,6 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
     return 0;
   }
 
-  /// Brotli flush implementation.
-  ///
-  /// Return the number of bytes flushed.
-  @override
-  int doFlush(NativeCodecBuffer outputBuffer) {
-    final result = _dispatcher.callBrotliEncoderCompressStream(
-        _state,
-        BrotliConstants.BROTLI_OPERATION_FLUSH,
-        0,
-        nullptr,
-        outputBuffer.unwrittenCount,
-        outputBuffer.writePtr);
-    final written = result[1];
-    return written;
-  }
-
   /// Perform an brotli encoding of [inputBuffer.unreadCount] bytes in
   /// and put the resulting encoded bytes into [outputBuffer] of length
   /// [outputBuffer.unwrittenCount].
@@ -256,7 +243,7 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
   _BrotliEncodingResult doProcessing(
       NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
     final result = _dispatcher.callBrotliEncoderCompressStream(
-        _state,
+        _brotliState,
         BrotliConstants.BROTLI_OPERATION_PROCESS,
         inputBuffer.unreadCount,
         inputBuffer.readPtr,
@@ -267,18 +254,39 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
     return _BrotliEncodingResult(read, written);
   }
 
+  /// Brotli flush implementation.
+  ///
+  /// Return the number of bytes flushed.
+  @override
+  int doFlush(NativeCodecBuffer outputBuffer) {
+    if (_dispatcher.callBrotliEncoderIsFinished(_brotliState)) return 0;
+    final result = _dispatcher.callBrotliEncoderCompressStream(
+        _brotliState,
+        BrotliConstants.BROTLI_OPERATION_FLUSH,
+        0,
+        nullptr,
+        outputBuffer.unwrittenCount,
+        outputBuffer.writePtr);
+    final written = result[1];
+    return written;
+  }
+
   /// Brotli finalize implementation.
   ///
   /// A [StateError] is thrown if writing out the brotli end stream fails.
   @override
   int doFinalize(NativeCodecBuffer outputBuffer) {
+    if (_dispatcher.callBrotliEncoderIsFinished(_brotliState)) return 0;
     final result = _dispatcher.callBrotliEncoderCompressStream(
-        _state,
+        _brotliState,
         BrotliConstants.BROTLI_OPERATION_FINISH,
         0,
         nullptr,
         outputBuffer.unwrittenCount,
         outputBuffer.writePtr);
+    if (!_dispatcher.callBrotliEncoderIsFinished(_brotliState)) {
+      throw StateError('Failure to finish the stream');
+    }
     state = CodecFilterState.finalized;
     final written = result[1];
     return written;
@@ -295,7 +303,7 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
   void _applyParameter(int parameter) {
     final value = parameters[parameter];
     if (value != null) {
-      _dispatcher.callBrotliEncoderSetParameter(_state, parameter, value);
+      _dispatcher.callBrotliEncoderSetParameter(_brotliState, parameter, value);
     }
   }
 
@@ -308,7 +316,7 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
     if (result == nullptr) {
       throw StateError('Could not allocate brotli encoder state');
     }
-    _state = result.ref;
+    _brotliState = result.ref;
     _applyParameter(BrotliConstants.BROTLI_PARAM_QUALITY);
     _applyParameter(BrotliConstants.BROTLI_PARAM_MODE);
     _applyParameter(BrotliConstants.BROTLI_PARAM_LGWIN);
@@ -325,11 +333,11 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
   ///
   /// A [StateError] is thrown if the context is invalid and can not be freed
   void _destroyState() {
-    if (_state != null) {
+    if (_brotliState != null) {
       try {
-        _dispatcher.callBrotliEncoderDestroyInstance(_state);
+        _dispatcher.callBrotliEncoderDestroyInstance(_brotliState);
       } finally {
-        _state = null;
+        _brotliState = null;
       }
     }
   }

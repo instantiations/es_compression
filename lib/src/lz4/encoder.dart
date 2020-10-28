@@ -20,10 +20,10 @@ import 'codec.dart';
 import 'options.dart';
 
 /// Default input buffer length
-const defaultInputBufferLength = 64 * 1024;
+const defaultInputBufferLength = 256 * 1024;
 
 /// Default output buffer length
-const defaultOutputBufferLength = CodecBufferHolder.autoLength;
+const defaultOutputBufferLength = defaultInputBufferLength;
 
 /// The [Lz4Encoder] encoder is used by [Lz4Codec] to lz4 compress data.
 class Lz4Encoder extends CodecConverter {
@@ -198,12 +198,18 @@ class _Lz4CompressFilter
       int start,
       int end) {
     if (!inputBufferHolder.isLengthSet()) {
-      inputBufferHolder.length = defaultInputBufferLength;
+      inputBufferHolder.length = outputBufferHolder.isLengthSet()
+          ? outputBufferHolder.length
+          : defaultInputBufferLength;
     }
-    outputBufferHolder.length = outputBufferHolder.isLengthSet()
-        ? max(outputBufferHolder.length,
-            _lz4CompressBound(inputBufferHolder.length))
-        : _lz4CompressBound(inputBufferHolder.length);
+
+    final minimumOut = _lz4CompressBound(inputBufferHolder.length);
+    outputBufferHolder.length = max(
+        minimumOut,
+        outputBufferHolder.isLengthSet()
+            ? outputBufferHolder.length
+            : defaultOutputBufferLength);
+
     _initContext();
     _writeHeader(outputBufferHolder.buffer);
     return 0;
@@ -291,7 +297,7 @@ class _Lz4CompressFilter
   }
 
   /// Return the maximum length of an lz4 block, given its uncompressed
-  /// [uncompressedLength].
+  /// [uncompressedLength] and header size.
   int _lz4CompressBound(int uncompressedLength) {
     return _dispatcher.callLz4FCompressBound(uncompressedLength, _preferences);
   }

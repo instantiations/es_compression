@@ -18,11 +18,23 @@ import 'types.dart';
 /// Impl: To cut down on FFI malloc/free and native heap fragmentation, the
 /// native src/dest size pointers are pre-allocated.
 class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
+  /// Answer the version number of the library.
+  static int get versionNumber {
+    try {
+      final dispatcher = Lz4Dispatcher();
+      final versionNumber = dispatcher._versionNumber;
+      dispatcher.release();
+      return versionNumber;
+    } catch (error) {
+      return 0;
+    }
+  }
+
   /// Library accessor to the Lz4 shared lib.
   Lz4Library library;
 
   /// Version number of the shared library.
-  int versionNumber;
+  int _versionNumber;
 
   /// For safety to prevent double free.
   bool released = false;
@@ -34,7 +46,7 @@ class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
   /// Construct the [Lz4Dispatcher].
   Lz4Dispatcher() {
     library = Lz4Library();
-    versionNumber = callLz4VersionNumber();
+    _versionNumber = callLz4VersionNumber();
   }
 
   /// Release native resources.
@@ -80,6 +92,11 @@ class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
   int callLz4FCompressBound(int srcSize, Lz4Preferences preferences) {
     return checkError(
         library.lz4FCompressBound(srcSize, preferences.addressOf));
+  }
+
+  int callLz4FCompressFrameBound(int srcSize, Lz4Preferences preferences) {
+    return checkError(
+        library.lz4FCompressFrameBound(srcSize, preferences.addressOf));
   }
 
   int callLz4FCompressUpdate(

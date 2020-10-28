@@ -20,16 +20,24 @@ class ZstdCodec extends Codec<List<int>, List<int>> {
   final int level;
 
   /// Length in bytes of the buffer used for input data.
+  ///
+  /// Note: This is a preferred value. There are algorithm specific
+  /// constraints that may need to coerce this value to a required minimum or
+  /// maximum.
   final int inputBufferLength;
 
   /// Length in bytes of the buffer used for processed output data.
+  ///
+  /// Note: This is a preferred value. There are algorithm specific
+  /// constraints that may need to coerce this value to a required minimum or
+  /// maximum.
   final int outputBufferLength;
 
   /// Return the base binding version this binding code was developed for.
   ZstdVersion get bindingVersion => ZstdVersion(10405);
 
   /// Return the actual library version of the shared library.
-  ZstdVersion get libraryVersion => ZstdVersion(ZstdDispatcher().versionNumber);
+  ZstdVersion get libraryVersion => ZstdVersion(ZstdDispatcher.versionNumber);
 
   /// Construct an [ZstdCodec] that is configured with the following parameters.
   ///
@@ -62,9 +70,6 @@ class ZstdCodec extends Codec<List<int>, List<int>> {
       outputBufferLength: outputBufferLength);
 }
 
-/// An instance of the default implementation of the [ZstdCodec].
-const ZstdCodec zstd = ZstdCodec._default();
-
 /// Helper class to decode the version number returned from the zstd FFI
 /// library.
 class ZstdVersion {
@@ -85,3 +90,6 @@ class ZstdVersion {
   @override
   String toString() => '$major.$minor.$patch';
 }
+
+/// An instance of the default implementation of the [ZstdCodec].
+const ZstdCodec zstd = ZstdCodec._default();

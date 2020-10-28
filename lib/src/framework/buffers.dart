@@ -315,6 +315,10 @@ abstract class CodecBuffer<T> {
     return list;
   }
 
+  /// Subclass Responsibility: Return [:true:] if buffer is available for use,
+  /// [:false:] otherwise
+  bool isAvailable();
+
   /// Subclass Responsibility: Free internal resources used by the buffer.
   void release();
 }

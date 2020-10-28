@@ -19,7 +19,7 @@ import 'ffi/types.dart';
 const defaultInputBufferLength = 64 * 1024;
 
 /// Default output buffer length
-const defaultOutputBufferLength = CodecBufferHolder.autoLength;
+const defaultOutputBufferLength = defaultInputBufferLength;
 
 /// The [BrotliDecoder] decoder is used by [BrotliCodec] to decompress brotli data.
 class BrotliDecoder extends CodecConverter {
@@ -72,11 +72,16 @@ class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
   final List<int> parameters = List(5);
 
   /// Native brotli state object
-  BrotliDecoderState _state;
+  BrotliDecoderState _brotliState;
 
   _BrotliDecompressFilter(
-      {bool ringBufferReallocation = true, bool largeWindow = false})
-      : super() {
+      {bool ringBufferReallocation = true,
+      bool largeWindow = false,
+      int inputBufferLength,
+      int outputBufferLength})
+      : super(
+            inputBufferLength: inputBufferLength,
+            outputBufferLength: outputBufferLength) {
     parameters[BrotliConstants
             .BROTLI_DECODER_PARAM_DISABLE_RING_BUFFER_REALLOCATION] =
         ringBufferReallocation == false
@@ -92,6 +97,13 @@ class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
   CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
       int length) {
     return NativeCodecBufferHolder(length);
+  }
+
+  /// Return [:true:] if there is more data to process, [:false:] otherwise.
+  @override
+  bool hasMoreToProcess() {
+    return super.hasMoreToProcess() ||
+        _dispatcher.callBrotliDecoderHasMoreOutput(_brotliState);
   }
 
   /// Init the filter
@@ -120,7 +132,7 @@ class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
   _BrotliDecodingResult doProcessing(
       NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
     final result = _dispatcher.callBrotliDecoderDecompressStream(
-        _state,
+        _brotliState,
         inputBuffer.unreadCount,
         inputBuffer.readPtr,
         outputBuffer.unwrittenCount,
@@ -138,6 +150,9 @@ class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
 
   @override
   int doFinalize(CodecBuffer outputBuffer) {
+    if(!_dispatcher.callBrotliDecoderIsFinished(_brotliState)) {
+      throw StateError('Failure to finish decoding');
+    }
     return 0;
   }
 
@@ -152,7 +167,7 @@ class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
   void _applyParameter(int parameter) {
     final value = parameters[parameter];
     if (value != null) {
-      _dispatcher.callBrotliDecoderSetParameter(_state, parameter, value);
+      _dispatcher.callBrotliDecoderSetParameter(_brotliState, parameter, value);
     }
   }
 
@@ -161,18 +176,18 @@ class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
     if (result == nullptr) {
       throw StateError('Could not allocate brotli decoder state');
     }
-    _state = result.ref;
+    _brotliState = result.ref;
     _applyParameter(
         BrotliConstants.BROTLI_DECODER_PARAM_DISABLE_RING_BUFFER_REALLOCATION);
     _applyParameter(BrotliConstants.BROTLI_DECODER_PARAM_LARGE_WINDOW);
   }
 
   void _destroyState() {
-    if (_state != null) {
+    if (_brotliState != null) {
       try {
-        _dispatcher.callBrotliDecoderDestroyInstance(_state);
+        _dispatcher.callBrotliDecoderDestroyInstance(_brotliState);
       } finally {
-        _state = null;
+        _brotliState = null;
       }
     }
   }

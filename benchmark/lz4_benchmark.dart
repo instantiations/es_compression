@@ -3,12 +3,13 @@
 // a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:collection/collection.dart';
+import 'package:es_compression/framework.dart';
 import 'package:es_compression/lz4.dart';
+
+import 'utils/benchmark_utils.dart';
 
 /// An [Lz4EncodeBenchmark] calls [Lz4Codec.encode] on the incoming data
 /// supplied by [Lz4Data].
@@ -21,9 +22,15 @@ class Lz4EncodeBenchmark extends BenchmarkBase {
   final Lz4Codec codec;
   List<int> encoded;
 
-  Lz4EncodeBenchmark(this.data)
-      : codec = Lz4Codec(level: -1),
-        super('lz4 encode()');
+  Lz4EncodeBenchmark(this.data,
+      {ScoreEmitter emitter = const PrintEmitter(),
+      int inputBufferLength = CodecBufferHolder.autoLength,
+      int outputBufferLength = CodecBufferHolder.autoLength})
+      : codec = Lz4Codec(
+            level: -1,
+            inputBufferLength: inputBufferLength,
+            outputBufferLength: outputBufferLength),
+        super('lz4 encode()', emitter: emitter);
 
   @override
   void warmup() {
@@ -52,9 +59,15 @@ class Lz4DecodeBenchmark extends BenchmarkBase {
   final Lz4Codec codec;
   List<int> decoded;
 
-  Lz4DecodeBenchmark(this.data)
-      : codec = Lz4Codec(level: -1),
-        super('lz4 decode()');
+  Lz4DecodeBenchmark(this.data,
+      {ScoreEmitter emitter = const PrintEmitter(),
+      int inputBufferLength = CodecBufferHolder.autoLength,
+      int outputBufferLength = CodecBufferHolder.autoLength})
+      : codec = Lz4Codec(
+            level: -1,
+            inputBufferLength: inputBufferLength,
+            outputBufferLength: outputBufferLength),
+        super('lz4 decode()', emitter: emitter);
 
   @override
   void warmup() {
@@ -80,8 +93,6 @@ class Lz4Data {
   Lz4Data(this.bytes);
 }
 
-const tutoneConstant = 8675309;
-
 /// Benchmark: Lz4 Encoding/Decoding of seeded random data.
 ///
 /// Encoding/Decoding must actually work for the benchmark to be useful.
@@ -89,15 +100,30 @@ const tutoneConstant = 8675309;
 /// Verify this and report success (0) if good, failure (-1) if the bytes
 /// don't match.
 void main() {
-  // Generate 100MB of seeded pseudo-random bytes to encode/decode
-  final random = Random(tutoneConstant);
-  final randomBytes =
-      List<int>.generate(100 * 1024 * 1024, (i) => random.nextInt(256));
-  final data = Lz4Data(Uint8List.fromList(randomBytes));
+  const dataLength = 1000 * 1024 * 1024;
+  print('generating $dataLength bytes of random data');
+  final bytes = generateRandomBytes(dataLength);
+  final emitter = CodecPerformanceEmitter(bytes.length);
 
-  Lz4EncodeBenchmark(data).report();
-  Lz4DecodeBenchmark(data).report();
+  print('Lz4 encode/decode ${bytes.length} bytes of random data.');
+  var data = Lz4Data(bytes);
+  Lz4EncodeBenchmark(data, emitter: emitter).report();
+  print(
+      'compression ratio: ${compressionRatio(bytes.length, data.bytes.length)}');
+  Lz4DecodeBenchmark(data, emitter: emitter).report();
+  var bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
+  if (bytesMatch != true) exit(-1);
 
-  final bytesMatch = const ListEquality<int>().equals(randomBytes, data.bytes);
-  exitCode = (bytesMatch == true) ? 0 : -1;
+  print('');
+  print('generating ${bytes.length} bytes of constant data');
+  bytes.fillRange(0, bytes.length, 1);
+
+  print('Lz4 encode/decode ${bytes.length} bytes of constant data.');
+  data = Lz4Data(bytes);
+  Lz4EncodeBenchmark(data, emitter: emitter).report();
+  print(
+      'compression ratio: ${compressionRatio(bytes.length, data.bytes.length)}');
+  Lz4DecodeBenchmark(data, emitter: emitter).report();
+  bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
+  if (bytesMatch != true) exit(-1);
 }

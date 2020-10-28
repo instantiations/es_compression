@@ -16,7 +16,7 @@ import '../buffers.dart';
 /// using Dart's ffi framework..
 class NativeCodecBuffer extends CodecBuffer<Pointer<Uint8>> {
   /// References the buffer to the native bytes.
-  final Pointer<Uint8> _bytes;
+  Pointer<Uint8> _bytes;
 
   /// Constructs a buffer that allocates [length] bytes from the native OS-heap.
   NativeCodecBuffer(int length)
@@ -61,10 +61,19 @@ class NativeCodecBuffer extends CodecBuffer<Pointer<Uint8>> {
   @override
   void basicNextPut(int byte) => basePtr[writeCount++] = byte;
 
+  /// Native buffer is available if native bytes have not been freed.
+  @override
+  bool isAvailable() {
+    return _bytes != null;
+  }
+
   /// Free internal resources used by the buffer.
   @override
   void release() {
-    if (_bytes != null) ffi.free(_bytes);
+    if (_bytes != null) {
+      ffi.free(_bytes);
+      _bytes = null;
+    }
   }
 }
 

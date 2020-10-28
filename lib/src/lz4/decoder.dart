@@ -19,10 +19,10 @@ import 'ffi/types.dart';
 import 'codec.dart';
 
 /// Default input buffer length
-const defaultInputBufferLength = 64 * 1024;
+const defaultInputBufferLength = 256 * 1024;
 
 /// Default output buffer length
-const defaultOutputBufferLength = CodecBufferHolder.autoLength;
+const defaultOutputBufferLength = defaultInputBufferLength * 2;
 
 /// The [Lz4Decoder] decoder is used by [Lz4Codec] to decompress lz4 data.
 class Lz4Decoder extends CodecConverter {
@@ -98,14 +98,20 @@ class _Lz4DecompressFilter
       int start,
       int end) {
     _initContext();
+
     inputBufferHolder.length = inputBufferHolder.isLengthSet()
         ? max(inputBufferHolder.length, Lz4Constants.LZ4F_HEADER_SIZE_MAX)
         : defaultInputBufferLength;
+
     final numBytes = inputBufferHolder.buffer.nextPutAll(bytes, start, end);
     if (numBytes > 0) _readFrameInfo(inputBufferHolder.buffer);
-    outputBufferHolder.length = outputBufferHolder.isLengthSet()
-        ? max(outputBufferHolder.length, _frameInfo.blockSize)
-        : _frameInfo.blockSize;
+
+    outputBufferHolder.length = max(
+        _frameInfo.blockSize,
+        outputBufferHolder.isLengthSet()
+            ? outputBufferHolder.length
+            : max(defaultOutputBufferLength, inputBufferHolder.length));
+
     return numBytes;
   }
 

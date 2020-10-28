@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 
@@ -7,7 +8,8 @@ const tutoneConstant = 8675309;
 /// Return a [List] of [length] random bytes
 List<int> generateRandomBytes(int length) {
   final random = Random(tutoneConstant);
-  return List<int>.generate(length, (i) => random.nextInt(256));
+  final list = List<int>.generate(length, (i) => random.nextInt(256));
+  return Uint8List.fromList(list);
 }
 
 /// Verify elements match in [list1] and [list2]

@@ -6,31 +6,27 @@ import 'dart:io';
 
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:collection/collection.dart';
-import 'package:es_compression/brotli.dart';
 import 'package:es_compression/framework.dart';
 
 import 'utils/benchmark_utils.dart';
 
-/// An [BrotliEncodeBenchmark] calls [BrotliCodec.encode] on the incoming data
-/// supplied by [BrotliData].
+/// An [GZipEncodeBenchmark] calls [GZipCodec.encode] on the incoming data
+/// supplied by [GZipData].
 ///
 /// [warmup] is used to store of the encoded result.
-/// [teardown] is used to reassign [BrotliData.bytes] with the result from this
+/// [teardown] is used to reassign [GZipData.bytes] with the result from this
 /// codec.
-class BrotliEncodeBenchmark extends BenchmarkBase {
-  final BrotliData data;
-  final BrotliCodec codec;
+class GZipEncodeBenchmark extends BenchmarkBase {
+  final GZipData data;
+  final GZipCodec codec;
   List<int> encoded;
 
-  BrotliEncodeBenchmark(this.data,
+  GZipEncodeBenchmark(this.data,
       {ScoreEmitter emitter = const PrintEmitter(),
       int inputBufferLength = CodecBufferHolder.autoLength,
       int outputBufferLength = CodecBufferHolder.autoLength})
-      : codec = BrotliCodec(
-            level: 0,
-            inputBufferLength: inputBufferLength,
-            outputBufferLength: outputBufferLength),
-        super('brotli encode()', emitter: emitter);
+      : codec = GZipCodec(level: -1),
+        super('gzip encode()', emitter: emitter);
 
   @override
   void warmup() {
@@ -48,26 +44,23 @@ class BrotliEncodeBenchmark extends BenchmarkBase {
   }
 }
 
-/// An [BrotliDecodeBenchmark] calls [BrotliCodec.decode] on the incoming data
-/// supplied by [BrotliData].
+/// An [GZipDecodeBenchmark] calls [GZipCodec.decode] on the incoming data
+/// supplied by [GZipData].
 ///
 /// [warmup] is used to store of the decoded result.
-/// [teardown] is used to reassign [BrotliData.bytes] with the result from this
+/// [teardown] is used to reassign [GZipData.bytes] with the result from this
 /// codec.
-class BrotliDecodeBenchmark extends BenchmarkBase {
-  final BrotliData data;
-  final BrotliCodec codec;
+class GZipDecodeBenchmark extends BenchmarkBase {
+  final GZipData data;
+  final GZipCodec codec;
   List<int> decoded;
 
-  BrotliDecodeBenchmark(this.data,
+  GZipDecodeBenchmark(this.data,
       {ScoreEmitter emitter = const PrintEmitter(),
       int inputBufferLength = CodecBufferHolder.autoLength,
       int outputBufferLength = CodecBufferHolder.autoLength})
-      : codec = BrotliCodec(
-            level: 0,
-            inputBufferLength: inputBufferLength,
-            outputBufferLength: outputBufferLength),
-        super('brotli decode()', emitter: emitter);
+      : codec = GZipCodec(level: -1),
+        super('gzip decode()', emitter: emitter);
 
   @override
   void warmup() {
@@ -87,13 +80,14 @@ class BrotliDecodeBenchmark extends BenchmarkBase {
 
 /// Small single-slot container class to flow between benchmarks as data is
 /// transformed.
-class BrotliData {
+class GZipData {
   List<int> bytes;
 
-  BrotliData(this.bytes);
+  GZipData(this.bytes);
 }
 
-/// Benchmark: Brotli Encoding/Decoding of seeded random data.
+/// Benchmark: Dart-provided GZip Encoding/Decoding of seeded random data and
+/// constant data
 ///
 /// Encoding/Decoding must actually work for the benchmark to be useful.
 /// This means the final decoded bytes should match the original input.
@@ -105,12 +99,12 @@ void main() {
   final bytes = generateRandomBytes(dataLength);
   final emitter = CodecPerformanceEmitter(bytes.length);
 
-  print('Brotli encode/decode ${bytes.length} bytes of random data.');
-  var data = BrotliData(bytes);
-  BrotliEncodeBenchmark(data, emitter: emitter).report();
+  print('gzip encode/decode ${bytes.length} bytes of random data.');
+  var data = GZipData(bytes);
+  GZipEncodeBenchmark(data, emitter: emitter).report();
   print(
       'compression ratio: ${compressionRatio(bytes.length, data.bytes.length)}');
-  BrotliDecodeBenchmark(data, emitter: emitter).report();
+  GZipDecodeBenchmark(data, emitter: emitter).report();
   var bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
   if (bytesMatch != true) exit(-1);
 
@@ -118,12 +112,12 @@ void main() {
   print('generating ${bytes.length} bytes of constant data');
   bytes.fillRange(0, bytes.length, 1);
 
-  print('Brotli encode/decode ${bytes.length} bytes of constant data.');
-  data = BrotliData(bytes);
-  BrotliEncodeBenchmark(data, emitter: emitter).report();
+  print('gzip encode/decode ${bytes.length} bytes of constant data.');
+  data = GZipData(bytes);
+  GZipEncodeBenchmark(data, emitter: emitter).report();
   print(
       'compression ratio: ${compressionRatio(bytes.length, data.bytes.length)}');
-  BrotliDecodeBenchmark(data, emitter: emitter).report();
+  GZipDecodeBenchmark(data, emitter: emitter).report();
   bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
   if (bytesMatch != true) exit(-1);
 }
