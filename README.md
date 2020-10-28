@@ -159,6 +159,21 @@ See the comments for the mixin `OpenLibrary` in the [library loader];
 | `lz4`      | LZ4_LIBRARY_PATH      |
 | `zstd`     | ZSTD_LIBRARY_PATH     |
 
+#### Code Signing
+
+##### Windows
+Provided dlls are digitally signed with an MS authenticode certificate owned by [Instantiations, Inc].
+
+##### Linux
+*N/A*
+
+##### Mac
+Provided dylibs are not currently signed, and recent versions of OSX will refuse to load them unless you allow
+it from the *Security & Privacy* dialog.\
+The build scripts have been provided [blob_builder](tool/blob_builder) and gives you access to build and sign them
+yourself, if desired.\
+*Instantiations may sign the libraries in the future, and if so, it will be noted in the changelog and here.*
+
 ## Features and bugs
 Please file feature requests and bugs at the [issue tracker][tracker].\
 They will be reviewed and addressed on a best-effort basis by [Instantiations, Inc].
