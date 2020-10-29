@@ -182,3 +182,9 @@ They will be reviewed and addressed on a best-effort basis by [Instantiations, I
 [tracker]: https://github.com/instantiations/es_compression/issues
 [VAST Platform]: https://www.instantiations.com/products/vasmalltalk/index.html
 [Instantiations, Inc]: https://www.instantiations.com
+
+## About Us
+
+Since 1988, Instantiations has been building software to meet the diverse and evolutionary needs of our customers. We've now added Dart and Flutter to our toolbox.
+	
+For more information about our custom development or consulting services with Dart, Flutter, and other languages, please visit: https://www.instantiations.com/services/
