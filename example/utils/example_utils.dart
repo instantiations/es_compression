@@ -8,8 +8,11 @@ const tutoneConstant = 8675309;
 /// Return a [List] of [length] random bytes
 List<int> generateRandomBytes(int length) {
   final random = Random(tutoneConstant);
-  final list = List<int>.generate(length, (i) => random.nextInt(256));
-  return Uint8List.fromList(list);
+  final list = Uint8List(length);
+  for (var i = 0; i < length; i++) {
+    list[i] = random.nextInt(256);
+  }
+  return list;
 }
 
 /// Verify elements match in [list1] and [list2]

@@ -116,9 +116,9 @@ typedef BrotliDecoderVersionDart = int Function();
 ///     size_t* encoded_size,
 ///     uint8_t encoded_buffer[BROTLI_ARRAY_PARAM(*encoded_size)]);
 typedef BrotliEncoderCompressNative = Int32 Function(Int32, Int32, Int32,
-    Pointer<Void>, Pointer<Void>, Pointer<Void>, Pointer<Void>);
+    IntPtr, Pointer<Uint8>, Pointer<IntPtr>, Pointer<Uint8>);
 typedef BrotliEncoderCompressDart = int Function(
-    int, int, int, Pointer<Void>, Pointer<Void>, Pointer<Void>, Pointer<Void>);
+    int, int, int, int, Pointer<Uint8>, Pointer<IntPtr>, Pointer<Uint8>);
 
 /// File: *encode.h*
 /// BROTLI_ENC_API BROTLI_BOOL BrotliEncoderCompressStream(
@@ -168,10 +168,8 @@ typedef BrotliEncoderIsFinishedDart = int Function(Pointer<BrotliEncoderState>);
 
 /// File: *encode.h*
 /// BROTLI_ENC_API size_t BrotliEncoderMaxCompressedSize(size_t input_size);
-typedef BrotliEncoderMaxCompressedSizeNative = Pointer<Void> Function(
-    Pointer<Void>);
-typedef BrotliEncoderMaxCompressedSizeDart = Pointer<Void> Function(
-    Pointer<Void>);
+typedef BrotliEncoderMaxCompressedSizeNative = IntPtr Function(IntPtr);
+typedef BrotliEncoderMaxCompressedSizeDart = int Function(int);
 
 /// File: *encode.h*
 /// BROTLI_ENC_API BROTLI_BOOL BrotliEncoderSetParameter(

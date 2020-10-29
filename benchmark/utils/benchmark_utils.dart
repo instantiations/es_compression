@@ -24,14 +24,18 @@ class CodecPerformanceEmitter implements ScoreEmitter {
 /// Return generated pseudo-random bytes
 List<int> generateRandomBytes(int length) {
   final random = Random(tutoneConstant);
-  final list = List<int>.generate(length, (i) => random.nextInt(256));
-  return Uint8List.fromList(list);
+  final list = Uint8List(length);
+  for (var i = 0; i < length; i++) {
+    list[i] = random.nextInt(256);
+  }
+  return list;
 }
 
 /// Return bytes with a single value
 List<int> generateConstantBytes(int length) {
-  final list = List<int>.generate(length, (i) => 1);
-  return Uint8List.fromList(list);
+  final list = Uint8List(length);
+  list.fillRange(0, length, 1);
+  return list;
 }
 
 String compressionRatio(int uLength, int cLength) {

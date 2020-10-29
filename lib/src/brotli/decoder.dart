@@ -150,7 +150,7 @@ class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
 
   @override
   int doFinalize(CodecBuffer outputBuffer) {
-    if(!_dispatcher.callBrotliDecoderIsFinished(_brotliState)) {
+    if (!_dispatcher.callBrotliDecoderIsFinished(_brotliState)) {
       throw StateError('Failure to finish decoding');
     }
     return 0;

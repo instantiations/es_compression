@@ -9,27 +9,18 @@ import 'dart:typed_data';
 /// codec algorithms.
 ///
 /// # CodecBuffer<T>
-/// Type T is the "pointer" to the various memory locations in the buffer, such
-/// as the base, read and write ptr locations. T is usually [DartHeapPointer]
-/// from this library, or the ffi [Pointer] type. However, this can be user
-/// defined.
+/// Type [T] is the "pointer" to the various memory locations in the buffer,
+/// such as the base, read and write ptr locations. [T] is usually a
+/// [DartHeapPointer] from this library, or the ffi [Pointer] type.
+/// However, this can be user defined.
 ///
 /// # Writing:
 /// 0..[writeCount] contains the data that has been written to the buffer.
 /// The remaining amount is [unwrittenCount].
-/// For decoding buffers, data written will be the decoded bytes to process
-/// during encoding, or the decoded bytes during decoding.
-/// For encoding buffers, data written will be the encoded bytes that is
-/// output from the encoding routine, or the external input during decoding.
 ///
 /// # Reading:
 /// 0..[readCount] contains the data that has already been read in the buffer.
 /// The remaining amount is [unreadCount].
-/// For decoding buffers, read data is data that has been processed in the
-/// case of encoding, or bytes passed to the external output during decoding.
-/// For encoding buffers, data read will be the encoded bytes passed to
-/// the external output during encoding, or encoded data that has been
-/// processed in the case of decoding.
 ///
 /// The buffer is constantly being filled and flushed during usage by codecs.
 /// It internally keeps track of how many total bytes have been read and written

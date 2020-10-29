@@ -99,6 +99,12 @@ class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
         library.lz4FCompressFrameBound(srcSize, preferences.addressOf));
   }
 
+  int callLz4CompressFrame(Pointer<Uint8> dstBuffer, int dstCapacity,
+      Pointer<Uint8> srcBuffer, int srcSize, Lz4Preferences preferences) {
+    return checkError(library.lz4FCompressFrame(
+        dstBuffer, dstCapacity, srcBuffer, srcSize, preferences.addressOf));
+  }
+
   int callLz4FCompressUpdate(
       Lz4Cctx context,
       Pointer<Uint8> destBuffer,

@@ -100,7 +100,7 @@ class BrotliData {
 /// Verify this and report success (0) if good, failure (-1) if the bytes
 /// don't match.
 void main() {
-  const dataLength = 1000 * 1024 * 1024;
+  const dataLength = 50 * 1024 * 1024;
   print('generating $dataLength bytes of random data');
   final bytes = generateRandomBytes(dataLength);
   final emitter = CodecPerformanceEmitter(bytes.length);

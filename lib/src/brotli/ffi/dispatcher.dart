@@ -101,6 +101,10 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   void callBrotliEncoderDestroyInstance(BrotliEncoderState state) =>
       library.brotliEncoderDestroyInstance(state.addressOf);
 
+  int callBrotliEncoderMaxCompressedSize(int uncompressedSize) {
+    return library.brotliEncoderMaxCompressedSize(uncompressedSize);
+  }
+
   List<int> callBrotliEncoderCompressStream(
       BrotliEncoderState state,
       int op,
