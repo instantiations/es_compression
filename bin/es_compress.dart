@@ -26,41 +26,79 @@ const algorithms = {
 
 /// Compresses/Decompresses files using the [algorithms] available.
 ///
-/// Usage Example: Encode a file
-/// >dart es_compress.dart -e -i"inputFile.txt" -o"outputFile.lz4" -alz4 -l-1
+/// Usage Example: Lz4 compress *input.txt* to *output.lz4*
+/// > dart es_compress.dart -i"input.txt" -o"output.lz4"
 ///
-/// Or if the output file extension is the same name as the algorithm:
-/// >dart es_compress.dart -i"inputFile.txt" -o"outputFile.lz4" -l-1
+/// Usage Example: Zstd decompress *input.zstd* to *output.txt*
+/// > dart es_compress.dart -i"input.zstd" -o"output.txt"
 ///
-/// Usage Example: Decode a file
-/// >dart es_compress.dart -d -i"inputFile.lz4" -o"outputFile.txt" -alz4
-///
-/// Or if the input file extension is the same name as the algorithm:
-/// >dart es_compress.dart -i"inputFile.lz4" -o"outputFile.txt"
+/// Usage Example: Gzip compress *input.txt* to file with custom extension
+/// named *output.mygzip*. (User must require -e for encode and -a for algo
+/// selection)
+/// > dart es_compress.dart -e -a gzip -i"input.txt" -o"output.mygzip"
 ///
 /// Usage Example: Print help
-/// >dart es_compress.dart -h
+/// > dart es_compress.dart -h
 void main(List<String> arguments) {
   final argParser = _buildArgParser();
   final argResults = argParser.parse(arguments);
+  exitCode = 0;
 
   if (argResults.arguments.isEmpty || argResults[helpArg] as bool == true) {
     print(argParser.usage);
   } else {
+    // Read/Interpret arguments
     final algorithm =
         argResults[algorithmArg] as String ?? _guessAlgorithm(argResults);
-    final input = _toFile(argResults[inputFileArg]);
-    final output = _toFile(argResults[outputFileArg], mustExist: false);
     final level = argResults[levelArg] as String;
-    var encode = _shouldEncode(argResults);
-    final inputBytes = input.readAsBytesSync();
+    final encode = _shouldEncode(argResults);
     final codec = _selectCodec(algorithm, level);
     final coder = (encode == true) ? codec.encoder : codec.decoder;
-    final bytes = coder.convert(inputBytes);
-    output.writeAsBytesSync(bytes);
-  }
 
-  exitCode = 0;
+    // Open IO File Streams
+    final input = _toFile(argResults[inputFileArg]);
+    final output = _toFile(argResults[outputFileArg], mustExist: false);
+    final inputStream = input.openRead();
+    final outputSink = output.openWrite();
+    var numChunks = 0;
+
+    // Print the stats of the encode/decode
+    void _printStats(Stopwatch stopwatch) {
+      final inputLength = input.lengthSync();
+      final outputLength = output.lengthSync();
+      final uncompressedLength = encode ? inputLength : outputLength;
+      final compressedLength = encode ? outputLength : inputLength;
+      final elapsedTime = stopwatch.elapsed;
+      final speed =
+          (uncompressedLength / stopwatch.elapsedMilliseconds) ~/ 1000;
+      final ratio =
+          (uncompressedLength / compressedLength).toStringAsFixed(1) + ':1';
+      print('Stats:\n\tInput: $inputLength bytes split into $numChunks chunks'
+          '\n\tOutput: $outputLength bytes'
+          '\n\tTime: $elapsedTime'
+          '\n\tSpeed: $speed MB/sec'
+          '\n\tRatio: $ratio');
+    }
+
+    // Encode/Decode the input in chunks and write the results to the
+    // output file.
+    final stopwatch = Stopwatch()..start();
+    inputStream.transform(coder).listen((chunk) {
+      numChunks++;
+      outputSink.add(chunk);
+    }, onDone: () {
+      outputSink.close().then((Object f) {
+        stopwatch.stop();
+        print('Completed $algorithm ${encode ? 'encoding' : 'decoding'}');
+        _printStats(stopwatch);
+      });
+    }, onError: (Object e) {
+      outputSink.close().then((Object f) {
+        exitCode = -1;
+        print(e.toString());
+      });
+    }, cancelOnError: true);
+  }
 }
 
 /// Return true if encoding, false if decoding.
