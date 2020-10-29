@@ -32,7 +32,7 @@ install it using `pub global activate`:
 > pub global activate escompress
 ```
 
-Encode *input.txt* to *output.lz* using Lz4 compression at compression level 1:
+Encode *input.txt* to *output.lz4* using Lz4 compression at compression level 1:
 ```console
 > escompress -e -i"input.txt" -o"output.lz4" -alz4 -l1
 ```
