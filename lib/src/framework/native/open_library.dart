@@ -74,9 +74,8 @@ mixin OpenLibrary {
     if (envPath != null) return envPath;
 
     final libraryName = _libraryFileName();
-    final rootLibrary = 'package:es_compression/$moduleId.dart';
-    final packageUri =
-        cli.waitFor(Isolate.resolvePackageUri(Uri.parse(rootLibrary)));
+    final packageLibrary = 'package:es_compression/$moduleId.dart';
+    final packageUri = _resolvePackagedLibrary(packageLibrary);
     final blobs = packageUri?.resolve('src/$moduleId/blobs/');
     final filePath = blobs?.resolve(libraryName);
     if (filePath != null) return filePath.toFilePath();
@@ -86,6 +85,17 @@ mixin OpenLibrary {
     if (FileSystemEntity.typeSync(scriptBlobPath) !=
         FileSystemEntityType.notFound) return scriptBlobPath;
     return libraryName;
+  }
+
+  /// Resolve package-relative [packagePath] by converting it to a non-package
+  /// relative [Uri]
+  Uri _resolvePackagedLibrary(String packagePath) {
+    const timeoutSeconds = 5;
+    final libraryUri = Uri.parse(packagePath);
+    final packageUriFuture = Isolate.resolvePackageUri(libraryUri);
+    final packageUri = cli.waitFor(packageUriFuture,
+        timeout: const Duration(seconds: timeoutSeconds));
+    return packageUri;
   }
 
   /// Returns the absolute path of the shared library defined by the user-def
