@@ -37,8 +37,7 @@ class BrotliLibrary
   /// Internal constructor that opens the native shared library and resolves
   /// all the functions.
   BrotliLibrary._(String libraryPath) {
-    _libraryImpl =
-        libraryPath == null ? openLibrary() : openLibrary(path: libraryPath);
+    _libraryImpl = openLibrary(path: libraryPath);
     resolveFunctions(_libraryImpl);
   }
 }

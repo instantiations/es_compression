@@ -10,7 +10,7 @@ import 'package:test/test.dart';
 
 void main() {
   test('Test Lz4 Version Number', () {
-    final codec = Lz4Codec();
+    final codec = lz4;
     final bindingVersion = '1.9.2';
     expect(codec.bindingVersion.toString(), bindingVersion);
     expect(codec.libraryVersion.toString(), bindingVersion);

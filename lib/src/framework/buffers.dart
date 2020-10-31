@@ -5,6 +5,8 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:es_compression/framework.dart';
+
 /// An abstract implementation of a streamable buffer useful for implementing
 /// codec algorithms.
 ///
@@ -338,7 +340,7 @@ class CodecBufferHolder<T, CB extends CodecBuffer<T>> {
   int _length;
 
   /// Custom function which takes a length and answers a [CodecBuffer].
-  CB Function(int length) bufferBuilderFunc;
+  CB Function(int length) bufferBuilderFunc = (length) => null;
 
   /// Construct a new buffer holder with the specific length.
   CodecBufferHolder(this._length);

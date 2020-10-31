@@ -7,6 +7,10 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate' show Isolate;
 
+import 'package:es_compression/src/brotli/ffi/library.dart';
+import 'package:es_compression/src/lz4/ffi/library.dart';
+import 'package:es_compression/src/zstd/ffi/library.dart';
+
 /// Its expected that internal libraries are prefixed with es
 /// This is also referenced in CMakeLists.txt file in
 /// [blob_builder tool](tool/blob_builder/CMakeLists.txt)
@@ -15,27 +19,50 @@ const _esprefix = 'es';
 /// List of supported platforms.
 const Set<String> _supported = {'linux64', 'mac64', 'win64'};
 
-/// Provides the capability to locate and open the native shared libraries
+/// Provides the capability to locate and open native shared libraries
 /// according to the layout standards in the package.
 ///
-/// A [moduleId] is the only data that the mixer needs to provide in order to
-/// fully resolve the library to use on the filesystem.
+/// There are several mechanisms used to locate the shared libraries.
 ///
-/// The following standard is in place.
-/// Every compression algorithm is in its own subdirectory of lib/src.
-/// For example, the LZ4 implementation is in lib/src/lz4. The [moduleId] is the
-/// basename in this path, in this example *lz4*.
-/// There will exist a blobs subdirectory of the module or
-/// /lib/src/$moduleId/blobs in the example.
+/// **Prebuilt Libraries:** There is a library layout convention used for
+/// locating prebuilt shared libraries. This mixin requires a [moduleId], which
+/// is a [String] identifier used to fully resolve prebuilt library locations on
+/// the filesystem.
+///
+/// *Library layout convention:* The following convention is used for locating
+/// prebuilt shared libraries. Every compression library is defined in its own
+/// subdirectory of lib/src.
+/// For example, the LZ4 implementation is in *lib/src/lz4*. The [moduleId] is
+/// the basename in this path, in this example *lz4*. There will exist a *blobs*
+/// subdirectory of the module or */lib/src/lz4/blobs* in the example.
 /// The blobs directory will contain the shared libraries which have the name
 /// of the form es$moduleId_c-$os$bitness.$extension.
-/// In the case of lz4 on Win64, it is named *eslz4_c-win64.dll*
+/// In the case of lz4 on Win64, it is named *eslz4_c-win64.dll*.
 ///
-/// The user has the capability to inject an environment variable with either
-/// the location of the shared library, or a directory that should contain the
-/// shared library with the name using the rules defined above.
-/// This is done by providing the [moduleId]_LIBRARY_NAME envvar with the path
-/// to the shared library.
+/// **Environment Variable:** The user can also inject an environment variable
+/// that defines the location of the shared library, or a directory that
+/// contains the shared library with the name using the convention described
+/// above. This is done by providing [moduleId]_LIBRARY_NAME envvar with the
+/// path to the shared library. The [moduleId] should be uppercase.
+/// For example, lz4 would look for the envvar *LZ4_LIBRARY_NAME*.
+///
+/// **[openLibrary] path argument:** The [openLibrary] method accepts a *path*
+/// arguments that is expected to be the location of the shared library.
+/// If provided, all other shared library resolution procedures will be
+/// skipped. The included implementation libraries often pass these in via
+/// static variables the user can set:
+/// - [BrotliLibrary.userDefinedLibraryPath]
+/// - [Lz4Library.userDefinedLibraryPath]
+/// - [ZstdLibrary.userDefinedLibraryPath]
+///
+/// **Script Directory:** Check the directory that the script is running in
+/// and detect if there is a shared library file whose name conforms to the
+/// convention described above.
+///
+/// **Lookup Resolution:** As a last attempt to resolve, the name of the shared
+/// library (named according to the convention above) is passed directly to the
+/// [DynamicLibrary.open] function to be attempt resolution according the rules
+/// of the operating system.
 mixin OpenLibrary {
   /// Mixer Responsibility: Return the module id for path resolution.
   String get moduleId;
@@ -43,9 +70,7 @@ mixin OpenLibrary {
   /// Open the shared library whose path is resolved either by the supplied
   /// [path] or by the mixer [moduleId].
   ///
-  /// IOS Platform just assumes the process its resolvable by global symbols.
-  /// Android platform should have either [path] provided or must define the
-  /// [moduleId]_LIBRARY_NAME envvar with the path
+  /// IOS Platform just assumes the process is resolvable by global symbols.
   DynamicLibrary openLibrary({String path}) {
     return Platform.isIOS
         ? DynamicLibrary.process()
@@ -55,10 +80,6 @@ mixin OpenLibrary {
   /// Return a [String] describing the shared library path.
   ///
   /// First check if there is an environment variable defined for the module id.
-  /// If so, then check if the value represents a valid path and return if it
-  /// does.
-  /// For example, for the lz4 module, the environment variable would be named
-  /// LZ4_LIBRARY_PATH
   ///
   /// Next check for the library within the module package's blob folder.
   /// package:es_compression/lib/src/$moduleId/blobs/<shared library>.
@@ -75,7 +96,7 @@ mixin OpenLibrary {
 
     final libraryName = _libraryFileName();
     final packageLibrary = 'package:es_compression/$moduleId.dart';
-    final packageUri = _resolvePackagedLibrary(packageLibrary);
+    final packageUri = _resolvePackagedLibraryLocation(packageLibrary);
     final blobs = packageUri?.resolve('src/$moduleId/blobs/');
     final filePath = blobs?.resolve(libraryName);
     if (filePath != null) return filePath.toFilePath();
@@ -89,7 +110,7 @@ mixin OpenLibrary {
 
   /// Resolve package-relative [packagePath] by converting it to a non-package
   /// relative [Uri]
-  Uri _resolvePackagedLibrary(String packagePath) {
+  Uri _resolvePackagedLibraryLocation(String packagePath) {
     const timeoutSeconds = 5;
     final libraryUri = Uri.parse(packagePath);
     final packageUriFuture = Isolate.resolvePackageUri(libraryUri);

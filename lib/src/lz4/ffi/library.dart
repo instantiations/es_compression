@@ -38,8 +38,7 @@ class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
   /// Internal constructor that opens the native shared library and resolves
   /// all the functions.
   Lz4Library._(String libraryPath) {
-    _libraryImpl =
-        libraryPath == null ? openLibrary() : openLibrary(path: libraryPath);
+    _libraryImpl = openLibrary(path: libraryPath);
     resolveFunctions(_libraryImpl);
   }
 }

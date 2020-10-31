@@ -21,6 +21,7 @@ void doTest(String name, CodecBuffer Function(int length) newBuffer) {
     expect(buffer.totalReadCount, 0);
     expect(buffer.readCount, 0);
     expect(buffer.writeCount, 0);
+    expect(buffer.totalWriteCount, 0);
   });
 
   test('Test $name custom size', () {
@@ -29,6 +30,7 @@ void doTest(String name, CodecBuffer Function(int length) newBuffer) {
     expect(buffer.totalReadCount, 0);
     expect(buffer.readCount, 0);
     expect(buffer.writeCount, 0);
+    expect(buffer.totalWriteCount, 0);
   });
 
   test('Test $name allocation', () {
@@ -62,8 +64,10 @@ void doTest(String name, CodecBuffer Function(int length) newBuffer) {
     buffer = newBuffer(16384);
     expect(buffer.readCount, 0);
     expect(buffer.totalReadCount, 0);
+    expect(buffer.totalWriteCount, 0);
     buffer.incrementBytesWritten(10);
     expect(buffer.totalReadCount, 0);
+    expect(buffer.totalWriteCount, 10);
     expect(buffer.readCount, 0);
     expect(buffer.unreadCount, 10);
     buffer.incrementBytesRead(2);
@@ -86,6 +90,7 @@ void doTest(String name, CodecBuffer Function(int length) newBuffer) {
             e.message ==
                 'illegal attempt to read 10 bytes more than was written')));
     buffer.reset();
+    expect(buffer.totalWriteCount, 10);
     expect(buffer.totalReadCount, 10);
     buffer.incrementBytesWritten(buffer.unwrittenCount);
     buffer.incrementBytesRead(2);
@@ -143,15 +148,36 @@ void doTest(String name, CodecBuffer Function(int length) newBuffer) {
     for (var i in List<int>.generate(10, (i) => i)) {
       expect(buffer.nextPut(i), true);
     }
+    expect(() => buffer.nextPut(0, onEnd: () => throw StateError('onEnd')),
+        throwsStateError);
 
-    // Test next
-    buffer.reset();
+    // Test nextPutAll
+    buffer.reset(hard: true);
+    final nextPutAllList = List<int>.generate(10, (i) => i);
+    expect(buffer.nextPutAll(nextPutAllList), 10);
+    expect(buffer.isFull(), true);
+    expect(buffer.nextPutAll(nextPutAllList), 0);
+    buffer.reset(hard: true);
+
+    // Test peek
+    buffer.reset(hard: true);
     buffer.incrementBytesWritten(10);
     for (var i in List<int>.generate(10, (i) => i)) {
       expect(buffer.next(), i);
     }
     expect(buffer.next(), -1);
     expect(() => buffer.next(onEnd: () => throw StateError('onEnd')),
+        throwsStateError);
+
+    // Test next
+    buffer.reset();
+    buffer.incrementBytesWritten(10);
+    for (var i in List<int>.generate(10, (i) => i)) {
+      expect(buffer.peek(), i);
+      buffer.incrementBytesRead(1);
+    }
+    expect(buffer.peek(), -1);
+    expect(() => buffer.peek(onEnd: () => throw StateError('onEnd')),
         throwsStateError);
 
     // Test nextAll
@@ -186,6 +212,25 @@ void doTest(String name, CodecBuffer Function(int length) newBuffer) {
     expect(() => buffer.nextAll(-1), throwsRangeError);
     expect(buffer.readCount, 0);
     expect(buffer.writeCount, 10);
+    expect(buffer.writtenBytes(), List<int>.generate(10, (i) => i));
+    buffer.nextAll(buffer.unreadCount);
+    expect(buffer.readBytes(), List<int>.generate(10, (i) => i));
+  });
+
+  test('Test codec buffer holder', () {
+    final bufferHolder =
+        CodecBufferHolder<DartHeapPointer, DartCodecBuffer>(10);
+    expect(bufferHolder.length, 10);
+    bufferHolder.length = 20;
+    expect(bufferHolder.length, 20);
+    expect(bufferHolder.isLengthSet(), true);
+    expect(bufferHolder.isBufferSet(), false);
+    expect(bufferHolder.buffer == null, true);
+    bufferHolder.bufferBuilderFunc = (length) => DartCodecBuffer(length);
+    expect(bufferHolder.buffer is DartCodecBuffer, true);
+    expect(() => bufferHolder.length = 100, throwsStateError);
+    bufferHolder.release();
+    expect(bufferHolder.isBufferSet(), false);
   });
 
   tearDown(() {

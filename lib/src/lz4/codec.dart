@@ -8,8 +8,8 @@ import '../../framework.dart';
 import 'decoder.dart';
 import 'encoder.dart';
 import 'ffi/dispatcher.dart';
-import 'options.dart';
 import 'ffi/library.dart';
+import 'options.dart';
 
 /// The [Lz4Codec] encodes raw bytes to Lz4 compressed bytes and decodes Lz4
 /// compressed bytes to raw bytes using the Lz4 frame format
