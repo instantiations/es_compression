@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/instantiations/es_compression.svg?token=9nTaGMsgxFkfugqQqEZq&branch=master)](https://travis-ci.com/instantiations/es_compression)
+
 ## Description
 Compression framework for Dart providing FFI implementations for Brotli, Lz4, Zstd with ready-to-use prebuilt binaries
 for Win/Linux/Mac.

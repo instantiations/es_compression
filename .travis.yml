@@ -1,0 +1,22 @@
+language: dart
+
+dart:
+  - stable
+
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+
+    - os: windows
+
+    - os: osx
+      osx_image: xcode11.6
+
+install: pub get
+
+script: pub run test
+
+cache:
+  directories:
+  - $HOME/.pub-cache
