@@ -3,7 +3,8 @@ Compression framework for Dart providing FFI implementations for Brotli, Lz4, Zs
 for Win/Linux/Mac.
 
 This work is an inspired port of the *Unified Compression Framework* from the [VAST Platform] (VA Smalltalk) language
-and development environment.
+and development environment.\
+See the [Design Document](DESIGN.md) for detailed information on how this package was designed and implemented.
 
 Below is a simple example of what an encode/decode would look like:
 ```dart
@@ -32,24 +33,40 @@ install it using `pub global activate`:
 > pub global activate escompress
 ```
 
-Encode *input.txt* to *output.lz4* using Lz4 compression at compression level 1:
+### escompress
+`escompress` is a program that will encode/decode files using `brotli`, `gzip`, `lz4` or `zstd`.
+
+The user provides the input and output file names from the command line.\
+By default, the file extension of either the input or output file name is used to determine which algorithm and
+encode/decode mode to use.\
+The user can provide additional command line arguments to make these decisions explicitly.\
+Some examples are provided below.
+
+#### Examples
+
+Encode *input.txt* to *output.lz4* using Lz4 compression:
 ```console
-> escompress -e -i"input.txt" -o"output.lz4" -alz4 -l1
+> escompress -i"input.txt" -o"output.lz4"
+```
+
+Encode *input.txt* to *output.lz4* using Lz4 compression at compression level 3:
+```console
+> escompress -l 3 -i"input.txt" -o"output.lz4"
 ```
 
 Decode *input.brotli* to *output.txt* using Brotli compression:
 ```console
-> escompress -d -i"input.brotli" -o"output.txt" -abrotli
+> escompress -i"input.brotli" -o"output.txt"
 ```
 
-The program also will also guess the encode/decode context and algorithm based on the file extension of either the
-input or output.\
-If one of `brotli`, `gzip`, `lz4`, `zstd` is the input file extension, then it will attempt a decode using the
-algorithm defined by the file extension.\
-If it is the output file that contains one of the aforementioned extensions, then an encode will be attempted.\
-In the example below, the input will be lz4-encoded:
+Encode *input.txt* to *output.compressed* using Zstd compression:
 ```console
-> escompress -i"input.txt" -o"output.lz4"
+> escompress -e -a zstd -i"input.txt" -o"output.compressed"
+```
+
+Decode *input.compressed* to *output.txt* using GZip compression:
+```console
+> escompress -d -a gzip -i"input.compressed" -o"output.txt"
 ```
 
 Print help:
@@ -58,7 +75,8 @@ Print help:
 ```
 
 ## Examples
-In the `example` subdirectory, the following examples are provided to demonstrate usage of the converters and framework.
+In the `example` subdirectory, the following examples are provided to demonstrate usage of the converters and the
+framework.
 
 | Example                   | Description                                                                               |
 | ------------------------- | ----------------------------------------------------------------------------------------- |
@@ -95,6 +113,7 @@ and tradeoffs involved with parameters like buffer sizing.
 | Benchmark                 | Description                                                        |
 | ------------------------- | ------------------------------------------------------------------ |
 | `brotli_benchmark.dart`   | Benchmark encoding/decode of the Brotli FFI-based implementation   |
+| `gzip_benchmark.dart`     | Benchmark encoding/decode of the GZip implementation from the Dart SDK |
 | `lz4_benchmark.dart`      | Benchmark encoding/decode of the Lz4 FFI-based implementation      |
 | `zstd_benchmark.dart`     | Benchmark encoding/decode of the Zstd FFI-based implementation     |
 
