@@ -39,10 +39,10 @@ install it using `pub global activate`:
 ### escompress
 `escompress` is a program that will encode/decode files using `brotli`, `gzip`, `lz4` or `zstd`.
 
-The user provides the input and output file names from the command line.\
+The user provides the input and output file names from the command line.
 By default, the file extension of either the input or output file name is used to determine which algorithm and
-encode/decode mode to use.\
-The user can provide additional command line arguments to make these decisions explicitly.\
+encode/decode mode to use.
+The user can provide additional command line arguments to make these decisions explicitly.
 Some examples are provided below.
 
 #### Examples
@@ -132,11 +132,11 @@ In the `tool` subdirectory, the following tools are provided.
 [blob_builder](tool/blob_builder) is a `cmake`-based build generator which builds all the prebuilt shared libraries and
 copies them to their appropriate location in the dart library.
 
-The maintainers use this tool to update the prebuilt shared libraries.\
+The maintainers use this tool to update the prebuilt shared libraries.
 It can also be used to build custom versions of the various libraries by making adjustments to CMake variables that
 define the version level information.
 
-Prebuilt shared libraries for Win/Linux/Mac are provided in the `blob` directory for each FFI codec implementation.\
+Prebuilt shared libraries for Win/Linux/Mac are provided in the `blob` directory for each FFI codec implementation.
 The distributed shared libs for a codec named *xxx* is expected to be located in `lib/src/xxx/blobs`.
 
 There are instructions in the main [CMakeLists.txt](tool/blob_builder/CMakeLists.txt) file that describe how to run
@@ -144,8 +144,7 @@ the tool.
 
 ## Framework
 Initial codecs provided by this library use FFI-based implementations. However, the framework easily allows for pure
-dart implementations for use within a web context.\
-[rle_example.dart](example/rle_example.dart) shows a simple example of how to accomplish this.
+dart implementations for use within a web context. [rle_example.dart](example/rle_example.dart) shows a simple example of how to accomplish this.
 
 The `GZipCodec` from `dart:io` served as a great starting point for understanding how to put the VAST Platform framework
 abstractions in terms of Dart codecs, converters, filters, sinks.
@@ -158,9 +157,9 @@ The major compression framework abstractions are:
 or [dart](lib/src/framework/dart/buffers.dart) heap bytes.
 
 ### OS Shared Libraries
-FFI-based implementations will need access to the low-level shared libraries (i.e. .dll, .so, .dylib).\
-Prebuilt shared libraries for Win/Linux/Mac are provided in the `blob` directory for each FFI codec implementation.\
-The distributed shared libs for a codec named *'xxx'* is expected to be located in `lib/src/xxx/blobs` by default.\
+FFI-based implementations will need access to the low-level shared libraries (i.e. .dll, .so, .dylib).
+Prebuilt shared libraries for Win/Linux/Mac are provided in the `blob` directory for each FFI codec implementation.
+The distributed shared libs for a codec named *'xxx'* is expected to be located in `lib/src/xxx/blobs` by default.
 A flexible [library loader] exists that allows these locations to be customized.
 
 #### Codec Configuration
@@ -171,8 +170,8 @@ final codec = ZstdCodec(libraryPath: '/path/to/shared/library.so');
 ```
 
 #### Environment Variables
-An environment variable can be defined that provides the path to the shared library.\
-This is either the path to the shared library file or the directory which contains it.\
+An environment variable can be defined that provides the path to the shared library.
+This is either the path to the shared library file or the directory which contains it.
 See the comments for the mixin `OpenLibrary` in the [library loader];
 
 | Codec      | Environment Variable  |
@@ -191,15 +190,16 @@ Provided dlls are digitally signed with an MS authenticode certificate owned by 
 
 ##### Mac
 Provided dylibs are not currently signed, and recent versions of OSX will refuse to load them unless you allow
-it from the *Security & Privacy* dialog.\
+it from the *Security & Privacy* dialog.
 
 The build scripts have been provided [blob_builder](tool/blob_builder) and gives you access to build and sign them
-yourself, if desired.\
+yourself, if desired.
 
 *Instantiations may sign the libraries in the future, and if so, it will be noted in the changelog and here.*
 
 ## Features and bugs
-Please file feature requests and bugs at the [issue tracker][tracker].\
+Please file feature requests and bugs at the [issue tracker][tracker].
+
 They will be reviewed and addressed on a best-effort basis by [Instantiations, Inc].
 
 [library loader]: lib/src/framework/native/open_library.dart
