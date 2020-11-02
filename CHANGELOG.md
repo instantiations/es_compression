@@ -1,4 +1,4 @@
-## 0.1.0
+## 0.9.0
 
 - Initial development release, created by Seth Berman [Instantiations, Inc](https://www.instantiations.com).
 - Implemented general codec framework.
@@ -35,3 +35,5 @@
 - Implemented [escompress](bin/es_compress.dart) binary script with gzip, lz4, zstd, brotli integration
 - Implemented [Compression framework examples](example/rle_example.dart)
 - Implemented version objects for each codec that allow the user to easily see what library was bound to.
+- Implemented tests for [escompress](bin/es_compress.dart), [examples](example) and [benchmarks](benchmark)
+- Produced initial [design doc](DESIGN.md) and experience report

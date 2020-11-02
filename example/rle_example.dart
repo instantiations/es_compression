@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:es_compression/framework.dart';
+import 'package:meta/meta.dart';
 
 import 'utils/example_utils.dart';
 
@@ -26,30 +27,35 @@ import 'utils/example_utils.dart';
 ///
 /// The [exitCode] of this script is 0 if the decoded bytes match the original,
 /// otherwise the [exitCode] is -1.
-void main() {
+Future<void> main() async {
+  exitCode = await runRleExample();
+}
+
+/// Rle Example which answers 0 on success, -1 on error
+@visibleForTesting
+Future<int> runRleExample() async {
   final bytes = utf8.encode('abbcccddddeeeeefffffffffff');
 
   // One-shot encode/decode
   final encoded = runLengthCodec.encode(bytes);
   verifyEquality(utf8.encode('1a2b3c4d5e9f2f'), encoded,
       header: 'Verify encoding output');
-  final decoded = runLengthCodec.decode(encoded);
+  var decoded = runLengthCodec.decode(encoded);
   final oneShotResult = verifyEquality(bytes, decoded, header: 'One-shot: ');
 
   // Streaming encode/decode
   // Split bytes into 10 buckets
   final chunks = splitIntoChunks(bytes, 10);
   final randomStream = Stream.fromIterable(chunks);
-  randomStream
+  decoded = await randomStream
       .transform(runLengthCodec.encoder)
       .transform(runLengthCodec.decoder)
       .fold<List<int>>(<int>[], (buffer, data) {
     buffer.addAll(data);
     return buffer;
-  }).then((decoded) {
-    final streamResult = verifyEquality(bytes, decoded, header: 'Streaming: ');
-    exitCode = (oneShotResult == true && streamResult == true) ? 0 : -1;
   });
+  final streamResult = verifyEquality(bytes, decoded, header: 'Streaming: ');
+  return (oneShotResult == true && streamResult == true) ? 0 : -1;
 }
 
 /// An instance of the default implementation of the [RunLengthCodec].

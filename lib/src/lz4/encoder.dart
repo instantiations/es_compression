@@ -247,15 +247,15 @@ class _Lz4CompressFilter
   /// Only 1 round of finalization is required, put filter state into
   /// the finalized state.
   ///
-  /// A [StateError] is thrown if [outputBufferLength] is not of sufficient
+  /// A [FormatException] is thrown if [outputBufferLength] is not of sufficient
   /// length.
-  /// A [StateError] is thrown if writing out the lz4 trailer fails.
+  /// A [FormatException] is thrown if writing out the lz4 trailer fails.
   @override
   int doFinalize(NativeCodecBuffer outputBuffer) {
     final writeLength = outputBuffer.unwrittenCount;
     if (writeLength < 4 ||
         (_preferences.frameInfoContentChecksumFlag != 0 && writeLength < 8)) {
-      StateError(
+      FormatException(
           'buffer capacity is too small to properly finish the lz4 frame');
     }
     final numBytes = _dispatcher.callLz4FCompressEnd(
@@ -283,12 +283,12 @@ class _Lz4CompressFilter
 
   /// Write the lz4 frame header to the compressed buffer
   ///
-  /// A [StateError] is thrown if the encoding buffer is not big enough to
+  /// A [FormatException] is thrown if the encoding buffer is not big enough to
   /// hold at least the max size of an lz4 frame header
-  /// A [StateError] is thrown if the lz4 frame header could not be written
+  /// A [FormatException] is thrown if the lz4 frame header could not be written
   void _writeHeader(NativeCodecBuffer outputBuffer) {
     if (outputBuffer.unwrittenCount < Lz4Constants.LZ4F_HEADER_SIZE_MAX) {
-      StateError('buffer capacity < LZ4F_HEADER_SIZE_MAX '
+      FormatException('buffer capacity < LZ4F_HEADER_SIZE_MAX '
           '($Lz4Constants.LZ4F_HEADER_SIZE_MAX bytes)');
     }
     final numBytes = _dispatcher.callLz4FCompressBegin(

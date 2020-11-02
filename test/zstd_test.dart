@@ -4,8 +4,8 @@
 
 import 'dart:convert';
 
-import 'package:es_compression/zstd.dart';
 import 'package:collection/collection.dart';
+import 'package:es_compression/zstd.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -14,6 +14,10 @@ void main() {
     final bindingVersion = '1.4.5';
     expect(codec.bindingVersion.toString(), bindingVersion);
     expect(codec.libraryVersion.toString(), bindingVersion);
+  });
+
+  test('Test Bad Zstd Decode', () {
+    expect(zstd.decode(<int>[1, 2, 3, -2]), <int>[]);
   });
 
   test('Test Empty Zstd Encode/Decode', () {

@@ -4,8 +4,8 @@
 
 import 'dart:convert';
 
-import 'package:es_compression/brotli.dart';
 import 'package:collection/collection.dart';
+import 'package:es_compression/brotli.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -15,6 +15,10 @@ void main() {
     expect(codec.bindingVersion.toString(), bindingVersion);
     expect(codec.encoderVersion.toString(), bindingVersion);
     expect(codec.decoderVersion.toString(), bindingVersion);
+  });
+
+  test('Test Bad Brotli Decode', () {
+    expect(() => brotli.decode(<int>[1, 2, 3]), throwsFormatException);
   });
 
   test('Test Empty Brotli Encode/Decode', () {

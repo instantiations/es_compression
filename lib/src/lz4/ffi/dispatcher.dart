@@ -183,13 +183,13 @@ mixin Lz4DispatchErrorCheckerMixin {
   /// Dispatcher to make calls via FFI to lz4 shared library
   Lz4Dispatcher get dispatcher;
 
-  /// This function wraps all lz4 calls and throws a [StateError] if [code]
+  /// This function wraps all lz4 calls and throws a [FormatException] if [code]
   /// is an error code.
   int checkError(int code) {
     if (dispatcher.callLz4FIsError(code) != 0) {
       final errorNamePtr = dispatcher.callLz4FGetErrorName(code);
       final errorName = ffi.Utf8.fromUtf8(errorNamePtr);
-      throw StateError(errorName);
+      throw FormatException(errorName);
     } else {
       return code;
     }

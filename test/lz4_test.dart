@@ -4,8 +4,8 @@
 
 import 'dart:convert';
 
-import 'package:es_compression/lz4.dart';
 import 'package:collection/collection.dart';
+import 'package:es_compression/lz4.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -14,6 +14,10 @@ void main() {
     final bindingVersion = '1.9.2';
     expect(codec.bindingVersion.toString(), bindingVersion);
     expect(codec.libraryVersion.toString(), bindingVersion);
+  });
+
+  test('Test Bad Lz4 Decode', () {
+    expect(() => lz4.decode(<int>[1, 2, 3]), throwsFormatException);
   });
 
   test('Test Empty Lz4 Encode/Decode', () {

@@ -153,7 +153,7 @@ class _ZstdCompressFilter extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer,
 
   /// Zstd finalize implementation.
   ///
-  /// A [StateError] is thrown if writing out the zstd end stream fails.
+  /// A [FormatException] is thrown if writing out the zstd end stream fails.
   @override
   int doFinalize(NativeCodecBuffer outputBuffer) {
     final numBytes = _dispatcher.callZstdEndStream(
@@ -186,7 +186,7 @@ class _ZstdCompressFilter extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer,
 
   /// Free the native context
   ///
-  /// A [StateError] is thrown if the context is invalid and can not be freed
+  /// A [FormatException] is thrown if the context is invalid and can not be freed
   void _destroyCStream() {
     if (_cStream != null) {
       try {

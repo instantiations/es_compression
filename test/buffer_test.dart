@@ -50,12 +50,12 @@ void doTest(String name, CodecBuffer Function(int length) newBuffer) {
     expect(
         () => buffer.incrementBytesWritten(1),
         throwsA(predicate((Error e) =>
-            e is StateError &&
+            e is ArgumentError &&
             e.message == 'illegal attempt to write 1 byte past the buffer')));
     expect(
         () => buffer.incrementBytesWritten(10),
         throwsA(predicate((Error e) =>
-            e is StateError &&
+            e is ArgumentError &&
             e.message == 'illegal attempt to write 10 bytes past the buffer')));
     expect(buffer.writeCount, buffer.length);
   });
@@ -80,13 +80,13 @@ void doTest(String name, CodecBuffer Function(int length) newBuffer) {
     expect(
         () => buffer.incrementBytesRead(1),
         throwsA(predicate((Error e) =>
-            e is StateError &&
+            e is ArgumentError &&
             e.message ==
                 'illegal attempt to read 1 byte more than was written')));
     expect(
         () => buffer.incrementBytesRead(10),
         throwsA(predicate((Error e) =>
-            e is StateError &&
+            e is ArgumentError &&
             e.message ==
                 'illegal attempt to read 10 bytes more than was written')));
     buffer.reset();

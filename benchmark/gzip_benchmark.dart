@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:collection/collection.dart';
 import 'package:es_compression/framework.dart';
+import 'package:meta/meta.dart';
 
 import 'utils/benchmark_utils.dart';
 
@@ -86,38 +87,45 @@ class GZipData {
   GZipData(this.bytes);
 }
 
-/// Benchmark: Dart-provided GZip Encoding/Decoding of seeded random data and
-/// constant data
+/// Benchmark: GZip Encoding/Decoding of seeded random data.
 ///
 /// Encoding/Decoding must actually work for the benchmark to be useful.
 /// This means the final decoded bytes should match the original input.
 /// Verify this and report success (0) if good, failure (-1) if the bytes
 /// don't match.
-void main() {
-  const dataLength = 50 * 1024 * 1024;
-  print('generating $dataLength bytes of random data');
-  final bytes = generateRandomBytes(dataLength);
-  final emitter = CodecPerformanceEmitter(bytes.length);
+Future<void> main() async {
+  const dataLength = 50 * 1024 * 1024; // 50 MB;
+  exitCode = await runGZipBenchmark(dataLength);
+}
 
-  print('gzip encode/decode ${bytes.length} bytes of random data.');
-  var data = GZipData(bytes);
-  GZipEncodeBenchmark(data, emitter: emitter).report();
-  print(
-      'compression ratio: ${compressionRatio(bytes.length, data.bytes.length)}');
-  GZipDecodeBenchmark(data, emitter: emitter).report();
-  var bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
-  if (bytesMatch != true) exit(-1);
+/// GZip Benchmark which answers 0 on success, -1 on error
+@visibleForTesting
+Future<int> runGZipBenchmark(int dataLength) async {
+  return Future(() {
+    print('generating $dataLength bytes of random data');
+    final bytes = generateRandomBytes(dataLength);
+    final emitter = CodecPerformanceEmitter(bytes.length);
 
-  print('');
-  print('generating ${bytes.length} bytes of constant data');
-  bytes.fillRange(0, bytes.length, 1);
+    print('GZip encode/decode ${bytes.length} bytes of random data.');
+    var data = GZipData(bytes);
+    GZipEncodeBenchmark(data, emitter: emitter).report();
+    print(
+        'compression ratio: ${compressionRatio(bytes.length, data.bytes.length)}');
+    GZipDecodeBenchmark(data, emitter: emitter).report();
+    var bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
+    if (bytesMatch != true) return -1;
 
-  print('gzip encode/decode ${bytes.length} bytes of constant data.');
-  data = GZipData(bytes);
-  GZipEncodeBenchmark(data, emitter: emitter).report();
-  print(
-      'compression ratio: ${compressionRatio(bytes.length, data.bytes.length)}');
-  GZipDecodeBenchmark(data, emitter: emitter).report();
-  bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
-  if (bytesMatch != true) exit(-1);
+    print('');
+    print('generating ${bytes.length} bytes of constant data');
+    bytes.fillRange(0, bytes.length, 1);
+
+    print('GZip encode/decode ${bytes.length} bytes of constant data.');
+    data = GZipData(bytes);
+    GZipEncodeBenchmark(data, emitter: emitter).report();
+    print(
+        'compression ratio: ${compressionRatio(bytes.length, data.bytes.length)}');
+    GZipDecodeBenchmark(data, emitter: emitter).report();
+    bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
+    return (bytesMatch != true) ? -1 : 0;
+  });
 }

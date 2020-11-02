@@ -2,6 +2,7 @@
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -39,13 +40,15 @@ const algorithms = {
 ///
 /// Usage Example: Print help
 /// > dart es_compress.dart -h
-void main(List<String> arguments) {
+Future<int> main(List<String> arguments) async {
   final argParser = _buildArgParser();
   final argResults = argParser.parse(arguments);
+  Future<int> exited;
   exitCode = 0;
 
   if (argResults.arguments.isEmpty || argResults[helpArg] as bool == true) {
     print(argParser.usage);
+    exited = Future<int>.sync(() => 0);
   } else {
     // Read/Interpret arguments
     final algorithm =
@@ -83,7 +86,10 @@ void main(List<String> arguments) {
     // Encode/Decode the input in chunks and write the results to the
     // output file.
     final stopwatch = Stopwatch()..start();
-    inputStream.transform(coder).listen((chunk) {
+    final completer = Completer<int>();
+    exited = completer.future;
+    final stream = inputStream.transform(coder);
+    stream.listen((chunk) {
       numChunks++;
       outputSink.add(chunk);
     }, onDone: () {
@@ -91,14 +97,18 @@ void main(List<String> arguments) {
         stopwatch.stop();
         print('Completed $algorithm ${encode ? 'encoding' : 'decoding'}');
         _printStats(stopwatch);
+        completer.complete(0);
       });
     }, onError: (Object e) {
       outputSink.close().then((Object f) {
-        exitCode = -1;
         print(e.toString());
+        completer.complete(-1);
       });
     }, cancelOnError: true);
   }
+
+  exitCode = await exited;
+  return exitCode;
 }
 
 /// Return true if encoding, false if decoding.

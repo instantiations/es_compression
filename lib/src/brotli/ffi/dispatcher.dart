@@ -131,16 +131,16 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
     if (ret == BrotliConstants.BROTLI_FALSE) {
       switch (op) {
         case BrotliConstants.BROTLI_OPERATION_FINISH:
-          throw StateError(
+          throw FormatException(
               'BrotliEncoderCompressStream failure while finishing the stream');
         case BrotliConstants.BROTLI_OPERATION_FLUSH:
-          throw StateError(
+          throw FormatException(
               'BrotliEncoderCompressStream failure while flushing the stream');
         case BrotliConstants.BROTLI_OPERATION_PROCESS:
-          throw StateError(
+          throw FormatException(
               'BrotliEncoderCompressStream failure while processing the stream');
         default:
-          throw StateError('BrotliEncoderCompressStream failure');
+          throw FormatException('BrotliEncoderCompressStream failure');
       }
     }
   }
@@ -179,11 +179,11 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
     switch (result) {
       case BrotliConstants.BROTLI_DECODER_RESULT_SUCCESS:
         if (remainingIn > 0) {
-          throw StateError('$cFunctionName failed. Excessive input');
+          throw FormatException('$cFunctionName failed. Excessive input');
         }
         break;
       case BrotliConstants.BROTLI_DECODER_RESULT_ERROR:
-        throw StateError('$cFunctionName failed. error code: '
+        throw FormatException('$cFunctionName failed. error code: '
             '${callBrotliDecoderGetErrorCode(state)}');
         break;
       case BrotliConstants.BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT:
@@ -204,7 +204,7 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
     final ret =
         library.brotliDecoderSetParameter(state.addressOf, param, value);
     if (ret == BrotliConstants.BROTLI_FALSE) {
-      throw StateError('BrotliDecoderSetParameter failed');
+      throw ArgumentError('BrotliDecoderSetParameter failed');
     }
   }
 
@@ -213,7 +213,7 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
     final ret =
         library.brotliEncoderSetParameter(state.addressOf, param, value);
     if (ret == BrotliConstants.BROTLI_FALSE) {
-      throw StateError('BrotliEncoderSetParameter failed');
+      throw ArgumentError('BrotliEncoderSetParameter failed');
     }
   }
 
@@ -237,14 +237,14 @@ mixin BrotliDispatchErrorCheckerMixin {
   /// Dispatcher to make calls via FFI to brotli shared library
   BrotliDispatcher get dispatcher;
 
-  /// This function wraps brotli calls and throws a [StateError] if [code]
+  /// This function wraps brotli calls and throws a [FormatException] if [code]
   /// is an error code.
   int checkDecoderError(BrotliDecoderState state, int code) {
     if (code == BrotliConstants.BROTLI_DECODER_RESULT_ERROR) {
       final errorCode = dispatcher.callBrotliDecoderGetErrorCode(state);
       final errorNamePtr = dispatcher.callBrotliDecoderErrorString(errorCode);
       final errorName = ffi.Utf8.fromUtf8(errorNamePtr);
-      throw StateError(errorName);
+      throw FormatException(errorName);
     } else {
       return code;
     }

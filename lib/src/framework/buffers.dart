@@ -186,14 +186,14 @@ abstract class CodecBuffer<T> {
   /// Bumps the internal [readCount] pointer by an [amount].
   /// If [amount] is negative, a [RangeError] is thrown.
   /// If the additional offset by an [amount] would be > [writeCount],
-  /// a [StateError] is thrown.
+  /// a [ArgumentError] is thrown.
   void incrementBytesRead(int amount) {
     RangeError.checkNotNegative(amount);
     final nextRead = readCount + amount;
     if (nextRead > writeCount) {
       final overRead = nextRead - writeCount;
       final bytes = overRead == 1 ? 'byte' : 'bytes';
-      throw StateError(
+      throw ArgumentError(
           'illegal attempt to read $overRead $bytes more than was written');
     } else {
       readCount = nextRead;
@@ -205,14 +205,14 @@ abstract class CodecBuffer<T> {
   /// Bumps the internal [writeCount] pointer by an [amount].
   /// If [amount] is negative, a [RangeError] is thrown.
   /// If the additional write by an [amount] overflows
-  /// the buffer, a [StateError] is thrown.
+  /// the buffer, a [ArgumentError] is thrown.
   void incrementBytesWritten(int amount) {
     RangeError.checkNotNegative(amount);
     final nextWrite = writeCount + amount;
     if (nextWrite > length) {
       final overWritten = nextWrite - length;
       final bytes = overWritten == 1 ? 'byte' : 'bytes';
-      throw StateError(
+      throw ArgumentError(
           'illegal attempt to write $overWritten $bytes past the buffer');
     } else {
       writeCount = nextWrite;

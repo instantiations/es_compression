@@ -273,7 +273,7 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
 
   /// Brotli finalize implementation.
   ///
-  /// A [StateError] is thrown if writing out the brotli end stream fails.
+  /// A [FormatException] is thrown if writing out the brotli end stream fails.
   @override
   int doFinalize(NativeCodecBuffer outputBuffer) {
     if (_dispatcher.callBrotliEncoderIsFinished(_brotliState)) return 0;
@@ -285,7 +285,7 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
         outputBuffer.unwrittenCount,
         outputBuffer.writePtr);
     if (!_dispatcher.callBrotliEncoderIsFinished(_brotliState)) {
-      throw StateError('Failure to finish the stream');
+      throw FormatException('Failure to finish the stream');
     }
     state = CodecFilterState.finalized;
     final written = result[1];
@@ -330,8 +330,6 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
   }
 
   /// Free the native context
-  ///
-  /// A [StateError] is thrown if the context is invalid and can not be freed
   void _destroyState() {
     if (_brotliState != null) {
       try {

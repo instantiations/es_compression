@@ -155,13 +155,13 @@ mixin ZstdDispatchErrorCheckerMixin {
   /// Dispatcher to make calls via FFI to zstd shared library
   ZstdDispatcher get dispatcher;
 
-  /// This function wraps all zstd calls and throws a [StateError] if [code]
+  /// This function wraps all zstd calls and throws a [FormatException] if [code]
   /// is an error code.
   int checkError(int code) {
     if (dispatcher.callZstdIsError(code) != 0) {
       final errorNamePtr = dispatcher.callZstdGetErrorName(code);
       final errorName = ffi.Utf8.fromUtf8(errorNamePtr);
-      throw StateError(errorName);
+      throw FormatException(errorName);
     } else {
       return code;
     }
