@@ -55,8 +55,8 @@ VAST's FFI implementations to Dart. By the time we got to the third codec in thi
 was almost entirely auto-generated.
 
 ### Compression Framework
-When implementing compression schemes, one must implement the details of the compression algorithm.
-For it to be integrated and useful in practice, one must also implement...**everything else**.
+When implementing compression schemes, one must implement the details of the compression algorithm.\
+For it to be integrated and useful in practice, one must also implement...**everything else**.\
 The goal of the compression framework is to implement **"everything else"**.
 
 Specifically, for compression schemes an input is supplied, and the processing of that input produces a change
@@ -74,8 +74,8 @@ This is the fundamental motivation of the compression framework, to try and reli
 algorithm-independent considerations without sacrificing performance.
 
 #### Target Platforms
-Dart has a lot of targets. Win/Linux/Mac/Ios/Android/Web...
-Also several types of deployments. Executables, aot, snapshot, source...
+Dart has a lot of targets. Win/Linux/Mac/iOS/Android/Web...\
+Also several types of deployments. Executables, aot, snapshot, source...\
 **The compression framework should be useful in each of these contexts.**
 
 Especially with FFI-based codecs that interface with external shared libraries, there has to be a plan for how these
@@ -106,7 +106,7 @@ For FFI-based codecs, we want to minimize alloc/free of temporary buffers and re
 C functions.
 
 There are two types of buffers provided by the framework. Both are designed to be polymorphic with respect to each other:
-- A *native* buffer which is backed by bytes allocated from the native OS heap of the dart process.
+- A *native* buffer which is backed by bytes allocated from the native OS heap of the Dart process.
 - A *dart* buffer which is backed by bytes from Dart's managed heap.
 
 ##### Native
@@ -116,7 +116,7 @@ During processing, incoming data is copied to the writable portion of the input 
 A native pointer to this buffer is passed to the codec routines, along with a native pointer to the writable portion of
 the output buffer.
 
-As the output buffer is flushed, a dart heap-allocated copy of the buffered bytes is produced and passed on to
+As the output buffer is flushed, a Dart heap-allocated copy of the buffered bytes is produced and passed on to
 consumers.
 
 With this persistent double-buffer approach, there is a copy to get incoming data into the buffer and a copy to get
