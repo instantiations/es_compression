@@ -1,11 +1,11 @@
-# Design Document for 'es_compression'
+# Design Document for ES Compression
 This document provides the design and rationale for the components in this library, as well as background information
 for those that may be curious.
 
 We hope that it will be helpful information for codec implementors, as well as an interesting read for developers.
 
 ## Table Of Contents
-- [Design](#design)
+- [Design](#design-document-for-es-compression)
 - [Objective](#objective)
 - [Background](#background)
     - [Inspired-Port](#inspired-port)
@@ -107,7 +107,7 @@ C functions.
 
 There are two types of buffers provided by the framework. Both are designed to be polymorphic with respect to each other:
 - A *native* buffer which is backed by bytes allocated from the native OS heap of the Dart process.
-- A *dart* buffer which is backed by bytes from Dart's managed heap.
+- A *Dart* buffer which is backed by bytes from Dart's managed heap.
 
 ##### Native
 The *native* buffer is used by FFI-based codec implementations where bytes must be accessible within C Functions.
@@ -125,7 +125,7 @@ However, the buffers can be passed directly to C, as is. There isn't a need to a
 purpose of getting the data from each incoming invocation into a format suitable for passing to a C function.
 
 ###### One-Shot Algorithms
-At the time of this writing *(11/2/2020)*, a Dart managed byte object can not be passed directly to a C-Function via FFI.
+At the time of this writing *(NOV-02-2020)*, a Dart managed byte object can not be passed directly to a C-Function via FFI.
 In VAST, this is not the case, a *ByteArray* or *String* are both byte-shaped objects that the FFI engine knows about
 and can address just the byte contents of the object so it can be handed off to C.
 Furthermore, the memory-manager and FFI-call machinery itself ensure the contents will remain where they are for the
