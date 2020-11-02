@@ -1,4 +1,4 @@
-# Design
+# Design Document for 'es_compression'
 This document provides the design and rationale for the components in this library, as well as background information
 for those that may be curious.
 
