@@ -7,7 +7,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:es_compression/framework.dart';
-import 'package:meta/meta.dart';
 
 import 'utils/example_utils.dart';
 
@@ -27,13 +26,13 @@ import 'utils/example_utils.dart';
 ///
 /// The [exitCode] of this script is 0 if the decoded bytes match the original,
 /// otherwise the [exitCode] is -1.
-Future<void> main() async {
-  exitCode = await runRleExample();
+Future<int> main() async {
+  exitCode = await _runRleExample();
+  return exitCode;
 }
 
 /// Rle Example which answers 0 on success, -1 on error
-@visibleForTesting
-Future<int> runRleExample() async {
+Future<int> _runRleExample() async {
   final bytes = utf8.encode('abbcccddddeeeeefffffffffff');
 
   // One-shot encode/decode

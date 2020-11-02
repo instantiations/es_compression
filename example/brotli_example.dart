@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:es_compression/brotli.dart';
-import 'package:meta/meta.dart';
 
 import 'utils/example_utils.dart';
 
@@ -17,13 +16,13 @@ const level = 0;
 ///
 /// The [exitCode] of this script is 0 if the decoded bytes match the original,
 /// otherwise the [exitCode] is -1.
-Future<void> main() async {
-  exitCode = await runBrotliExample();
+Future<int> main() async {
+  exitCode = await _runBrotliExample();
+  return exitCode;
 }
 
 /// Brotli Example which answers 0 on success, -1 on error
-@visibleForTesting
-Future<int> runBrotliExample() async {
+Future<int> _runBrotliExample() async {
   final randomBytes = generateRandomBytes(randomByteCount);
   final codec = BrotliCodec(level: level);
 

@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:es_compression/zstd.dart';
-import 'package:meta/meta.dart';
 
 import 'utils/example_utils.dart';
 
@@ -17,13 +16,13 @@ const level = -1;
 ///
 /// The [exitCode] of this script is 0 if the decoded bytes match the original,
 /// otherwise the [exitCode] is -1.
-Future<void> main() async {
-  exitCode = await runZstdExample();
+Future<int> main() async {
+  exitCode = await _runZstdExample();
+  return exitCode;
 }
 
 /// Zstd Example which answers 0 on success, -1 on error
-@visibleForTesting
-Future<int> runZstdExample() async {
+Future<int> _runZstdExample() async {
   final randomBytes = generateRandomBytes(randomByteCount);
   final codec = ZstdCodec(level: level);
 

@@ -8,7 +8,6 @@ import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:collection/collection.dart';
 import 'package:es_compression/brotli.dart';
 import 'package:es_compression/framework.dart';
-import 'package:meta/meta.dart';
 
 import 'utils/benchmark_utils.dart';
 
@@ -100,14 +99,15 @@ class BrotliData {
 /// This means the final decoded bytes should match the original input.
 /// Verify this and report success (0) if good, failure (-1) if the bytes
 /// don't match.
-Future<void> main() async {
-  const dataLength = 50 * 1024 * 1024; // 50 MB;
-  exitCode = await runBrotliBenchmark(dataLength);
+Future<int> main(List<String> arguments) async {
+  final dataLength =
+      arguments.isEmpty ? 50 * 1024 * 1024 : int.parse(arguments.first);
+  exitCode = await _runBrotliBenchmark(dataLength);
+  return exitCode;
 }
 
 /// Brotli Benchmark which answers 0 on success, -1 on error
-@visibleForTesting
-Future<int> runBrotliBenchmark(int dataLength) async {
+Future<int> _runBrotliBenchmark(int dataLength) async {
   return Future(() {
     print('generating $dataLength bytes of random data');
     final bytes = generateRandomBytes(dataLength);

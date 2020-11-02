@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:es_compression/lz4.dart';
-import 'package:meta/meta.dart';
 
 import 'utils/example_utils.dart';
 
@@ -17,13 +16,13 @@ const level = -1;
 ///
 /// The [exitCode] of this script is 0 if the decoded bytes match the original,
 /// otherwise the [exitCode] is -1.
-Future<void> main() async {
-  exitCode = await runLz4Example();
+Future<int> main() async {
+  exitCode = await _runLz4Example();
+  return exitCode;
 }
 
 /// Lz4 Example which answers 0 on success, -1 on error
-@visibleForTesting
-Future<int> runLz4Example() async {
+Future<int> _runLz4Example() async {
   final randomBytes = generateRandomBytes(randomByteCount);
   final codec = Lz4Codec(level: level);
 
