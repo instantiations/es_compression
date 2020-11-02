@@ -92,14 +92,14 @@ The shared libraries are built using the [blob_builder](tool/blob_builder) from 
 This is a cmake-based build generator that will handle the building of prebuilt libraries for win/linux/mac.
 The tool will also install them in the appropriate locations within the package to make updating simple for the
 maintainers.
+
 The cmake project is based on the internal cmake project used to build the virtual machine and third-party
 libraries for the VAST Platform.
 
 #### Buffers
 The compression framework uses a double-buffered approach for managing incoming/outgoing data.
 One buffer collects up all incoming data until the buffer is full. The other buffer is used for storing processed
-outgoing data.
-The goal is to hand-off as much incoming data as possible to the codec routines so they can maximize the amount of
+outgoing data. The goal is to hand-off as much incoming data as possible to the codec routines so they can maximize the amount of
 outgoing data written to the output buffer.
 
 For FFI-based codecs, we want to minimize alloc/free of temporary buffers and reduce the total number of FFI calls to
@@ -112,8 +112,10 @@ There are two types of buffers provided by the framework. Both are designed to b
 ##### Native
 The *native* buffer is used by FFI-based codec implementations where bytes must be accessible within C Functions.
 During processing, incoming data is copied to the writable portion of the input buffer.
+
 A native pointer to this buffer is passed to the codec routines, along with a native pointer to the writable portion of
 the output buffer.
+
 As the output buffer is flushed, a dart heap-allocated copy of the buffered bytes is produced and passed on to
 consumers.
 
