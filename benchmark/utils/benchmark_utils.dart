@@ -16,8 +16,11 @@ class CodecPerformanceEmitter implements ScoreEmitter {
   @override
   void emit(String testName, double value) {
     final milliseconds = value / 1000;
-    final mbSec = (dataLength / milliseconds) ~/ 1000;
-    print('$testName(RunTime): ${milliseconds.round()} ms. $mbSec MB/sec');
+    final seconds = milliseconds / 1000;
+    final bytesPerSecond = seconds > 0 ? dataLength / seconds : 0;
+    final megabytesPerSecond = bytesPerSecond / 1048576;
+    print('$testName(RunTime): ${milliseconds.round()} '
+        'ms. ${megabytesPerSecond.toStringAsFixed(2)} MB/sec');
   }
 }
 

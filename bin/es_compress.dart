@@ -72,14 +72,17 @@ Future<int> main(List<String> arguments) async {
       final uncompressedLength = encode ? inputLength : outputLength;
       final compressedLength = encode ? outputLength : inputLength;
       final elapsedTime = stopwatch.elapsed;
-      final speed =
-          (uncompressedLength / stopwatch.elapsedMilliseconds) ~/ 1000;
+      final bytesPerSecond = elapsedTime.inSeconds > 0
+          ? uncompressedLength / elapsedTime.inSeconds
+          : 0;
+      final megabytesPerSecond = bytesPerSecond / 1048576;
+      final speed = megabytesPerSecond;
       final ratio =
           (uncompressedLength / compressedLength).toStringAsFixed(1) + ':1';
       print('Stats:\n\tInput: $inputLength bytes split into $numChunks chunks'
           '\n\tOutput: $outputLength bytes'
           '\n\tTime: $elapsedTime'
-          '\n\tSpeed: $speed MB/sec'
+          '\n\tSpeed: ${speed.toStringAsFixed(2)} MB/sec'
           '\n\tRatio: $ratio');
     }
 
