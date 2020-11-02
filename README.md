@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.com/instantiations/es_compression.svg?token=9nTaGMsgxFkfugqQqEZq&branch=master)](https://travis-ci.com/instantiations/es_compression)
 
+# ES Compression: A Compression Framework for Dart
+
 ## Description
 Compression framework for Dart providing FFI implementations for Brotli, Lz4, Zstd with ready-to-use prebuilt binaries
 for Win/Linux/Mac.
@@ -144,7 +146,7 @@ the tool.
 
 ## Framework
 Initial codecs provided by this library use FFI-based implementations. However, the framework easily allows for pure
-dart implementations for use within a web context. [rle_example.dart](example/rle_example.dart) shows a simple example of how to accomplish this.
+dart implementations for use within a front-end web context. [rle_example.dart](example/rle_example.dart) shows a simple example of how to accomplish this.
 
 The `GZipCodec` from `dart:io` served as a great starting point for understanding how to put the VAST Platform framework
 abstractions in terms of Dart codecs, converters, filters, sinks.
