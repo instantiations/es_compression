@@ -5,7 +5,8 @@ Compression framework for Dart providing FFI implementations for Brotli, Lz4, Zs
 for Win/Linux/Mac.
 
 This work is an inspired port of the *Unified Compression Framework* from the [VAST Platform] (VA Smalltalk) language
-and development environment.\
+and development environment. 
+
 See the [Design Document](DESIGN.md) for detailed information on how this package was designed and implemented.
 
 Below is a simple example of what an encode/decode would look like:
@@ -191,8 +192,10 @@ Provided dlls are digitally signed with an MS authenticode certificate owned by 
 ##### Mac
 Provided dylibs are not currently signed, and recent versions of OSX will refuse to load them unless you allow
 it from the *Security & Privacy* dialog.\
+
 The build scripts have been provided [blob_builder](tool/blob_builder) and gives you access to build and sign them
 yourself, if desired.\
+
 *Instantiations may sign the libraries in the future, and if so, it will be noted in the changelog and here.*
 
 ## Features and bugs
