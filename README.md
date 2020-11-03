@@ -1,3 +1,4 @@
+[![pub package](https://img.shields.io/pub/v/es_compression.svg)](https://pub.dartlang.org/packages/es_compression)
 [![Build Status](https://travis-ci.com/instantiations/es_compression.svg?token=9nTaGMsgxFkfugqQqEZq&branch=master)](https://travis-ci.com/instantiations/es_compression)
 
 # ES Compression: A Compression Framework for Dart
@@ -35,7 +36,7 @@ If you want to use escompress on the command line,
 install it using `pub global activate`:
 
 ```console
-> pub global activate escompress
+> pub global activate es_compression
 ```
 
 ### escompress
@@ -138,7 +139,7 @@ The maintainers use this tool to update the prebuilt shared libraries.
 It can also be used to build custom versions of the various libraries by making adjustments to CMake variables that
 define the version level information.
 
-Prebuilt shared libraries for Win/Linux/Mac are provided in the `blob` directory for each FFI codec implementation.
+Prebuilt shared libraries for Win/Linux/Mac are provided in the `blobs` directory for each FFI codec implementation.
 The distributed shared libs for a codec named *xxx* is expected to be located in `lib/src/xxx/blobs`.
 
 There are instructions in the main [CMakeLists.txt](tool/blob_builder/CMakeLists.txt) file that describe how to run
