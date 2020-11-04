@@ -1,3 +1,4 @@
+[![Language](https://img.shields.io/badge/language-Dart-blue.svg)](https://dart.dev)
 [![pub package](https://img.shields.io/pub/v/es_compression.svg)](https://pub.dartlang.org/packages/es_compression)
 [![Build Status](https://travis-ci.com/instantiations/es_compression.svg?token=9nTaGMsgxFkfugqQqEZq&branch=master)](https://travis-ci.com/instantiations/es_compression)
 
