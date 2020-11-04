@@ -9,14 +9,12 @@ import 'dart:math';
 import '../framework/buffers.dart';
 import '../framework/converters.dart';
 import '../framework/filters.dart';
-import '../framework/sinks.dart';
 import '../framework/native/buffers.dart';
-
+import '../framework/sinks.dart';
+import 'codec.dart';
 import 'ffi/constants.dart';
 import 'ffi/dispatcher.dart';
 import 'ffi/types.dart';
-
-import 'codec.dart';
 import 'options.dart';
 
 /// Default input buffer length

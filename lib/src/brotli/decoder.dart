@@ -8,9 +8,8 @@ import 'dart:ffi';
 import '../framework/buffers.dart';
 import '../framework/converters.dart';
 import '../framework/filters.dart';
-import '../framework/sinks.dart';
 import '../framework/native/buffers.dart';
-
+import '../framework/sinks.dart';
 import 'ffi/constants.dart';
 import 'ffi/dispatcher.dart';
 import 'ffi/types.dart';

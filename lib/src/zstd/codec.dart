@@ -9,8 +9,8 @@ import 'package:es_compression/src/zstd/ffi/dispatcher.dart';
 import '../../framework.dart';
 import 'decoder.dart';
 import 'encoder.dart';
-import 'options.dart';
 import 'ffi/library.dart';
+import 'options.dart';
 
 /// The [ZstdCodec] encodes/decodes raw bytes using the Zstd (ZStandard)
 /// algorithm.

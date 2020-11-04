@@ -7,10 +7,6 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate' show Isolate;
 
-import 'package:es_compression/src/brotli/ffi/library.dart';
-import 'package:es_compression/src/lz4/ffi/library.dart';
-import 'package:es_compression/src/zstd/ffi/library.dart';
-
 /// Its expected that internal libraries are prefixed with es
 /// This is also referenced in CMakeLists.txt file in
 /// [blob_builder tool](tool/blob_builder/CMakeLists.txt)

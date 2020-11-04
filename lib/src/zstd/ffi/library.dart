@@ -5,7 +5,6 @@
 import 'dart:ffi';
 
 import '../../framework/native/open_library.dart';
-
 import 'constants.dart';
 import 'functions.dart';
 import 'types.dart';

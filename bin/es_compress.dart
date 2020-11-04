@@ -7,8 +7,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:es_compression/lz4.dart';
 import 'package:es_compression/brotli.dart';
+import 'package:es_compression/lz4.dart';
 import 'package:es_compression/zstd.dart';
 
 const encodeArg = 'encode';

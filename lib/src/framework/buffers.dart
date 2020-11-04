@@ -5,8 +5,6 @@
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:es_compression/framework.dart';
-
 /// An abstract implementation of a streamable buffer useful for implementing
 /// codec algorithms.
 ///
