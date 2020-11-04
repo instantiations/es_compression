@@ -34,11 +34,8 @@ enum CodecFilterState {
 /// algorithms and direct the processing of data.
 ///
 /// Generics:
-/// The [CodecFilter] has both the [CodecBuffer] and the [CodecResult] as
-/// generic types.
 /// [P] defines the type to use for the [CodecBuffer]'s memory pointer.
 /// [CB] is the implementation type for an abstract [CodecBuffer] of type [P]
-/// [CR] is the implementation type for a [CodecResult]
 ///
 /// A [CodecFilter] contains two buffers.
 /// An buffer [_inputBuffer] to incoming bytes to process.
@@ -47,8 +44,7 @@ enum CodecFilterState {
 /// A [CodecFilter] also maintains a [state] which can help
 /// implementations know what part of the lifecycle the filter is in
 /// (i.e. processing vs closed)
-abstract class CodecFilter<P, CB extends CodecBuffer<P>,
-    CR extends CodecResult> {
+abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
   /// Buffer holder for the input buffer
   CodecBufferHolder<P, CB> _inputBufferHolder;
 
@@ -160,7 +156,7 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>,
   /// Perform a coder/decoder routine where the bytes from the incoming buffer
   /// are processed by the algorithm and the resulting processed bytes are
   /// placed in the output buffer
-  CR _codeOrDecode() {
+  CodecResult _codeOrDecode() {
     final result =
         doProcessing(_checkBuffer(_inputBuffer), _checkBuffer(_outputBuffer));
     if (result.adjustBufferCounts) {
@@ -294,7 +290,7 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>,
   ///
   /// Return a [CodecResult] describing the number of bytes read/written during
   /// the processing routine.
-  CR doProcessing(CB inputBuffer, CB outputBuffer);
+  CodecResult doProcessing(CB inputBuffer, CB outputBuffer);
 
   /// Subclass Responsibility: Perform algorithm-specific flush.
   ///
@@ -334,8 +330,6 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>,
 }
 
 /// Represents the result of encode/decode routines.
-///
-/// This is a generic type required by a [CodecFilter].
 class CodecResult {
   /// Number of bytes read by codec routine
   final int readCount;

@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:math';
 
+import 'package:es_compression/src/framework/native/filters.dart';
+
 import '../framework/buffers.dart';
 import '../framework/converters.dart';
 import '../framework/filters.dart';
@@ -42,6 +44,7 @@ class Lz4Decoder extends CodecConverter {
   }
 }
 
+/// Lz4 decoding sink internal implementation.
 class _Lz4DecoderSink extends CodecSink {
   _Lz4DecoderSink._(
       ByteConversionSink sink, int inputBufferLength, int outputBufferLength)
@@ -49,8 +52,8 @@ class _Lz4DecoderSink extends CodecSink {
             sink, _Lz4DecompressFilter(inputBufferLength, outputBufferLength));
 }
 
-class _Lz4DecompressFilter
-    extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer, _Lz4DecodingResult> {
+/// Internal filter that decompresses lz4 bytes.
+class _Lz4DecompressFilter extends NativeCodecFilterBase {
   /// Dispatcher to make calls via FFI to lz4 shared library
   final Lz4Dispatcher _dispatcher = Lz4Dispatcher();
 
@@ -69,12 +72,6 @@ class _Lz4DecompressFilter
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength) {
     _options = _dispatcher.library.newDecompressOptions();
-  }
-
-  @override
-  CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
-      int length) {
-    return NativeCodecBufferHolder(length);
   }
 
   /// Init the filter
@@ -113,8 +110,12 @@ class _Lz4DecompressFilter
     return numBytes;
   }
 
+  /// Perform decompression.
+  ///
+  /// Answer an [_Lz4DecodingResult] that store how much was read, written and
+  /// how many 'srcSize' bytes are expected for the next call.
   @override
-  _Lz4DecodingResult doProcessing(
+  CodecResult doProcessing(
       NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
     final result = _dispatcher.callLz4FDecompress(
         _ctx,
@@ -129,16 +130,7 @@ class _Lz4DecompressFilter
     return _Lz4DecodingResult(read, written, hint);
   }
 
-  @override
-  int doFlush(CodecBuffer outputBuffer) {
-    return 0;
-  }
-
-  @override
-  int doFinalize(CodecBuffer outputBuffer) {
-    return 0;
-  }
-
+  /// Free memory and release the dispatcher.
   @override
   void doClose() {
     _destroyContext();

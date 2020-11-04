@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:math';
 
+import 'package:es_compression/src/framework/native/filters.dart';
+
 import '../framework/buffers.dart';
 import '../framework/converters.dart';
 import '../framework/filters.dart';
@@ -104,7 +106,7 @@ class Lz4Encoder extends CodecConverter {
   }
 }
 
-/// LZ4 codec sink impl
+/// Lz4 encoding sink internal implementation.
 class _Lz4EncoderSink extends CodecSink {
   _Lz4EncoderSink._(
       ByteConversionSink sink,
@@ -133,8 +135,7 @@ class _Lz4EncoderSink extends CodecSink {
 
 /// This filter contains the implementation details for the usage of the native
 /// lz4 API bindings.
-class _Lz4CompressFilter
-    extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer, _Lz4EncodingResult> {
+class _Lz4CompressFilter extends NativeCodecFilterBase {
   /// Dispatcher to make calls via FFI to lz4 shared library
   final Lz4Dispatcher _dispatcher = Lz4Dispatcher();
 
@@ -147,6 +148,7 @@ class _Lz4CompressFilter
   /// Native lz4 compress options
   Lz4CompressOptions _options;
 
+  /// Construct the [_Lz4CompressFilter] with the optional parameters.
   _Lz4CompressFilter(
       {int level,
       bool fastAcceleration,
@@ -169,12 +171,6 @@ class _Lz4CompressFilter
         blockLinked: blockLinked,
         blockSize: blockSize,
         optimizeForCompression: optimizeForCompression);
-  }
-
-  @override
-  CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
-      int length) {
-    return NativeCodecBufferHolder(length);
   }
 
   /// Init the filter
@@ -226,9 +222,9 @@ class _Lz4CompressFilter
   /// and put the resulting encoded bytes into [outputBuffer] of length
   /// [outputBuffer.unwrittenCount].
   ///
-  /// Return an [_Lz4EncodingResult] which describes the amount read/write
+  /// Return an [CodecResult] which describes the amount read/write
   @override
-  _Lz4EncodingResult doProcessing(
+  CodecResult doProcessing(
       NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
     final writtenCount = _dispatcher.callLz4FCompressUpdate(
         _ctx,
@@ -237,7 +233,7 @@ class _Lz4CompressFilter
         inputBuffer.readPtr,
         inputBuffer.unreadCount,
         _options);
-    return _Lz4EncodingResult(inputBuffer.unreadCount, writtenCount);
+    return CodecResult(inputBuffer.unreadCount, writtenCount);
   }
 
   /// Lz4 finalize implementation.
@@ -353,10 +349,4 @@ CodecFilter _makeLz4CompressFilter(
       optimizeForCompression: optimizeForCompression,
       inputBufferLength: inputBufferLength,
       outputBufferLength: outputBufferLength);
-}
-
-/// Result object for an Lz4 Encoding operation
-class _Lz4EncodingResult extends CodecResult {
-  const _Lz4EncodingResult(int bytesRead, int bytesWritten)
-      : super(bytesRead, bytesWritten);
 }

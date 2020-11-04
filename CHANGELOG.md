@@ -1,3 +1,11 @@
+## 0.9.1
+
+- **(Breaking Change only for Codec Implementors)** Removed class generic type from `CodecFilter` class.
+- Created extendable base class for FFI-based codec filters: [NativeCodecFilterBase](lib/src/framework/native/filters.dart).
+- Created extendable base class for non-FFI codec filters: [DartCodecFilterBase](lib/src/framework/dart/filters.dart).
+- Refactored existing codec filters to subclass `NativeCodecFilterBase` and `DartCodecFilterBase`.
+- Fixed some minor issues with the [README](README.md).
+
 ## 0.9.0
 
 - Initial development release, created by Seth Berman [Instantiations, Inc](https://www.instantiations.com).

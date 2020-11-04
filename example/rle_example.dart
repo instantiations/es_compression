@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:es_compression/framework.dart';
+import 'package:es_compression/src/framework/dart/filters.dart';
 
 import 'utils/example_utils.dart';
 
@@ -84,25 +85,8 @@ class RunLengthEncoder extends CodecConverter {
 }
 
 /// Filter that encodes the incoming bytes using a Dart in-memory buffer.
-class RunLengthEncoderFilter
-    extends CodecFilter<DartHeapPointer, DartCodecBuffer, CodecResult> {
+class RunLengthEncoderFilter extends DartCodecFilterBase {
   int runLength = 1;
-
-  @override
-  CodecBufferHolder<DartHeapPointer, DartCodecBuffer> newBufferHolder(
-      int length) {
-    return DartCodecBufferHolder(length);
-  }
-
-  @override
-  int doInit(
-      CodecBufferHolder<DartHeapPointer, DartCodecBuffer> inputBufferHolder,
-      CodecBufferHolder<DartHeapPointer, DartCodecBuffer> outputBufferHolder,
-      List<int> bytes,
-      int start,
-      int end) {
-    return 0;
-  }
 
   @override
   CodecResult doProcessing(
@@ -126,21 +110,6 @@ class RunLengthEncoderFilter
     final written = outputBuffer.writeCount - writePos;
     return CodecResult(read, written, adjustBufferCounts: false);
   }
-
-  @override
-  int doFlush(DartCodecBuffer outputBuffer) {
-    return 0;
-  }
-
-  @override
-  int doFinalize(DartCodecBuffer outputBuffer) {
-    return 0;
-  }
-
-  @override
-  void doClose() {
-    // No action
-  }
 }
 
 /// Custom decoder that provides a [CodecSink] with the algorithm
@@ -156,26 +125,9 @@ class RunLengthDecoder extends CodecConverter {
 enum RleState { expecting_length, expecting_data }
 
 /// Filter that decodes the incoming bytes using a Dart in-memory buffer.
-class RunLengthDecoderFilter
-    extends CodecFilter<DartHeapPointer, DartCodecBuffer, CodecResult> {
+class RunLengthDecoderFilter extends DartCodecFilterBase {
   RleState _state = RleState.expecting_length;
   int runLength = 1;
-
-  @override
-  CodecBufferHolder<DartHeapPointer, DartCodecBuffer> newBufferHolder(
-      int length) {
-    return DartCodecBufferHolder(length);
-  }
-
-  @override
-  int doInit(
-      CodecBufferHolder<DartHeapPointer, DartCodecBuffer> inputBufferHolder,
-      CodecBufferHolder<DartHeapPointer, DartCodecBuffer> outputBufferHolder,
-      List<int> bytes,
-      int start,
-      int end) {
-    return 0;
-  }
 
   @override
   CodecResult doProcessing(
@@ -201,20 +153,5 @@ class RunLengthDecoderFilter
     final read = inputBuffer.readCount - readPos;
     final written = outputBuffer.writeCount - writePos;
     return CodecResult(read, written, adjustBufferCounts: false);
-  }
-
-  @override
-  int doFlush(DartCodecBuffer outputBuffer) {
-    return 0;
-  }
-
-  @override
-  int doFinalize(DartCodecBuffer outputBuffer) {
-    return 0;
-  }
-
-  @override
-  void doClose() {
-    // No action
   }
 }

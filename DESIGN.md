@@ -154,4 +154,8 @@ A [simple example](example/rle_example.dart) was created so implementors could s
 #### Filters
 The framework offers a `CodecFilter` that handles most of the external concerns of codec implementations.
 This class is designed to be subclassed, and subclass implementors will override callback hooks for codec initialization
-, processing, flushing, finalizing and closing. All provided codecs build off of the `CodecFilter`.
+, processing, flushing, finalizing and closing.
+
+To simplify things even more, we provide two `CodecFilter` subclasses for implementors to extend:
+- [DartCodecFilter](lib/src/framework/dart/filters.dart) for non-ffi codec implementations
+- [NativeCodecFilter](lib/src/framework/native/filters.dart) for ffi codec implementations

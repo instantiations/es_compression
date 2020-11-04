@@ -5,6 +5,8 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:es_compression/src/framework/native/filters.dart';
+
 import '../framework/buffers.dart';
 import '../framework/converters.dart';
 import '../framework/filters.dart';
@@ -56,6 +58,7 @@ class BrotliDecoder extends CodecConverter {
   }
 }
 
+/// Brotli decoding sink internal implementation.
 class _BrotliDecoderSink extends CodecSink {
   _BrotliDecoderSink._(
       ByteConversionSink sink, bool ringBufferReallocation, bool largeWindow)
@@ -63,16 +66,18 @@ class _BrotliDecoderSink extends CodecSink {
             _makeBrotliDecompressFilter(ringBufferReallocation, largeWindow));
 }
 
-class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
-    NativeCodecBuffer, _BrotliDecodingResult> {
+/// Internal filter that decompresses brotli bytes.
+class _BrotliDecompressFilter extends NativeCodecFilterBase {
   /// Dispatcher to make calls via FFI to brotli shared library
   final BrotliDispatcher _dispatcher = BrotliDispatcher();
 
+  /// Option holder.
   final List<int> parameters = List(5);
 
   /// Native brotli state object
   BrotliDecoderState _brotliState;
 
+  /// Construct an [_BrotliDecompressFilter] with the supplied options.
   _BrotliDecompressFilter(
       {bool ringBufferReallocation = true,
       bool largeWindow = false,
@@ -90,12 +95,6 @@ class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
         largeWindow == true
             ? BrotliConstants.BROTLI_TRUE
             : BrotliConstants.BROTLI_FALSE;
-  }
-
-  @override
-  CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
-      int length) {
-    return NativeCodecBufferHolder(length);
   }
 
   /// Return [:true:] if there is more data to process, [:false:] otherwise.
@@ -127,8 +126,12 @@ class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
     return 0;
   }
 
+  /// Perform decompression.
+  ///
+  /// Answer an [_BrotliDecodingResult] that store how much was read, written
+  /// and the next read state.
   @override
-  _BrotliDecodingResult doProcessing(
+  CodecResult doProcessing(
       NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
     final result = _dispatcher.callBrotliDecoderDecompressStream(
         _brotliState,
@@ -140,11 +143,6 @@ class _BrotliDecompressFilter extends CodecFilter<Pointer<Uint8>,
     final written = result[1];
     final nextReadState = result[2];
     return _BrotliDecodingResult(read, written, nextReadState);
-  }
-
-  @override
-  int doFlush(CodecBuffer outputBuffer) {
-    return 0;
   }
 
   @override

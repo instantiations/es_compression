@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:math';
 
+import 'package:es_compression/src/framework/native/filters.dart';
+
 import '../framework/buffers.dart';
 import '../framework/converters.dart';
 import '../framework/filters.dart';
@@ -126,6 +128,7 @@ class BrotliEncoder extends CodecConverter {
   }
 }
 
+/// Brotli encoding sink internal implementation.
 class _BrotliEncoderSink extends CodecSink {
   _BrotliEncoderSink._(
       ByteConversionSink sink,
@@ -158,16 +161,17 @@ class _BrotliEncoderSink extends CodecSink {
 
 /// This filter contains the implementation details for the usage of the native
 /// brotli API bindings.
-class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
-    NativeCodecBuffer, _BrotliEncodingResult> {
+class _BrotliCompressFilter extends NativeCodecFilterBase {
   /// Dispatcher to make calls via FFI to brotli shared library
   final BrotliDispatcher _dispatcher = BrotliDispatcher();
 
+  /// Option holder.
   final List<int> parameters = List<int>(10);
 
   /// Native brotli context object
   BrotliEncoderState _brotliState;
 
+  /// Construct an [_BrotliCompressFilter] with the provided options.
   _BrotliCompressFilter(
       {int level,
       int mode,
@@ -197,12 +201,6 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
         : BrotliConstants.BROTLI_FALSE;
     parameters[BrotliConstants.BROTLI_PARAM_NPOSTFIX] = postfixBits;
     parameters[BrotliConstants.BROTLI_PARAM_NDIRECT] = directDistanceCodeCount;
-  }
-
-  @override
-  CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
-      int length) {
-    return NativeCodecBufferHolder(length);
   }
 
   /// Init the filter
@@ -238,7 +236,7 @@ class _BrotliCompressFilter extends CodecFilter<Pointer<Uint8>,
   ///
   /// Return an [_BrotliEncodingResult] which describes the amount read/write
   @override
-  _BrotliEncodingResult doProcessing(
+  CodecResult doProcessing(
       NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
     final result = _dispatcher.callBrotliEncoderCompressStream(
         _brotliState,

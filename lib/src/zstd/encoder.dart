@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:math';
 
+import 'package:es_compression/src/framework/native/filters.dart';
+
 import '../framework/buffers.dart';
 import '../framework/converters.dart';
 import '../framework/filters.dart';
@@ -58,6 +60,7 @@ class ZstdEncoder extends CodecConverter {
   }
 }
 
+/// Zstd encoding sink internal implementation.
 class _ZstdEncoderSink extends CodecSink {
   _ZstdEncoderSink._(ByteConversionSink sink, int level, int inputBufferLength,
       int outputBufferLength)
@@ -69,8 +72,7 @@ class _ZstdEncoderSink extends CodecSink {
 
 /// This filter contains the implementation details for the usage of the native
 /// zstd API bindings.
-class _ZstdCompressFilter extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer,
-    _ZstdEncodingResult> {
+class _ZstdCompressFilter extends NativeCodecFilterBase {
   /// Dispatcher to make calls via FFI to zstd shared library
   final ZstdDispatcher _dispatcher = ZstdDispatcher();
 
@@ -80,18 +82,13 @@ class _ZstdCompressFilter extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer,
   /// Native zstd context object
   ZstdCStream _cStream;
 
+  /// Construct the [_ZstdCompressFilter] with the optional parameters.
   _ZstdCompressFilter(
       {int level, int inputBufferLength, int outputBufferLength})
       : level = level,
         super(
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength);
-
-  @override
-  CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
-      int length) {
-    return NativeCodecBufferHolder(length);
-  }
 
   /// Init the filter
   ///
@@ -135,7 +132,7 @@ class _ZstdCompressFilter extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer,
   ///
   /// Return an [_ZstdEncodingResult] which describes the amount read/write
   @override
-  _ZstdEncodingResult doProcessing(
+  CodecResult doProcessing(
       NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
     final result = _dispatcher.callZstdCompressStream(
         _cStream,
@@ -184,7 +181,8 @@ class _ZstdCompressFilter extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer,
 
   /// Free the native context
   ///
-  /// A [FormatException] is thrown if the context is invalid and can not be freed
+  /// A [FormatException] is thrown if the context is invalid and can not be
+  /// freed
   void _destroyCStream() {
     if (_cStream != null) {
       try {

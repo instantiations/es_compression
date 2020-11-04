@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:math';
 
+import 'package:es_compression/src/framework/native/filters.dart';
+
 import '../framework/buffers.dart';
 import '../framework/converters.dart';
 import '../framework/filters.dart';
@@ -29,7 +31,7 @@ class ZstdDecoder extends CodecConverter {
   /// Length in bytes of the buffer used for processed output data.
   final int outputBufferLength;
 
-  /// Construct an [ZstdDecoder]
+  /// Construct an [ZstdDecoder].
   ZstdDecoder(
       {this.inputBufferLength = defaultInputBufferLength,
       this.outputBufferLength = defaultOutputBufferLength});
@@ -41,6 +43,7 @@ class ZstdDecoder extends CodecConverter {
   }
 }
 
+/// Zstd decoding sink internal implementation.
 class _ZstdDecoderSink extends CodecSink {
   _ZstdDecoderSink._(
       ByteConversionSink sink, int inputBufferLength, int outputBufferLength)
@@ -48,24 +51,19 @@ class _ZstdDecoderSink extends CodecSink {
             sink, _ZstdDecompressFilter(inputBufferLength, outputBufferLength));
 }
 
-class _ZstdDecompressFilter extends CodecFilter<Pointer<Uint8>,
-    NativeCodecBuffer, _ZstdDecodingResult> {
+/// Internal filter that decompresses lz4 bytes.
+class _ZstdDecompressFilter extends NativeCodecFilterBase {
   /// Dispatcher to make calls via FFI to zstd shared library
   final ZstdDispatcher _dispatcher = ZstdDispatcher();
 
   /// Native zstd context object
   ZstdDStream _dStream;
 
+  /// Construct the [_ZstdDecompressFilter] with the optional parameters.
   _ZstdDecompressFilter(int inputBufferLength, int outputBufferLength)
       : super(
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength);
-
-  @override
-  CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
-      int length) {
-    return NativeCodecBufferHolder(length);
-  }
 
   /// Init the filter
   ///
@@ -94,8 +92,12 @@ class _ZstdDecompressFilter extends CodecFilter<Pointer<Uint8>,
     return 0;
   }
 
+  /// Perform decompression.
+  ///
+  /// Answer an [_ZstdDecodingResult] that store how much was read, written and
+  /// how many 'srcSize' bytes are expected for the next call.
   @override
-  _ZstdDecodingResult doProcessing(
+  CodecResult doProcessing(
       NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
     final result = _dispatcher.callZstdDecompressStream(
         _dStream,
@@ -107,16 +109,6 @@ class _ZstdDecompressFilter extends CodecFilter<Pointer<Uint8>,
     final written = result[1];
     final hint = result[2];
     return _ZstdDecodingResult(read, written, hint);
-  }
-
-  @override
-  int doFlush(CodecBuffer outputBuffer) {
-    return 0;
-  }
-
-  @override
-  int doFinalize(CodecBuffer outputBuffer) {
-    return 0;
   }
 
   /// Release zstd resources
