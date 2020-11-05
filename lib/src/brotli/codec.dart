@@ -5,11 +5,9 @@
 import 'dart:convert';
 
 import '../../framework.dart';
-import 'decoder.dart';
-import 'encoder.dart';
-import 'ffi/dispatcher.dart';
-import 'ffi/library.dart';
+import 'codec_stub.dart' if (dart.library.io) 'codec_io.dart';
 import 'options.dart';
+import 'version.dart';
 
 /// The [BrotliCodec] encodes/decodes raw bytes using the Brotli algorithm
 class BrotliCodec extends Codec<List<int>, List<int>> {
@@ -87,12 +85,10 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
   BrotliVersion get bindingVersion => BrotliVersion(0x1000009);
 
   /// Return the encoder library version.
-  BrotliVersion get encoderVersion =>
-      BrotliVersion(BrotliDispatcher.encoderVersionNumber);
+  BrotliVersion get encoderVersion => BrotliVersion(encoderVersionNumber);
 
   /// Return the decoder library version.
-  BrotliVersion get decoderVersion =>
-      BrotliVersion(BrotliDispatcher.decoderVersionNumber);
+  BrotliVersion get decoderVersion => BrotliVersion(decoderVersionNumber);
 
   /// Construct an [BrotliCodec] that is configured with the following parameters.
   ///
@@ -117,9 +113,10 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
     validateBrotliWindowBits(windowBits);
     validateBrotliBlockBits(blockBits);
     validateBrotliPostfixBits(postfixBits);
-    if (libraryPath != null) BrotliLibrary.userDefinedLibraryPath = libraryPath;
+    if (libraryPath != null) userDefinedLibraryPath = libraryPath;
   }
 
+  /// Internal Constructor for building the [brotli] instance.
   const BrotliCodec._default()
       : level = BrotliOption.defaultLevel,
         mode = BrotliOption.defaultMode,
@@ -134,47 +131,13 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
         inputBufferLength = CodecBufferHolder.autoLength,
         outputBufferLength = CodecBufferHolder.autoLength;
 
+  /// Return the [BrotliEncoder] configured implementation.
   @override
-  Converter<List<int>, List<int>> get encoder => BrotliEncoder(
-      level: level,
-      mode: mode,
-      windowBits: windowBits,
-      blockBits: blockBits,
-      postfixBits: postfixBits,
-      literalContextModeling: literalContextModeling,
-      sizeHint: sizeHint,
-      largeWindow: largeWindow,
-      directDistanceCodeCount: directDistanceCodeCount,
-      inputBufferLength: inputBufferLength,
-      outputBufferLength: outputBufferLength);
+  Converter<List<int>, List<int>> get encoder => encoderImpl;
 
+  /// Return the [BrotliDecoder] configured implementation.
   @override
-  Converter<List<int>, List<int>> get decoder => BrotliDecoder(
-      ringBufferReallocation: ringBufferReallocation,
-      largeWindow: largeWindow,
-      inputBufferLength: inputBufferLength,
-      outputBufferLength: outputBufferLength);
-}
-
-/// Helper class to decode the version number returned from the brotli FFI
-/// library.
-class BrotliVersion {
-  /// Encoded version number from brotli.
-  final int versionNumber;
-
-  const BrotliVersion(this.versionNumber);
-
-  /// Return the major element of the version.
-  int get major => versionNumber >> 24;
-
-  /// Return the minor element of the version.
-  int get minor => (versionNumber >> 12) & 0xFFF;
-
-  /// Return the patch element of the version.
-  int get patch => versionNumber & 0xFFF;
-
-  @override
-  String toString() => '$major.$minor.$patch';
+  Converter<List<int>, List<int>> get decoder => decoderImpl;
 }
 
 /// An instance of the default implementation of the [BrotliCodec].

@@ -12,4 +12,5 @@
 library framework_io;
 
 export 'framework.dart';
-export 'src/framework/native/buffers.dart';
+export 'src/framework/dart/buffers.dart'
+    if (dart.library.io) 'src/framework/native/buffers.dart';

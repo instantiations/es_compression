@@ -5,11 +5,9 @@
 import 'dart:convert';
 
 import '../../framework.dart';
-import 'decoder.dart';
-import 'encoder.dart';
-import 'ffi/dispatcher.dart';
-import 'ffi/library.dart';
+import 'codec_stub.dart' if (dart.library.io) 'codec_io.dart';
 import 'options.dart';
+import 'version.dart';
 
 /// The [Lz4Codec] encodes raw bytes to Lz4 compressed bytes and decodes Lz4
 /// compressed bytes to raw bytes using the Lz4 frame format
@@ -66,7 +64,7 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
   Lz4Version get bindingVersion => Lz4Version(10902);
 
   /// Return the actual library version of the shared library.
-  Lz4Version get libraryVersion => Lz4Version(Lz4Dispatcher.versionNumber);
+  Lz4Version get libraryVersion => Lz4Version(libraryVersionNumber);
 
   /// Construct an [Lz4Codec] that is configured with the following parameters.
   ///
@@ -86,9 +84,10 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
       String libraryPath}) {
     validateLz4Level(level);
     validateLz4BlockSize(blockSize);
-    if (libraryPath != null) Lz4Library.userDefinedLibraryPath = libraryPath;
+    if (libraryPath != null) userDefinedLibraryPath = libraryPath;
   }
 
+  /// Internal Constructor for building the [lz4] instance.
   const Lz4Codec._default()
       : level = Lz4Option.defaultLevel,
         fastAcceleration = false,
@@ -100,43 +99,13 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
         inputBufferLength = CodecBufferHolder.autoLength,
         outputBufferLength = CodecBufferHolder.autoLength;
 
+  /// Return the [Lz4Encoder] configured implementation.
   @override
-  Converter<List<int>, List<int>> get encoder => Lz4Encoder(
-      level: level,
-      fastAcceleration: fastAcceleration,
-      contentChecksum: contentChecksum,
-      blockChecksum: blockChecksum,
-      blockLinked: blockLinked,
-      blockSize: blockSize,
-      optimizeForDecompression: optimizeForDecompression,
-      inputBufferLength: inputBufferLength,
-      outputBufferLength: outputBufferLength);
+  Converter<List<int>, List<int>> get encoder => encoderImpl;
 
+  /// Return the [Lz4Decoder] configured implementation.
   @override
-  Converter<List<int>, List<int>> get decoder => Lz4Decoder(
-      inputBufferLength: inputBufferLength,
-      outputBufferLength: outputBufferLength);
-}
-
-/// Helper class to decode the version number returned from the lz4 FFI
-/// library.
-class Lz4Version {
-  /// Encoded version number from lz4.
-  final int versionNumber;
-
-  const Lz4Version(this.versionNumber);
-
-  /// Return the major element of the version.
-  int get major => versionNumber ~/ (100 * 100);
-
-  /// Return the minor element of the version.
-  int get minor => (versionNumber ~/ 100) - 100;
-
-  /// Return the patch element of the version.
-  int get patch => versionNumber - (major * (100 * 100)) - (minor * 100);
-
-  @override
-  String toString() => '$major.$minor.$patch';
+  Converter<List<int>, List<int>> get decoder => decoderImpl;
 }
 
 /// An instance of the default implementation of the [Lz4Codec].

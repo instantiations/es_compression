@@ -1,3 +1,7 @@
+## 0.9.2
+
+- Refactored and provided stubs for native/js library import compat.
+
 ## 0.9.1
 
 - **(Breaking Change only for Codec Implementors)** Removed class generic type from `CodecFilter` class.

@@ -209,15 +209,6 @@ class _Lz4CompressFilter extends NativeCodecFilterBase {
     return 0;
   }
 
-  /// Lz4 flush implementation.
-  ///
-  /// Return the number of bytes flushed.
-  @override
-  int doFlush(NativeCodecBuffer outputBuffer) {
-    return _dispatcher.callLz4FFlush(
-        _ctx, outputBuffer.writePtr, outputBuffer.unwrittenCount, _options);
-  }
-
   /// Perform an lz4 encoding of [inputBuffer.unreadCount] bytes in
   /// and put the resulting encoded bytes into [outputBuffer] of length
   /// [outputBuffer.unwrittenCount].
@@ -234,6 +225,15 @@ class _Lz4CompressFilter extends NativeCodecFilterBase {
         inputBuffer.unreadCount,
         _options);
     return CodecResult(inputBuffer.unreadCount, writtenCount);
+  }
+
+  /// Lz4 flush implementation.
+  ///
+  /// Return the number of bytes flushed.
+  @override
+  int doFlush(NativeCodecBuffer outputBuffer) {
+    return _dispatcher.callLz4FFlush(
+        _ctx, outputBuffer.writePtr, outputBuffer.unwrittenCount, _options);
   }
 
   /// Lz4 finalize implementation.

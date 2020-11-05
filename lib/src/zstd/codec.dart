@@ -4,13 +4,10 @@
 
 import 'dart:convert';
 
-import 'package:es_compression/src/zstd/ffi/dispatcher.dart';
-
 import '../../framework.dart';
-import 'decoder.dart';
-import 'encoder.dart';
-import 'ffi/library.dart';
+import 'codec_stub.dart' if (dart.library.io) 'codec_io.dart';
 import 'options.dart';
+import 'version.dart';
 
 /// The [ZstdCodec] encodes/decodes raw bytes using the Zstd (ZStandard)
 /// algorithm.
@@ -37,7 +34,7 @@ class ZstdCodec extends Codec<List<int>, List<int>> {
   ZstdVersion get bindingVersion => ZstdVersion(10405);
 
   /// Return the actual library version of the shared library.
-  ZstdVersion get libraryVersion => ZstdVersion(ZstdDispatcher.versionNumber);
+  ZstdVersion get libraryVersion => ZstdVersion(libraryVersionNumber);
 
   /// Construct an [ZstdCodec] that is configured with the following parameters.
   ///
@@ -50,45 +47,22 @@ class ZstdCodec extends Codec<List<int>, List<int>> {
       this.outputBufferLength = CodecBufferHolder.autoLength,
       String libraryPath}) {
     validateZstdLevel(level);
-    if (libraryPath != null) ZstdLibrary.userDefinedLibraryPath = libraryPath;
+    if (libraryPath != null) userDefinedLibraryPath = libraryPath;
   }
 
+  /// Internal Constructor for building the [zstd] instance.
   const ZstdCodec._default()
       : level = ZstdOption.defaultLevel,
         inputBufferLength = CodecBufferHolder.autoLength,
         outputBufferLength = CodecBufferHolder.autoLength;
 
+  /// Return the [ZstdEncoder] configured implementation.
   @override
-  Converter<List<int>, List<int>> get encoder => ZstdEncoder(
-      level: level,
-      inputBufferLength: inputBufferLength,
-      outputBufferLength: outputBufferLength);
+  Converter<List<int>, List<int>> get encoder => encoderImpl;
 
+  /// Return the [ZstdDecoder] configured implementation.
   @override
-  Converter<List<int>, List<int>> get decoder => ZstdDecoder(
-      inputBufferLength: inputBufferLength,
-      outputBufferLength: outputBufferLength);
-}
-
-/// Helper class to decode the version number returned from the zstd FFI
-/// library.
-class ZstdVersion {
-  /// Encoded version number from zstd.
-  final int versionNumber;
-
-  const ZstdVersion(this.versionNumber);
-
-  /// Return the major element of the version.
-  int get major => versionNumber ~/ (100 * 100);
-
-  /// Return the minor element of the version.
-  int get minor => (versionNumber ~/ 100) - 100;
-
-  /// Return the patch element of the version.
-  int get patch => versionNumber - (major * (100 * 100)) - (minor * 100);
-
-  @override
-  String toString() => '$major.$minor.$patch';
+  Converter<List<int>, List<int>> get decoder => decoderImpl;
 }
 
 /// An instance of the default implementation of the [ZstdCodec].
