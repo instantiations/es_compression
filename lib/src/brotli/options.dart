@@ -26,18 +26,25 @@ abstract class BrotliOption {
   /// Compression mode for UTF-8 formatted text input.
   static const int textMode = 0;
 
+  /// Default value for [BrotliCodec.windowBits].
   static const int defaultWindowBits = 22;
 
+  /// Minimal value for [BrotliCodec.windowBits].
   static const int minWindowBits = 10;
 
+  /// Maximal value for [BrotliCodec.windowBits].
   static const int maxWindowBits = 24;
 
+  /// Minimal value for [BrotliCodec.blockBits].
   static const int minBlockBits = 16;
 
+  /// Maximal value for [BrotliCodec.blockBits].
   static const int maxBlockBits = 24;
 
+  /// Minimal value for [BrotliCodec.postfixBits].
   static const int minPostfixBits = 0;
 
+  /// Maximal value for [BrotliCodec.postfixBits].
   static const int maxPostfixBits = 3;
 }
 

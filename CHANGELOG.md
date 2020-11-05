@@ -1,3 +1,9 @@
+## 0.9.3
+
+- **(Breaking Change: Codec Implementors)** bool positionable param -> named param in `CodecBuffer.resetRead()`
+and `CodecBuffer.resetWrite()`
+- Tweaks based on feedback from *effective_dart* analysis
+
 ## 0.9.2
 
 - Refactored and provided stubs for native/js library import compat.
@@ -5,7 +11,7 @@
 
 ## 0.9.1
 
-- **(Breaking Change only for Codec Implementors)** Removed class generic type from `CodecFilter` class.
+- **(Breaking Change: Codec Implementors)** Removed class generic type from `CodecFilter` class.
 - Created extendable base class for FFI-based codec filters: [NativeCodecFilterBase](lib/src/framework/native/filters.dart).
 - Created extendable base class for non-FFI codec filters: [DartCodecFilterBase](lib/src/framework/dart/filters.dart).
 - Refactored existing codec filters to subclass `NativeCodecFilterBase` and `DartCodecFilterBase`.

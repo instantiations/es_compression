@@ -90,7 +90,8 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
   /// Return the decoder library version.
   BrotliVersion get decoderVersion => BrotliVersion(decoderVersionNumber);
 
-  /// Construct an [BrotliCodec] that is configured with the following parameters.
+  /// Construct an [BrotliCodec] that is configured with the following
+  /// parameters.
   ///
   /// Default values are provided for unspecified parameters.
   /// Validation is performed which may result in throwing a [RangeError] or

@@ -4,8 +4,9 @@
 
 import 'dart:ffi';
 
-import 'package:es_compression/src/zstd/ffi/types.dart';
 import 'package:ffi/ffi.dart' as ffi;
+
+import 'types.dart';
 
 // ignore_for_file: public_member_api_docs
 
@@ -49,7 +50,10 @@ typedef ZstdCompressCCtxDart = Pointer<Void> Function(Pointer<Void>,
     Pointer<Void>, Pointer<Void>, Pointer<Void>, Pointer<Void>, int);
 
 /// File: *zstd.h*
-/// ZSTDLIB_API size_t ZSTD_compressStream(ZSTD_CStream* zcs, ZSTD_outBuffer* output, ZSTD_inBuffer* input);
+/// ZSTDLIB_API size_t
+/// ZSTD_compressStream(ZSTD_CStream* zcs,
+///   ZSTD_outBuffer* output,
+///   ZSTD_inBuffer* input);
 typedef ZstdCompressStreamNative = IntPtr Function(
     Pointer<ZstdCStream>, Pointer<ZstdOutBuffer>, Pointer<ZstdInBuffer>);
 typedef ZstdCompressStreamDart = int Function(
@@ -124,7 +128,10 @@ typedef ZstdDecompressDCtxDart = Pointer<Void> Function(
     Pointer<Void>, Pointer<Void>, Pointer<Void>, Pointer<Void>, Pointer<Void>);
 
 /// File: *zstd.h*
-/// ZSTDLIB_API size_t ZSTD_decompressStream(ZSTD_DStream* zds, ZSTD_outBuffer* output, ZSTD_inBuffer* input);
+/// ZSTDLIB_API size_t
+/// ZSTD_decompressStream(ZSTD_DStream* zds,
+///   ZSTD_outBuffer* output,
+///   ZSTD_inBuffer* input);
 typedef ZstdDecompressStreamNative = IntPtr Function(
     Pointer<ZstdDStream>, Pointer<ZstdOutBuffer>, Pointer<ZstdInBuffer>);
 typedef ZstdDecompressStreamDart = int Function(
@@ -141,14 +148,16 @@ typedef ZstdDStreamOutSizeNative = IntPtr Function();
 typedef ZstdDStreamOutSizeDart = int Function();
 
 /// File: *zstd.h*
-/// ZSTDLIB_API size_t ZSTD_endStream(ZSTD_CStream* zcs, ZSTD_outBuffer* output);
+/// ZSTDLIB_API size_t
+/// ZSTD_endStream(ZSTD_CStream* zcs, ZSTD_outBuffer* output);
 typedef ZstdEndStreamNative = IntPtr Function(
     Pointer<ZstdCStream>, Pointer<ZstdOutBuffer>);
 typedef ZstdEndStreamDart = int Function(
     Pointer<ZstdCStream>, Pointer<ZstdOutBuffer>);
 
 /// File: *zstd.h*
-/// ZSTDLIB_API size_t ZSTD_flushStream(ZSTD_CStream* zcs, ZSTD_outBuffer* output);
+/// ZSTDLIB_API size_t
+/// ZSTD_flushStream(ZSTD_CStream* zcs, ZSTD_outBuffer* output);
 typedef ZstdFlushStreamNative = IntPtr Function(
     Pointer<ZstdCStream>, Pointer<ZstdOutBuffer>);
 typedef ZstdFlushStreamDart = int Function(
@@ -190,7 +199,8 @@ typedef ZstdGetFrameContentSizeDart = int Function(
     Pointer<Void>, Pointer<Void>);
 
 /// File: *zstd.h*
-/// ZSTDLIB_API size_t ZSTD_initCStream(ZSTD_CStream* zcs, int compressionLevel);
+/// ZSTDLIB_API size_t
+/// ZSTD_initCStream(ZSTD_CStream* zcs, int compressionLevel);
 typedef ZstdInitCStreamNative = IntPtr Function(Pointer<ZstdCStream>, Int32);
 typedef ZstdInitCStreamDart = int Function(Pointer<ZstdCStream>, int);
 

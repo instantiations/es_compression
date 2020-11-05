@@ -116,8 +116,8 @@ Future<int> _runLz4Benchmark(int dataLength) async {
     print('Lz4 encode/decode ${bytes.length} bytes of random data.');
     var data = Lz4Data(bytes);
     Lz4EncodeBenchmark(data, emitter: emitter).report();
-    print(
-        'compression ratio: ${compressionRatio(bytes.length, data.bytes.length)}');
+    print('compression ratio: '
+        '${compressionRatio(bytes.length, data.bytes.length)}');
     Lz4DecodeBenchmark(data, emitter: emitter).report();
     var bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
     if (bytesMatch != true) return -1;
@@ -129,8 +129,8 @@ Future<int> _runLz4Benchmark(int dataLength) async {
     print('Lz4 encode/decode ${bytes.length} bytes of constant data.');
     data = Lz4Data(bytes);
     Lz4EncodeBenchmark(data, emitter: emitter).report();
-    print(
-        'compression ratio: ${compressionRatio(bytes.length, data.bytes.length)}');
+    print('compression ratio: '
+        '${compressionRatio(bytes.length, data.bytes.length)}');
     Lz4DecodeBenchmark(data, emitter: emitter).report();
     bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
     return (bytesMatch != true) ? -1 : 0;

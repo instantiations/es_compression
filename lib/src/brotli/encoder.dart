@@ -6,12 +6,11 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:math';
 
-import 'package:es_compression/src/framework/native/filters.dart';
-
 import '../framework/buffers.dart';
 import '../framework/converters.dart';
 import '../framework/filters.dart';
 import '../framework/native/buffers.dart';
+import '../framework/native/filters.dart';
 import '../framework/sinks.dart';
 import 'ffi/constants.dart';
 import 'ffi/dispatcher.dart';
@@ -24,7 +23,8 @@ const defaultInputBufferLength = 64 * 1024;
 /// Default output buffer length
 const defaultOutputBufferLength = defaultInputBufferLength;
 
-/// The [BrotliEncoder] encoder is used by [BrotliCodec] to brotli compress data.
+/// The [BrotliEncoder] encoder is used by [BrotliCodec] to brotli compress
+/// data.
 class BrotliEncoder extends CodecConverter {
   /// The compression-[level] or quality can be set in the range of
   /// [BrotliOption.minLevel]..[BrotliOption.maxLevel].
@@ -83,8 +83,8 @@ class BrotliEncoder extends CodecConverter {
   /// Length in bytes of the buffer used for processed output data.
   final int outputBufferLength;
 
-  /// Construct an [BrotliEncoder] with the supplied parameters used by the Brotli
-  /// encoder.
+  /// Construct an [BrotliEncoder] with the supplied parameters used by the
+  /// Brotli encoder.
   ///
   /// Validation will be performed which may result in a [RangeError] or
   /// [ArgumentError]

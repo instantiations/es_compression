@@ -122,11 +122,11 @@ class RunLengthDecoder extends CodecConverter {
   }
 }
 
-enum RleState { expecting_length, expecting_data }
+enum RleState { expectingLength, expectingData }
 
 /// Filter that decodes the incoming bytes using a Dart in-memory buffer.
 class RunLengthDecoderFilter extends DartCodecFilterBase {
-  RleState _state = RleState.expecting_length;
+  RleState _state = RleState.expectingLength;
   int runLength = 1;
 
   @override
@@ -136,17 +136,17 @@ class RunLengthDecoderFilter extends DartCodecFilterBase {
     final writePos = outputBuffer.writeCount;
     while (!inputBuffer.atEnd() && !outputBuffer.isFull()) {
       switch (_state) {
-        case RleState.expecting_length:
+        case RleState.expectingLength:
           final runLengthStr = String.fromCharCode(inputBuffer.next());
           runLength = int.parse(runLengthStr);
-          _state = RleState.expecting_data;
+          _state = RleState.expectingData;
           break;
-        case RleState.expecting_data:
+        case RleState.expectingData:
           final nextChar = inputBuffer.next();
           for (var i = 0; i < runLength; i++) {
             outputBuffer.nextPut(nextChar);
           }
-          _state = RleState.expecting_length;
+          _state = RleState.expectingLength;
           break;
       }
     }

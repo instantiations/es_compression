@@ -42,5 +42,5 @@ List<int> generateConstantBytes(int length) {
 }
 
 String compressionRatio(int uLength, int cLength) {
-  return (uLength / cLength).toStringAsFixed(1) + ':1';
+  return '${(uLength / cLength).toStringAsFixed(1)}:1';
 }

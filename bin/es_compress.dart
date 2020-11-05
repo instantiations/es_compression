@@ -78,7 +78,7 @@ Future<int> main(List<String> arguments) async {
       final megabytesPerSecond = bytesPerSecond / 1048576;
       final speed = megabytesPerSecond.toStringAsFixed(2);
       final ratio =
-          (uncompressedLength / compressedLength).toStringAsFixed(1) + ':1';
+          '${(uncompressedLength / compressedLength).toStringAsFixed(1)}:1';
       print('Stats:\n\tInput: $inputLength bytes split into $numChunks chunks'
           '\n\tOutput: $outputLength bytes'
           '\n\tTime: $elapsedTime'

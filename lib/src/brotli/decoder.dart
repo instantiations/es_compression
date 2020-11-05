@@ -5,12 +5,11 @@
 import 'dart:convert';
 import 'dart:ffi';
 
-import 'package:es_compression/src/framework/native/filters.dart';
-
 import '../framework/buffers.dart';
 import '../framework/converters.dart';
 import '../framework/filters.dart';
 import '../framework/native/buffers.dart';
+import '../framework/native/filters.dart';
 import '../framework/sinks.dart';
 import 'ffi/constants.dart';
 import 'ffi/dispatcher.dart';
@@ -22,7 +21,8 @@ const defaultInputBufferLength = 64 * 1024;
 /// Default output buffer length
 const defaultOutputBufferLength = defaultInputBufferLength;
 
-/// The [BrotliDecoder] decoder is used by [BrotliCodec] to decompress brotli data.
+/// The [BrotliDecoder] decoder is used by [BrotliCodec] to decompress brotli
+/// data.
 class BrotliDecoder extends CodecConverter {
   /// Flag the determines if "canny" ring buffer allocation is enabled.
   /// Ring buffer is allocated according to window size, despite the real size

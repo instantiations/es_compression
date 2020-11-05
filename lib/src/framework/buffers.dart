@@ -226,8 +226,8 @@ abstract class CodecBuffer<T> {
   ///
   /// The length of the buffer does not change.
   void reset({bool hard = false}) {
-    resetRead(hard);
-    resetWrite(hard);
+    resetRead(hard: hard);
+    resetWrite(hard: hard);
   }
 
   /// Reset the read offsets in the buffer.
@@ -235,7 +235,7 @@ abstract class CodecBuffer<T> {
   /// If [hard] is true, reset the [_recordedReadCount] accumulator.
   /// If [hard] is false (default), add the current [readCount] to the
   /// [_recordedReadCount].
-  void resetRead(bool hard) {
+  void resetRead({bool hard = false}) {
     _recordedReadCount = hard ? 0 : _recordedReadCount + readCount;
     readCount = 0;
   }
@@ -245,7 +245,7 @@ abstract class CodecBuffer<T> {
   /// If [hard] is true, reset the [_recordedWriteCount] accumulator.
   /// If [hard] is false (default), add the current [writeCount] to the
   /// [_recordedWriteCount].
-  void resetWrite(bool hard) {
+  void resetWrite({bool hard = false}) {
     _recordedWriteCount = hard ? 0 : _recordedWriteCount + writeCount;
     writeCount = 0;
   }
@@ -286,7 +286,7 @@ abstract class CodecBuffer<T> {
       {bool copy = true, bool reset = false, bool hard = false}) {
     final listView = baseListView(readCount);
     final list = (copy == true) ? Uint8List.fromList(listView) : listView;
-    if (reset == true) resetRead(hard);
+    if (reset == true) resetRead(hard: hard);
     return list;
   }
 
@@ -302,7 +302,7 @@ abstract class CodecBuffer<T> {
       {bool copy = true, bool reset = false, bool hard = false}) {
     final listView = baseListView(writeCount);
     final list = (copy == true) ? Uint8List.fromList(listView) : listView;
-    if (reset == true) resetWrite(hard);
+    if (reset == true) resetWrite(hard: hard);
     return list;
   }
 
@@ -329,6 +329,8 @@ abstract class CodecBuffer<T> {
 /// [CodecBufferHolder.buffer] is sent multiple times, the same instance
 /// will be returned.
 class CodecBufferHolder<T, CB extends CodecBuffer<T>> {
+  /// Signals the [length] of the [CodecBuffer] should be left to the algorithm
+  /// to determine.
   static const autoLength = -1;
 
   /// Buffer that was constructed.
@@ -338,10 +340,20 @@ class CodecBufferHolder<T, CB extends CodecBuffer<T>> {
   int _length;
 
   /// Custom function which takes a length and answers a [CodecBuffer].
-  CB Function(int length) bufferBuilderFunc = (length) => null;
+  CB Function(int length) bufferBuilderFunc;
 
   /// Construct a new buffer holder with the specific length.
-  CodecBufferHolder(this._length);
+  CodecBufferHolder(this._length) {
+    bufferBuilderFunc = nullBuffer;
+  }
+
+  /// [bufferBuilderFunc] that returns [:null:].
+  ///
+  /// This is used in [CodecBufferHolder] construction as the default
+  /// [bufferBuilderFunc].
+  CB nullBuffer(int length) {
+    return null;
+  }
 
   /// Returns a constructed [CodecBuffer].
   CB get buffer => _buffer ??= bufferBuilderFunc(length);

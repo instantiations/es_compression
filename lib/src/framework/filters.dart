@@ -89,8 +89,6 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
     _outputBufferHolder = newBufferHolder(outputBufferLength);
   }
 
-  CodecBufferHolder<P, CB> newBufferHolder(int inputBufferLength);
-
   /// Close this filter if not already [closed].
   ///
   /// Subclasses will have an opportunity to [doClose] before
@@ -240,6 +238,13 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
     _inputBufferHolder.release();
     _outputBufferHolder.release();
   }
+
+  /// Subclass Responsibility: Return a concrete [CodecBufferHolder].
+  ///
+  /// Subclasses will typically choose to return a [NativeCodecBufferHolder] or
+  /// a [DartCodecBufferHolder] depending on if the buffer is FFI-based or pure
+  /// Dart heap-based.
+  CodecBufferHolder<P, CB> newBufferHolder(int inputBufferLength);
 
   /// Subclass Responsibility: Init the filter
   ///

@@ -100,7 +100,7 @@ class DartHeapPointer {
   ///
   /// Read and write pointers will have their offsets adjusted as more is read
   /// or written from the buffers.
-  DartHeapPointer(this._bytes, {int offset = 0}) : offset = offset;
+  DartHeapPointer(this._bytes, {this.offset = 0});
 
   /// Return a typed list view on the byte data in the range
   /// [offset]..([offset] + [amount]).
@@ -111,12 +111,13 @@ class DartHeapPointer {
   int operator [](int index) => _bytes[offset + index];
 
   /// Set a byte in the buffer relative to the current [offset] position.
-  operator []=(int index, int value) => _bytes[offset + index] = value;
+  void operator []=(int index, int value) => _bytes[offset + index] = value;
 }
 
 /// [CodecBufferHolder] for constructing [DartCodecBuffer] instances.
 class DartCodecBufferHolder
     extends CodecBufferHolder<DartHeapPointer, DartCodecBuffer> {
+  /// Construct a [DartCodecBufferHolder] which generates [DartCodecBuffer]s
   DartCodecBufferHolder(int length) : super(length) {
     bufferBuilderFunc = (length) => DartCodecBuffer(length);
   }

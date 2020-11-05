@@ -4,16 +4,16 @@
 
 import 'dart:ffi';
 
-import 'package:es_compression/src/brotli/ffi/types.dart';
 import 'package:ffi/ffi.dart' as ffi;
 
 import 'constants.dart';
 import 'library.dart';
+import 'types.dart';
 
 // ignore_for_file: public_member_api_docs
 
-/// The [BrotliDispatcher] prepares arguments intended for FFI calls and instructs
-/// the [BrotliLibrary] which native call to make.
+/// The [BrotliDispatcher] prepares arguments intended for FFI calls and
+/// instructs the [BrotliLibrary] which native call to make.
 ///
 /// Impl: To cut down on FFI malloc/free and native heap fragmentation, the
 /// native pointers for brotli compress/decompress functions are pre-allocated.
@@ -25,7 +25,7 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
       final versionNumber = dispatcher._encoderVersionNumber;
       dispatcher.release();
       return versionNumber;
-    } catch (error) {
+    } on Exception {
       return 0;
     }
   }
@@ -37,7 +37,7 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
       final versionNumber = dispatcher._decoderVersionNumber;
       dispatcher.release();
       return versionNumber;
-    } catch (error) {
+    } on Exception {
       return 0;
     }
   }
@@ -131,16 +131,17 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
     if (ret == BrotliConstants.BROTLI_FALSE) {
       switch (op) {
         case BrotliConstants.BROTLI_OPERATION_FINISH:
-          throw FormatException(
-              'BrotliEncoderCompressStream failure while finishing the stream');
+          throw FormatException('BrotliEncoderCompressStream'
+              'failure while finishing the stream');
         case BrotliConstants.BROTLI_OPERATION_FLUSH:
-          throw FormatException(
-              'BrotliEncoderCompressStream failure while flushing the stream');
+          throw FormatException('BrotliEncoderCompressStream'
+              'failure while flushing the stream');
         case BrotliConstants.BROTLI_OPERATION_PROCESS:
-          throw FormatException(
-              'BrotliEncoderCompressStream failure while processing the stream');
+          throw FormatException('BrotliEncoderCompressStream'
+              'failure while processing the stream');
         default:
-          throw FormatException('BrotliEncoderCompressStream failure');
+          throw FormatException('BrotliEncoderCompressStream'
+              'failure');
       }
     }
   }

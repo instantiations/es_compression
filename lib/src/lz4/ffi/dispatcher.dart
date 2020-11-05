@@ -25,7 +25,7 @@ class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
       final versionNumber = dispatcher._versionNumber;
       dispatcher.release();
       return versionNumber;
-    } catch (error) {
+    } on Exception {
       return 0;
     }
   }

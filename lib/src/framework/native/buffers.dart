@@ -80,6 +80,7 @@ class NativeCodecBuffer extends CodecBuffer<Pointer<Uint8>> {
 /// [CodecBufferHolder] for constructing [NativeCodecBuffer] instances.
 class NativeCodecBufferHolder
     extends CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> {
+  /// Construct a [NativeCodecBufferHolder] which generates [NativeCodecBuffer]s
   NativeCodecBufferHolder(int length) : super(length) {
     bufferBuilderFunc = (length) => NativeCodecBuffer(length);
   }

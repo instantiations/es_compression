@@ -4,10 +4,10 @@
 
 import 'dart:ffi';
 
-import 'package:es_compression/src/zstd/ffi/types.dart';
 import 'package:ffi/ffi.dart' as ffi;
 
 import 'library.dart';
+import 'types.dart';
 
 // ignore_for_file: public_member_api_docs
 
@@ -24,7 +24,7 @@ class ZstdDispatcher with ZstdDispatchErrorCheckerMixin {
       final versionNumber = dispatcher._versionNumber;
       dispatcher.release();
       return versionNumber;
-    } catch (error) {
+    } on Exception {
       return 0;
     }
   }
@@ -155,8 +155,8 @@ mixin ZstdDispatchErrorCheckerMixin {
   /// Dispatcher to make calls via FFI to zstd shared library
   ZstdDispatcher get dispatcher;
 
-  /// This function wraps all zstd calls and throws a [FormatException] if [code]
-  /// is an error code.
+  /// This function wraps all zstd calls and throws a [FormatException] if
+  /// [code] is an error code.
   int checkError(int code) {
     if (dispatcher.callZstdIsError(code) != 0) {
       final errorNamePtr = dispatcher.callZstdGetErrorName(code);

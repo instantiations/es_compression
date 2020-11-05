@@ -6,12 +6,11 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:math';
 
-import 'package:es_compression/src/framework/native/filters.dart';
-
 import '../framework/buffers.dart';
 import '../framework/converters.dart';
 import '../framework/filters.dart';
 import '../framework/native/buffers.dart';
+import '../framework/native/filters.dart';
 import '../framework/sinks.dart';
 import 'ffi/constants.dart';
 import 'ffi/dispatcher.dart';
@@ -84,9 +83,8 @@ class _ZstdCompressFilter extends NativeCodecFilterBase {
 
   /// Construct the [_ZstdCompressFilter] with the optional parameters.
   _ZstdCompressFilter(
-      {int level, int inputBufferLength, int outputBufferLength})
-      : level = level,
-        super(
+      {this.level, int inputBufferLength, int outputBufferLength})
+      : super(
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength);
 
