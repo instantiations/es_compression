@@ -1,6 +1,7 @@
 ## 0.9.2
 
 - Refactored and provided stubs for native/js library import compat.
+- Fix stats printing in `escompress` for sub-second conversions.
 
 ## 0.9.1
 

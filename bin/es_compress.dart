@@ -72,8 +72,8 @@ Future<int> main(List<String> arguments) async {
       final uncompressedLength = encode ? inputLength : outputLength;
       final compressedLength = encode ? outputLength : inputLength;
       final elapsedTime = stopwatch.elapsed;
-      final bytesPerSecond = elapsedTime.inSeconds > 0
-          ? uncompressedLength / elapsedTime.inSeconds
+      final bytesPerSecond = elapsedTime.inMicroseconds > 0
+          ? (uncompressedLength * 1e6) / elapsedTime.inMicroseconds
           : 0;
       final megabytesPerSecond = bytesPerSecond / 1048576;
       final speed = megabytesPerSecond.toStringAsFixed(2);
