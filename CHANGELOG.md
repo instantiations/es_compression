@@ -55,4 +55,4 @@ and `CodecBuffer.resetWrite()`
 - Implemented [Compression framework examples](example/rle_example.dart)
 - Implemented version objects for each codec that allow the user to easily see what library was bound to.
 - Implemented tests for [escompress](bin/es_compress.dart), [examples](example) and [benchmarks](benchmark)
-- Produced initial [design doc](DESIGN.md) and experience report
+- Produced initial [design doc](doc/design_doc.md) and experience report

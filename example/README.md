@@ -67,7 +67,7 @@ For FFI based implementations, import the `framework_io.dart` library.
 import 'package:es_compression/framework_io.dart';
 ```
 
-There is a [design document](../DESIGN.md) that provides more details behind the framework.
+There is a [design document](../doc/design_doc.md) that provides more details behind the framework.
 
 Codec implementors that want to know more about how this is accomplished should look at the following example:
 - [rle_example.dart](rle_example.dart)

@@ -82,13 +82,13 @@ Especially with FFI-based codecs that interface with external shared libraries, 
 libraries are to be located by the program.
 
 #### Locating Shared Libraries
-[open_library.dart](lib/src/framework/native/open_library.dart) is a library module whose responsibility is to locate
+[open_library.dart](../lib/src/framework/native/open_library.dart) is a library module whose responsibility is to locate
 and open OS shared libraries for use with FFI-codec implementations.
 
 See the comment for the `OpenLibrary` mixin for an explanation of the ways a given shared library is found and loaded.
 
 #### Building Shared Libraries
-The shared libraries are built using the [blob_builder](tool/blob_builder) from the `tool` directory.
+The shared libraries are built using the [blob_builder](../tool/blob_builder) from the `tool` directory.
 This is a cmake-based build generator that will handle the building of prebuilt libraries for win/linux/mac.
 The tool will also install them in the appropriate locations within the package to make updating simple for the
 maintainers.
@@ -141,7 +141,7 @@ accommodate all the data.
 While the one-shot algorithms from VAST were not ported for the reason described above, we did make a framework hook
 available for ourselves and others.
 
-See the [CodecConverter](lib/src/framework/converters.dart) for more information.
+See the [CodecConverter](../lib/src/framework/converters.dart) for more information.
 
 ##### Dart
 We also developed Dart-based buffers which are suitable to be used for pure Dart codec implementations.
@@ -149,7 +149,7 @@ This is part of the `framework.dart` library and does not have any dependencies 
 A Dart-based buffer is backed by `Uint8List` and there is a pointer abstraction that has the same feel as a
 `Pointer<Uint8>`.
 
-A [simple example](example/rle_example.dart) was created so implementors could see how it works.
+A [simple example](../example/rle_example.dart) was created so implementors could see how it works.
 
 #### Filters
 The framework offers a `CodecFilter` that handles most of the external concerns of codec implementations.
@@ -157,5 +157,5 @@ This class is designed to be subclassed, and subclass implementors will override
 , processing, flushing, finalizing and closing.
 
 To simplify things even more, we provide two `CodecFilter` subclasses for implementors to extend:
-- [DartCodecFilter](lib/src/framework/dart/filters.dart) for non-ffi codec implementations
-- [NativeCodecFilter](lib/src/framework/native/filters.dart) for ffi codec implementations
+- [DartCodecFilter](../lib/src/framework/dart/filters.dart) for non-ffi codec implementations
+- [NativeCodecFilter](../lib/src/framework/native/filters.dart) for ffi codec implementations

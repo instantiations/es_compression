@@ -11,7 +11,7 @@ for Win/Linux/Mac.
 This work is an inspired port of the *Unified Compression Framework* from the [VAST Platform] (VA Smalltalk) language
 and development environment. 
 
-See the [Design Document](DESIGN.md) for detailed information on how this package was designed and implemented.
+See the [Design Document](doc/design_doc.md) for detailed information on how this package was designed and implemented.
 
 Below is a simple example of what an encode/decode would look like:
 ```dart
