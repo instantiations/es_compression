@@ -16,13 +16,18 @@ See the [Design Document](DESIGN.md) for detailed information on how this packag
 Below is a simple example of what an encode/decode would look like:
 ```dart
 import 'dart:convert';
+import 'package:es_compression/brotli.dart';
 import 'package:es_compression/lz4.dart';
+import 'package:es_compression/zstd.dart';
 
+/// Brotli, Lz4, Zstd usage example
 void main() {
-  var bytes = utf8.encode('Hello Dart');
-  var encoded = lz4.encode(bytes);
-  var decoded = lz4.decode(encoded);
-  print(utf8.decode(decoded));
+  final bytes = utf8.encode('Hello Dart');
+  for (final codec in [brotli, lz4, zstd]) {
+    final encoded = codec.encode(bytes);
+    final decoded = codec.decode(encoded);
+    print(utf8.decode(decoded));
+  }
 }
 ```
 
