@@ -15,4 +15,3 @@ abstract class ZstdOption {
   /// Maximal value for [ZstdCodec.level] and [ZstdEncoder.level].
   static const int maxLevel = 22;
 }
-

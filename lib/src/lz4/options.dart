@@ -30,4 +30,3 @@ abstract class Lz4Option {
   /// 4MB max block size for [Lz4Codec.blockSize] and [Lz4Encoder.blockSize]
   static const int blockSize4MB = Lz4Constants.LZ4F_max4MB;
 }
-
