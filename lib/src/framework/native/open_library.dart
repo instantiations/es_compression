@@ -12,9 +12,6 @@ import 'dart:isolate' show Isolate;
 /// [blob_builder tool](tool/blob_builder/CMakeLists.txt)
 const _esprefix = 'es';
 
-/// List of supported platforms.
-const Set<String> _supported = {'linux64', 'mac64', 'win64'};
-
 /// Provides the capability to locate and open native shared libraries
 /// according to the layout standards in the package.
 ///
@@ -165,15 +162,14 @@ mixin OpenLibrary {
     } else if (Platform.isWindows) {
       os = 'win';
       extension = 'dll';
+    } else if (Platform.isAndroid) {
+      os = 'android';
+      extension = 'so';
     } else {
       throw Exception('Unsupported platform!');
     }
 
     final result = os + bitness;
-    if (!_supported.contains(result)) {
-      throw Exception('Unsupported platform: $result!');
-    }
-
     return '$_esprefix$moduleId-$result.$extension';
   }
 }

@@ -4,6 +4,9 @@
 
 // ignore_for_file: public_member_api_docs, constant_identifier_names
 
+/// Contains required constants referenced by the following header files:
+/// *decode.h*
+/// *encode.h*
 mixin BrotliConstants {
   static const BROTLI_FALSE = 0;
   static const BROTLI_TRUE = 1;
