@@ -241,8 +241,8 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
 
   /// Subclass Responsibility: Return a concrete [CodecBufferHolder].
   ///
-  /// Subclasses will typically choose to return a [NativeCodecBufferHolder] or
-  /// a [DartCodecBufferHolder] depending on if the buffer is FFI-based or pure
+  /// Subclasses will typically choose to return a `NativeCodecBufferHolder` or
+  /// a `DartCodecBufferHolder` depending on if the buffer is FFI-based or pure
   /// Dart heap-based.
   CodecBufferHolder<P, CB> newBufferHolder(int inputBufferLength);
 
@@ -279,13 +279,13 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
   /// A request is being made to process bytes from the [inputBuffer] and place
   /// the results in the [outputBuffer]
   ///
-  /// The [inputBuffer.readPtr] is an ffi [Pointer] to the read position and
+  /// The [inputBuffer.readPtr] is a [CB] buffer to the read position and
   /// [inputBuffer.unreadCount] is the maximum number of bytes that can be read
   /// from the buffer.
   ///
   /// The resulting bytes can be placed in the [outputBuffer]. Callers will need
   /// to take care to write only the amount that can be written.
-  /// The [outputBuffer.writePtr] is an ffi [Pointer] to the write position and
+  /// The [outputBuffer.writePtr] is a [CB] buffer to the write position and
   /// [outputBuffer.unwrittenCount] is the number of bytes that can be written
   /// to the buffer.
   ///

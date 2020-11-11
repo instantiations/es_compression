@@ -11,7 +11,8 @@ for Win/Linux/Mac.
 This work is an inspired port of the *Unified Compression Framework* from the [VAST Platform] (VA Smalltalk) language
 and development environment. 
 
-See the [Design Document](doc/design_doc.md) for detailed information on how this package was designed and implemented.
+See the [Design Document](https://github.com/instantiations/es_compression/blob/master/doc/design_doc.md) for detailed
+information on how this package was designed and implemented.
 
 Below is a simple example of what an encode/decode would look like:
 ```dart
@@ -138,8 +139,8 @@ To run (lz4 shown below):
 In the `tool` subdirectory, the following tools are provided.
 
 ### Blob Builder
-[blob_builder](tool/blob_builder) is a `cmake`-based build generator which builds all the prebuilt shared libraries and
-copies them to their appropriate location in the dart library.
+[blob_builder](https://github.com/instantiations/es_compression/tree/master/tool/blob_builder) is a `cmake`-based build
+generator which builds all the prebuilt shared libraries and copies them to their appropriate location in the dart library.
 
 The maintainers use this tool to update the prebuilt shared libraries.
 It can also be used to build custom versions of the various libraries by making adjustments to CMake variables that
@@ -148,12 +149,13 @@ define the version level information.
 Prebuilt shared libraries for Win/Linux/Mac are provided in the `blobs` directory for each FFI codec implementation.
 The distributed shared libs for a codec named *xxx* is expected to be located in `lib/src/xxx/blobs`.
 
-There are instructions in the main [CMakeLists.txt](tool/blob_builder/CMakeLists.txt) file that describe how to run
-the tool.
+There are instructions in the main [CMakeLists.txt](https://github.com/instantiations/es_compression/blob/master/tool/blob_builder/CMakeLists.txt)
+file that describe how to run the tool.
 
 ## Framework
 Initial codecs provided by this library use FFI-based implementations. However, the framework easily allows for pure
-dart implementations for use within a front-end web context. [rle_example.dart](example/rle_example.dart) shows a simple example of how to accomplish this.
+dart implementations for use within a front-end web context. [rle_example.dart](https://github.com/instantiations/es_compression/blob/master/example/rle_example.dart)
+shows a simple example of how to accomplish this.
 
 The `GZipCodec` from `dart:io` served as a great starting point for understanding how to put the VAST Platform framework
 abstractions in terms of Dart codecs, converters, filters, sinks.
@@ -162,8 +164,8 @@ The major compression framework abstractions are:
 - `CodecConverter` - Connects the compression framework to `Converter` in `dart:convert`.
 - `CodecFilter` - Direct processing of byte data and provides low-level compression implementation and hooks.
 - `CodecSink` - A type of `ByteConversionSink` for efficient transmission of byte data.
-- `CodecBuffer` - A buffer with a streaming API that is backed by either [native](lib/src/framework/native/buffers.dart)
-or [dart](lib/src/framework/dart/buffers.dart) heap bytes.
+- `CodecBuffer` - A buffer with a streaming API that is backed by either [native](https://github.com/instantiations/es_compression/blob/master/lib/src/framework/native/buffers.dart)
+or [dart](https://github.com/instantiations/es_compression/blob/master/lib/src/framework/dart/buffers.dart) heap bytes.
 
 ### OS Shared Libraries
 FFI-based implementations will need access to the low-level shared libraries (i.e. .dll, .so, .dylib).
@@ -201,8 +203,8 @@ Provided dlls are digitally signed with an MS authenticode certificate owned by 
 Provided dylibs are not currently signed, and recent versions of OSX will refuse to load them unless you allow
 it from the *Security & Privacy* dialog.
 
-The build scripts have been provided [blob_builder](tool/blob_builder) and gives you access to build and sign them
-yourself, if desired.
+The build scripts have been provided [blob_builder](https://github.com/instantiations/es_compression/tree/master/tool/blob_builder)
+and gives you access to build and sign them yourself, if desired.
 
 *Instantiations may sign the libraries in the future, and if so, it will be noted in the changelog and here.*
 
@@ -211,7 +213,7 @@ Please file feature requests and bugs at the [issue tracker][tracker].
 
 They will be reviewed and addressed on a best-effort basis by [Instantiations, Inc].
 
-[library loader]: lib/src/framework/native/open_library.dart
+[library loader]: https://github.com/instantiations/es_compression/blob/master/lib/src/framework/native/open_library.dart
 [tracker]: https://github.com/instantiations/es_compression/issues
 [VAST Platform]: https://www.instantiations.com/products/vasmalltalk/index.html
 [Instantiations, Inc]: https://www.instantiations.com

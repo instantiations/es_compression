@@ -11,7 +11,7 @@ import 'dart:typed_data';
 /// # CodecBuffer<T>
 /// Type [T] is the "pointer" to the various memory locations in the buffer,
 /// such as the base, read and write ptr locations. [T] is usually a
-/// [DartHeapPointer] from this library, or the ffi [Pointer] type.
+/// `DartHeapPointer from this library, or the ffi `Pointer` type.
 /// However, this can be user defined.
 ///
 /// # Writing:
@@ -315,7 +315,7 @@ abstract class CodecBuffer<T> {
 }
 
 /// Provides a simple buffer holder/builder with a customizable builder function
-/// [codecBufferBuilderFunc].
+/// [bufferBuilderFunc].
 ///
 /// The motivation is to help subclasses of [CodecFilter] to customize the
 /// building of [CodecBuffer] by adjusting either the length or the buffer

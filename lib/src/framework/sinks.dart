@@ -9,7 +9,7 @@ import 'filters.dart';
 
 /// The [CodecSink] is the base class for encode/decoder sinks.
 ///
-/// This was modelled after the [_FilterSink] from the *data_transformer.dart*
+/// This was modelled after the `_FilterSink` from the *data_transformer.dart*
 /// library in the Dart SDK.
 ///
 /// And additional concept was added to request the filter to close since there
@@ -21,7 +21,7 @@ class CodecSink extends ByteConversionSink {
   bool _empty = true;
 
   /// Construct new [CodecSink] which wraps a [ByteConversionSink] with a
-  /// specified [CodedFilter] which will handle the algorithm details.
+  /// specified [CodecFilter] which will handle the algorithm details.
   CodecSink(this._sink, this._filter);
 
   @override

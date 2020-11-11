@@ -86,7 +86,7 @@ class Lz4Encoder extends CodecConverter {
   }
 
   /// Start a chunked conversion using the options given to the [Lz4Encoder]
-  /// constructor. While it accepts any [Sink] taking [List<int>]'s,
+  /// constructor. While it accepts any [Sink] taking [List]'s,
   /// the optimal sink to be passed as [sink] is a [ByteConversionSink].
   @override
   ByteConversionSink startChunkedConversion(Sink<List<int>> sink) {
