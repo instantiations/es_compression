@@ -16,9 +16,3 @@ abstract class ZstdOption {
   static const int maxLevel = 22;
 }
 
-/// Validate the zstd compression level is within range.
-void validateZstdLevel(int level) {
-  if (ZstdOption.minLevel > level || ZstdOption.maxLevel < level) {
-    throw RangeError.range(level, ZstdOption.minLevel, ZstdOption.maxLevel);
-  }
-}

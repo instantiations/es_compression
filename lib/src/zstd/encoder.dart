@@ -16,6 +16,7 @@ import 'ffi/constants.dart';
 import 'ffi/dispatcher.dart';
 import 'ffi/types.dart';
 import 'options.dart';
+import 'validation.dart';
 
 /// Default input buffer length
 const _defaultInputBufferLength = ZstdConstants.ZSTD_BLOCKSIZE_MAX;

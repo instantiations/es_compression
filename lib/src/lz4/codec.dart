@@ -7,6 +7,7 @@ import 'dart:convert';
 import '../../framework.dart';
 import 'codec_stub.dart' if (dart.library.io) 'codec_io.dart';
 import 'options.dart';
+import 'validation.dart';
 import 'version.dart';
 
 /// The [Lz4Codec] encodes raw bytes to Lz4 compressed bytes and decodes Lz4
