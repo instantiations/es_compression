@@ -1,8 +1,13 @@
+## 0.9.4
+
+- Relaxed platform restrictions in shared library loader.
+- Cosmetic tweaks to [README.md](README.md).
+
 ## 0.9.3
 
 - **(Breaking Change: Codec Implementors)** bool positionable param -> named param in `CodecBuffer.resetRead()`
-and `CodecBuffer.resetWrite()`
-- Tweaks based on feedback from *effective_dart* analysis
+and `CodecBuffer.resetWrite()`.
+- Tweaks based on feedback from *effective_dart* analysis.
 
 ## 0.9.2
 
@@ -23,36 +28,36 @@ and `CodecBuffer.resetWrite()`
 - Implemented general codec framework.
 - Implemented FFI read/write streamable buffers.
 - Implemented Dart Heap read/write streamable buffers.
-- Implemented flexible library loading with [OpenLibrary](lib/src/framework/native/open_library.dart) mixin
+- Implemented flexible library loading with [OpenLibrary](lib/src/framework/native/open_library.dart) mixin.
 - Implemented FFI bindings for [Brotli v1.0.9](https://github.com/google/brotli/tree/v1.0.9).
 - Implemented Brotli codec framework extensions (encoder/decoders).
-- Implemented shared library and Brotli [Cmake build instructions](tool/blob_builder/brotli/CMakeLists.txt)
-- Provided prebuilt [Win64 Brotli native shared library](lib/src/brotli/blobs/esbrotli-win64.dll)
-- Provided prebuilt [Linux64 Brotli native shared library](lib/src/brotli/blobs/esbrotli-linux64.so)
-- Provided prebuilt [Mac64 Brotli native shared library](lib/src/brotli/blobs/esbrotli-mac64.dylib)
-- Implemented [Brotli examples](example/brotli_example.dart)
-- Implemented [Brotli benchmarks](benchmark/brotli_benchmark.dart)
-- Implemented [Brotli tests](test/brotli_test.dart)
+- Implemented shared library and Brotli [Cmake build instructions](tool/blob_builder/brotli/CMakeLists.txt).
+- Provided prebuilt [Win64 Brotli native shared library](lib/src/brotli/blobs/esbrotli-win64.dll).
+- Provided prebuilt [Linux64 Brotli native shared library](lib/src/brotli/blobs/esbrotli-linux64.so).
+- Provided prebuilt [Mac64 Brotli native shared library](lib/src/brotli/blobs/esbrotli-mac64.dylib).
+- Implemented [Brotli examples](example/brotli_example.dart).
+- Implemented [Brotli benchmarks](benchmark/brotli_benchmark.dart).
+- Implemented [Brotli tests](test/brotli_test.dart).
 - Implemented FFI bindings for [LZ4 v1.9.2](https://github.com/lz4/lz4/tree/v1.9.2).
 - Implemented LZ4 codec framework extensions (encoder/decoders).
-- Implemented shared library and LZ4 [Cmake build instructions](tool/blob_builder/lz4/CMakeLists.txt)
-- Provided prebuilt [Win64 LZ4 native shared library](lib/src/lz4/blobs/eslz4-win64.dll)
-- Provided prebuilt [Linux64 LZ4 native shared library](lib/src/lz4/blobs/eslz4-linux64.so)
-- Provided prebuilt [Mac64 LZ4 native shared library](lib/src/lz4/blobs/eslz4-mac64.dylib)
-- Implemented [LZ4 examples](example/lz4_example.dart)
-- Implemented [LZ4 benchmarks](benchmark/lz4_benchmark.dart)
-- Implemented [LZ4 tests](test/lz4_test.dart)
+- Implemented shared library and LZ4 [Cmake build instructions](tool/blob_builder/lz4/CMakeLists.txt).
+- Provided prebuilt [Win64 LZ4 native shared library](lib/src/lz4/blobs/eslz4-win64.dll).
+- Provided prebuilt [Linux64 LZ4 native shared library](lib/src/lz4/blobs/eslz4-linux64.so).
+- Provided prebuilt [Mac64 LZ4 native shared library](lib/src/lz4/blobs/eslz4-mac64.dylib).
+- Implemented [LZ4 examples](example/lz4_example.dart).
+- Implemented [LZ4 benchmarks](benchmark/lz4_benchmark.dart).
+- Implemented [LZ4 tests](test/lz4_test.dart).
 - Implemented FFI bindings for [Zstd v1.4.5](https://github.com/facebook/zstd/tree/v1.4.5).
 - Implemented ZStandard (zstd) codec framework extensions (encoder/decoders).
-- Implemented shared library and Zstd [Cmake build instructions](tool/blob_builder/zstd/CMakeLists.txt)
-- Provided prebuilt [Win64 Zstd native shared library](lib/src/zstd/blobs/eszstd-win64.dll)
-- Provided prebuilt [Linux64 Zstd native shared library](lib/src/zstd/blobs/eszstd-linux64.so)
-- Provided prebuilt [Mac64 Zstd native shared library](lib/src/zstd/blobs/eszstd-mac64.dylib)
-- Implemented [Zstd examples](example/zstd_example.dart)
-- Implemented [Zstd benchmarks](benchmark/zstd_benchmark.dart)
-- Implemented [Zstd tests](test/zstd_test.dart)
-- Implemented [escompress](bin/es_compress.dart) binary script with gzip, lz4, zstd, brotli integration
-- Implemented [Compression framework examples](example/rle_example.dart)
+- Implemented shared library and Zstd [Cmake build instructions](tool/blob_builder/zstd/CMakeLists.txt).
+- Provided prebuilt [Win64 Zstd native shared library](lib/src/zstd/blobs/eszstd-win64.dll).
+- Provided prebuilt [Linux64 Zstd native shared library](lib/src/zstd/blobs/eszstd-linux64.so).
+- Provided prebuilt [Mac64 Zstd native shared library](lib/src/zstd/blobs/eszstd-mac64.dylib).
+- Implemented [Zstd examples](example/zstd_example.dart).
+- Implemented [Zstd benchmarks](benchmark/zstd_benchmark.dart).
+- Implemented [Zstd tests](test/zstd_test.dart).
+- Implemented [escompress](bin/es_compress.dart) binary script with gzip, lz4, zstd, brotli integration.
+- Implemented [Compression framework examples](example/rle_example.dart).
 - Implemented version objects for each codec that allow the user to easily see what library was bound to.
-- Implemented tests for [escompress](bin/es_compress.dart), [examples](example) and [benchmarks](benchmark)
-- Produced initial [design doc](doc/design_doc.md) and experience report
+- Implemented tests for [escompress](bin/es_compress.dart), [examples](example) and [benchmarks](benchmark).
+- Produced initial [design doc](doc/design_doc.md) and experience report.
