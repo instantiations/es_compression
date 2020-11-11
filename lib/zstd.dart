@@ -11,3 +11,7 @@
 library zstd;
 
 export 'src/zstd/codec.dart';
+export 'src/zstd/decoder.dart';
+export 'src/zstd/encoder.dart';
+export 'src/zstd/options.dart';
+export 'src/zstd/version.dart';

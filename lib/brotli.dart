@@ -11,3 +11,7 @@
 library brotli;
 
 export 'src/brotli/codec.dart';
+export 'src/brotli/decoder.dart';
+export 'src/brotli/encoder.dart';
+export 'src/brotli/options.dart';
+export 'src/brotli/version.dart';

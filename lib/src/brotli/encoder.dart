@@ -18,10 +18,10 @@ import 'ffi/types.dart';
 import 'options.dart';
 
 /// Default input buffer length
-const defaultInputBufferLength = 64 * 1024;
+const _defaultInputBufferLength = 64 * 1024;
 
 /// Default output buffer length
-const defaultOutputBufferLength = defaultInputBufferLength;
+const _defaultOutputBufferLength = _defaultInputBufferLength;
 
 /// The [BrotliEncoder] encoder is used by [BrotliCodec] to brotli compress
 /// data.
@@ -218,11 +218,11 @@ class _BrotliCompressFilter extends NativeCodecFilterBase {
     _initState();
 
     if (!inputBufferHolder.isLengthSet()) {
-      inputBufferHolder.length = defaultInputBufferLength;
+      inputBufferHolder.length = _defaultInputBufferLength;
     }
 
     // Formula from 'BROTLI_CStreamOutSize'
-    final outputLength = defaultOutputBufferLength;
+    final outputLength = _defaultOutputBufferLength;
     outputBufferHolder.length = outputBufferHolder.isLengthSet()
         ? max(outputBufferHolder.length, outputLength)
         : outputLength;

@@ -17,10 +17,10 @@ import 'ffi/dispatcher.dart';
 import 'ffi/types.dart';
 
 /// ZSTD_BLOCKSIZE_MAX + ZSTD_blockHeaderSize;
-const defaultInputBufferLength = ZstdConstants.ZSTD_BLOCKSIZE_MAX + 3;
+const _defaultInputBufferLength = ZstdConstants.ZSTD_BLOCKSIZE_MAX + 3;
 
 /// Default output buffer length
-const defaultOutputBufferLength = CodecBufferHolder.autoLength;
+const _defaultOutputBufferLength = CodecBufferHolder.autoLength;
 
 /// The [ZstdDecoder] decoder is used by [ZstdCodec] to decompress zstd data.
 class ZstdDecoder extends CodecConverter {
@@ -32,8 +32,8 @@ class ZstdDecoder extends CodecConverter {
 
   /// Construct an [ZstdDecoder].
   ZstdDecoder(
-      {this.inputBufferLength = defaultInputBufferLength,
-      this.outputBufferLength = defaultOutputBufferLength});
+      {this.inputBufferLength = _defaultInputBufferLength,
+      this.outputBufferLength = _defaultOutputBufferLength});
 
   @override
   ByteConversionSink startChunkedConversion(Sink<List<int>> sink) {

@@ -18,10 +18,10 @@ import 'ffi/dispatcher.dart';
 import 'ffi/types.dart';
 
 /// Default input buffer length
-const defaultInputBufferLength = 256 * 1024;
+const _defaultInputBufferLength = 256 * 1024;
 
 /// Default output buffer length
-const defaultOutputBufferLength = defaultInputBufferLength * 2;
+const _defaultOutputBufferLength = _defaultInputBufferLength * 2;
 
 /// The [Lz4Decoder] decoder is used by [Lz4Codec] to decompress lz4 data.
 class Lz4Decoder extends CodecConverter {
@@ -33,8 +33,8 @@ class Lz4Decoder extends CodecConverter {
 
   /// Construct an [Lz4Decoder]
   Lz4Decoder(
-      {this.inputBufferLength = defaultInputBufferLength,
-      this.outputBufferLength = defaultOutputBufferLength});
+      {this.inputBufferLength = _defaultInputBufferLength,
+      this.outputBufferLength = _defaultOutputBufferLength});
 
   @override
   ByteConversionSink startChunkedConversion(Sink<List<int>> sink) {
@@ -95,7 +95,7 @@ class _Lz4DecompressFilter extends NativeCodecFilterBase {
 
     inputBufferHolder.length = inputBufferHolder.isLengthSet()
         ? max(inputBufferHolder.length, Lz4Constants.LZ4F_HEADER_SIZE_MAX)
-        : defaultInputBufferLength;
+        : _defaultInputBufferLength;
 
     final numBytes = inputBufferHolder.buffer.nextPutAll(bytes, start, end);
     if (numBytes > 0) _readFrameInfo(inputBufferHolder.buffer);
@@ -104,7 +104,7 @@ class _Lz4DecompressFilter extends NativeCodecFilterBase {
         _frameInfo.blockSize,
         outputBufferHolder.isLengthSet()
             ? outputBufferHolder.length
-            : max(defaultOutputBufferLength, inputBufferHolder.length));
+            : max(_defaultOutputBufferLength, inputBufferHolder.length));
 
     return numBytes;
   }

@@ -16,10 +16,10 @@ import 'ffi/dispatcher.dart';
 import 'ffi/types.dart';
 
 /// Default input buffer length
-const defaultInputBufferLength = 64 * 1024;
+const _defaultInputBufferLength = 64 * 1024;
 
 /// Default output buffer length
-const defaultOutputBufferLength = defaultInputBufferLength;
+const _defaultOutputBufferLength = _defaultInputBufferLength;
 
 /// The [BrotliDecoder] decoder is used by [BrotliCodec] to decompress brotli
 /// data.
@@ -118,10 +118,10 @@ class _BrotliDecompressFilter extends NativeCodecFilterBase {
       int end) {
     _initState();
     if (!inputBufferHolder.isLengthSet()) {
-      inputBufferHolder.length = defaultInputBufferLength;
+      inputBufferHolder.length = _defaultInputBufferLength;
     }
     if (!outputBufferHolder.isLengthSet()) {
-      outputBufferHolder.length = defaultOutputBufferLength;
+      outputBufferHolder.length = _defaultOutputBufferLength;
     }
     return 0;
   }

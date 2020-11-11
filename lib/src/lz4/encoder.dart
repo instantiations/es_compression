@@ -19,10 +19,10 @@ import 'ffi/types.dart';
 import 'options.dart';
 
 /// Default input buffer length
-const defaultInputBufferLength = 256 * 1024;
+const _defaultInputBufferLength = 256 * 1024;
 
 /// Default output buffer length
-const defaultOutputBufferLength = defaultInputBufferLength;
+const _defaultOutputBufferLength = _defaultInputBufferLength;
 
 /// The [Lz4Encoder] encoder is used by [Lz4Codec] to lz4 compress data.
 class Lz4Encoder extends CodecConverter {
@@ -79,8 +79,8 @@ class Lz4Encoder extends CodecConverter {
       this.blockLinked = true,
       this.blockSize = Lz4Option.defaultBlockSize,
       this.optimizeForDecompression = false,
-      this.inputBufferLength = defaultInputBufferLength,
-      this.outputBufferLength = defaultOutputBufferLength}) {
+      this.inputBufferLength = _defaultInputBufferLength,
+      this.outputBufferLength = _defaultOutputBufferLength}) {
     validateLz4Level(level);
     validateLz4BlockSize(blockSize);
   }
@@ -193,7 +193,7 @@ class _Lz4CompressFilter extends NativeCodecFilterBase {
     if (!inputBufferHolder.isLengthSet()) {
       inputBufferHolder.length = outputBufferHolder.isLengthSet()
           ? outputBufferHolder.length
-          : defaultInputBufferLength;
+          : _defaultInputBufferLength;
     }
 
     final minimumOut = _lz4CompressBound(inputBufferHolder.length);
@@ -201,7 +201,7 @@ class _Lz4CompressFilter extends NativeCodecFilterBase {
         minimumOut,
         outputBufferHolder.isLengthSet()
             ? outputBufferHolder.length
-            : defaultOutputBufferLength);
+            : _defaultOutputBufferLength);
 
     _initContext();
     _writeHeader(outputBufferHolder.buffer);

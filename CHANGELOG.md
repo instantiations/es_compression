@@ -1,3 +1,8 @@
+## 0.9.5
+
+- Extended library export for direct access to encoder/decoder/version/option objects.
+- Visibility tweaks to library constants to resolve conflicts.
+
 ## 0.9.4
 
 - Relaxed platform restrictions in shared library loader.

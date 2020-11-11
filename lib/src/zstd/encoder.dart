@@ -18,10 +18,10 @@ import 'ffi/types.dart';
 import 'options.dart';
 
 /// Default input buffer length
-const defaultInputBufferLength = ZstdConstants.ZSTD_BLOCKSIZE_MAX;
+const _defaultInputBufferLength = ZstdConstants.ZSTD_BLOCKSIZE_MAX;
 
 /// Default output buffer length
-const defaultOutputBufferLength = CodecBufferHolder.autoLength;
+const _defaultOutputBufferLength = CodecBufferHolder.autoLength;
 
 /// The [ZstdEncoder] encoder is used by [ZstdCodec] to zstd compress data.
 class ZstdEncoder extends CodecConverter {
@@ -43,8 +43,8 @@ class ZstdEncoder extends CodecConverter {
   /// [ArgumentError]
   ZstdEncoder(
       {this.level = ZstdOption.defaultLevel,
-      this.inputBufferLength = defaultInputBufferLength,
-      this.outputBufferLength = defaultOutputBufferLength}) {
+      this.inputBufferLength = _defaultInputBufferLength,
+      this.outputBufferLength = _defaultOutputBufferLength}) {
     validateZstdLevel(level);
   }
 

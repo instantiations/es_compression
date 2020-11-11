@@ -11,3 +11,7 @@
 library lz4;
 
 export 'src/lz4/codec.dart';
+export 'src/lz4/decoder.dart';
+export 'src/lz4/encoder.dart';
+export 'src/lz4/options.dart';
+export 'src/lz4/version.dart';
