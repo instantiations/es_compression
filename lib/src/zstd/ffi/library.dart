@@ -17,12 +17,13 @@ class ZstdLibrary with OpenLibrary, ZstdConstants, ZstdFunctions, ZstdTypes {
   /// Library path the user can define to override normal resolution.
   static String userDefinedLibraryPath;
 
+  /// Singleton instance.
   static final ZstdLibrary _instance = ZstdLibrary._(userDefinedLibraryPath);
 
   /// Dart native library object.
   DynamicLibrary _libraryImpl;
 
-  /// Zstd Version Number
+  /// Zstd Version Number.
   int versionNumber;
 
   /// Unique id of this library module.

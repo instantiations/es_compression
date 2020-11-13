@@ -5,7 +5,7 @@
 # ES Compression: A Compression Framework for Dart
 
 ## Description
-Compression framework for Dart providing FFI implementations for Brotli, Lz4, Zstd with ready-to-use prebuilt binaries
+Compression framework for Dart providing FFI implementations for Brotli, Lz4, Zstd (Zstandard) with ready-to-use prebuilt binaries
 for Win/Linux/Mac.
 
 This work is an inspired port of the *Unified Compression Framework* from the [VAST Platform] (VA Smalltalk) language

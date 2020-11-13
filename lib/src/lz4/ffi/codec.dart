@@ -1,18 +1,23 @@
+// Copyright (c) 2020, Instantiations, Inc. Please see the AUTHORS
+// file for details. All rights reserved. Use of this source code is governed by
+// a BSD-style license that can be found in the LICENSE file.
+
 import 'dart:convert';
 
-import 'codec.dart';
-import 'decoder.dart';
-import 'encoder.dart';
-import 'ffi/dispatcher.dart';
-import 'ffi/library.dart';
+import '../codec.dart';
+import '../decoder.dart';
+import '../encoder.dart';
+import 'dispatcher.dart';
+import 'library.dart';
 
-/// Extension that provides the `dart:io` dependent part of [Lz4Codec].
+/// Extension that provides the `dart:io` dependent part of [Lz4Codec],
+/// specifically FFI.
 ///
 /// This includes:
-/// - Version number which is queried from FFI call
-/// - Overriding library path which communicates with an FFI library object
-/// - Encoder/Decoder which has dependencies on FFI
-extension Lz4CodecIO on Lz4Codec {
+/// - Version number which is queried from FFI call.
+/// - Overriding library path which communicates with an FFI library object.
+/// - Encoder/Decoder which has dependencies on FFI.
+extension Lz4CodecFFI on Lz4Codec {
   /// Return the Lz4 version number.
   int get libraryVersionNumber => Lz4Dispatcher.versionNumber;
 

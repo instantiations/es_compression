@@ -17,12 +17,13 @@ class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
   /// Library path the user can define to override normal resolution.
   static String userDefinedLibraryPath;
 
+  /// Singleton instance.
   static final Lz4Library _instance = Lz4Library._(userDefinedLibraryPath);
 
   /// Dart native library object.
   DynamicLibrary _libraryImpl;
 
-  /// Lz4 Version Number
+  /// Lz4 Version Number.
   int versionNumber;
 
   /// Unique id of this library module.

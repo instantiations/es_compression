@@ -5,13 +5,13 @@
 import 'dart:convert';
 
 import '../../framework.dart';
-import 'codec_stub.dart' if (dart.library.io) 'codec_io.dart';
 import 'options.dart';
+import 'stubs/codec.dart' if (dart.library.io) 'ffi/codec.dart';
 import 'validation.dart';
 import 'version.dart';
 
 /// The [Lz4Codec] encodes raw bytes to Lz4 compressed bytes and decodes Lz4
-/// compressed bytes to raw bytes using the Lz4 frame format
+/// compressed bytes to raw bytes using the Lz4 frame format.
 class Lz4Codec extends Codec<List<int>, List<int>> {
   /// The compression-[level] can be set in the range of `0..16`, with
   /// 0 (fast mode) being the default compression level.
@@ -38,13 +38,13 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
 
   /// The maximum size to use for blocks. The larger the block, the (slightly)
   /// better compression ratio. However, more memory is consumed for both
-  /// compression and decompression. The default value is blockSize64KB
+  /// compression and decompression. The default value is blockSize64KB.
   final int blockSize;
 
   /// When true, generate compress data optimized for decompression speed.
   /// The size of the compressed data may be slightly larger, however the
   /// decompression speed should be improved.
-  /// **Note: This option will be ignored if [level] < 9**
+  /// **Note: This option will be ignored if [level] < 9**.
   final bool optimizeForDecompression;
 
   /// Length in bytes of the buffer used for input data.
@@ -71,7 +71,7 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
   ///
   /// Default values are provided for unspecified parameters.
   /// Validation is performed which may result in throwing a [RangeError] or
-  /// [ArgumentError]
+  /// [ArgumentError].
   Lz4Codec(
       {this.level = Lz4Option.defaultLevel,
       this.fastAcceleration = false,

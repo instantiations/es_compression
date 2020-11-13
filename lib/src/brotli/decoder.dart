@@ -3,23 +3,19 @@
 // a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:ffi';
 
 import '../framework/buffers.dart';
 import '../framework/converters.dart';
 import '../framework/filters.dart';
-import '../framework/native/buffers.dart';
-import '../framework/native/filters.dart';
 import '../framework/sinks.dart';
-import 'ffi/constants.dart';
-import 'ffi/dispatcher.dart';
-import 'ffi/types.dart';
+import 'stubs/decompress_filter.dart'
+    if (dart.library.io) 'ffi/decompress_filter.dart';
 
-/// Default input buffer length
-const _defaultInputBufferLength = 64 * 1024;
+/// Default input buffer length.
+const brotliDecoderInputBufferLength = 64 * 1024;
 
-/// Default output buffer length
-const _defaultOutputBufferLength = _defaultInputBufferLength;
+/// Default output buffer length.
+const brotliDecoderOutputBufferLength = brotliDecoderInputBufferLength;
 
 /// The [BrotliDecoder] decoder is used by [BrotliCodec] to decompress brotli
 /// data.
@@ -29,10 +25,10 @@ class BrotliDecoder extends CodecConverter {
   /// of content.
   final bool ringBufferReallocation;
 
-  /// Flag that determines if "Large Window Brotli" is ued.
+  /// Flag that determines if "Large Window Brotli" is used.
   /// If set to [:true:], then the LZ-Window can be set up to 30-bits but the
   /// result will not be RFC7932 compliant.
-  /// Default: [:false:]
+  /// Default: [:false:].
   final bool largeWindow;
 
   /// Length in bytes of the buffer used for input data.
@@ -44,13 +40,18 @@ class BrotliDecoder extends CodecConverter {
   /// Construct an [BrotliDecoder] with the supplied parameters.
   ///
   /// Validation will be performed which may result in a [RangeError] or
-  /// [ArgumentError]
+  /// [ArgumentError].
   BrotliDecoder(
       {this.ringBufferReallocation = true,
       this.largeWindow = false,
       this.inputBufferLength = CodecBufferHolder.autoLength,
       this.outputBufferLength = CodecBufferHolder.autoLength});
 
+  /// Start a chunked conversion using the options given to the [BrotliDecoder]
+  /// constructor.
+  ///
+  /// While it accepts any [Sink] taking [List]'s,
+  /// the optimal sink to be passed as [sink] is a [ByteConversionSink].
   @override
   ByteConversionSink startChunkedConversion(Sink<List<int>> sink) {
     final byteSink = asByteSink(sink);
@@ -66,148 +67,13 @@ class _BrotliDecoderSink extends CodecSink {
             _makeBrotliDecompressFilter(ringBufferReallocation, largeWindow));
 }
 
-/// Internal filter that decompresses brotli bytes.
-class _BrotliDecompressFilter extends NativeCodecFilterBase {
-  /// Dispatcher to make calls via FFI to brotli shared library
-  final BrotliDispatcher _dispatcher = BrotliDispatcher();
-
-  /// Option holder.
-  final List<int> parameters = List(5);
-
-  /// Native brotli state object
-  BrotliDecoderState _brotliState;
-
-  /// Construct an [_BrotliDecompressFilter] with the supplied options.
-  _BrotliDecompressFilter(
-      {bool ringBufferReallocation = true,
-      bool largeWindow = false,
-      int inputBufferLength,
-      int outputBufferLength})
-      : super(
-            inputBufferLength: inputBufferLength,
-            outputBufferLength: outputBufferLength) {
-    parameters[BrotliConstants
-            .BROTLI_DECODER_PARAM_DISABLE_RING_BUFFER_REALLOCATION] =
-        ringBufferReallocation == false
-            ? BrotliConstants.BROTLI_TRUE
-            : BrotliConstants.BROTLI_FALSE;
-    parameters[BrotliConstants.BROTLI_DECODER_PARAM_LARGE_WINDOW] =
-        largeWindow == true
-            ? BrotliConstants.BROTLI_TRUE
-            : BrotliConstants.BROTLI_FALSE;
-  }
-
-  /// Return [:true:] if there is more data to process, [:false:] otherwise.
-  @override
-  bool hasMoreToProcess() {
-    return super.hasMoreToProcess() ||
-        _dispatcher.callBrotliDecoderHasMoreOutput(_brotliState);
-  }
-
-  /// Init the filter
-  ///
-  /// Provide appropriate buffer lengths to codec builders
-  /// [inputBufferHolder.length] decoding buffer length and
-  /// [outputBufferHolder.length] encoding buffer length.
-  @override
-  int doInit(
-      CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> inputBufferHolder,
-      CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> outputBufferHolder,
-      List<int> bytes,
-      int start,
-      int end) {
-    _initState();
-    if (!inputBufferHolder.isLengthSet()) {
-      inputBufferHolder.length = _defaultInputBufferLength;
-    }
-    if (!outputBufferHolder.isLengthSet()) {
-      outputBufferHolder.length = _defaultOutputBufferLength;
-    }
-    return 0;
-  }
-
-  /// Perform decompression.
-  ///
-  /// Answer an [_BrotliDecodingResult] that store how much was read, written
-  /// and the next read state.
-  @override
-  CodecResult doProcessing(
-      NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
-    final result = _dispatcher.callBrotliDecoderDecompressStream(
-        _brotliState,
-        inputBuffer.unreadCount,
-        inputBuffer.readPtr,
-        outputBuffer.unwrittenCount,
-        outputBuffer.writePtr);
-    final read = result[0];
-    final written = result[1];
-    final nextReadState = result[2];
-    return _BrotliDecodingResult(read, written, nextReadState);
-  }
-
-  @override
-  int doFinalize(CodecBuffer outputBuffer) {
-    if (!_dispatcher.callBrotliDecoderIsFinished(_brotliState)) {
-      throw FormatException('Failure to finish decoding');
-    }
-    return 0;
-  }
-
-  /// Release brotli resources
-  @override
-  void doClose() {
-    _destroyState();
-    _releaseDispatcher();
-  }
-
-  /// Apply the parameter value to the encoder.
-  void _applyParameter(int parameter) {
-    final value = parameters[parameter];
-    if (value != null) {
-      _dispatcher.callBrotliDecoderSetParameter(_brotliState, parameter, value);
-    }
-  }
-
-  void _initState() {
-    final result = _dispatcher.callBrotliDecoderCreateInstance();
-    if (result == nullptr) {
-      throw StateError('Could not allocate brotli decoder state');
-    }
-    _brotliState = result.ref;
-    _applyParameter(
-        BrotliConstants.BROTLI_DECODER_PARAM_DISABLE_RING_BUFFER_REALLOCATION);
-    _applyParameter(BrotliConstants.BROTLI_DECODER_PARAM_LARGE_WINDOW);
-  }
-
-  void _destroyState() {
-    if (_brotliState != null) {
-      try {
-        _dispatcher.callBrotliDecoderDestroyInstance(_brotliState);
-      } finally {
-        _brotliState = null;
-      }
-    }
-  }
-
-  void _releaseDispatcher() {
-    _dispatcher.release();
-  }
-}
-
-/// Construct a new brotli filter which is configured with the options
-/// provided
+/// Construct a new [BrotliDecompressFilter] which is configured with the
+/// options provided.
+///
+/// There is a conditional import that determines the implementation of
+/// [BrotliDecompressFilter] based on the environment.
 CodecFilter _makeBrotliDecompressFilter(
     bool ringBufferReallocation, bool largeWindow) {
-  return _BrotliDecompressFilter(
+  return BrotliDecompressFilter(
       ringBufferReallocation: ringBufferReallocation, largeWindow: largeWindow);
-}
-
-/// Result object for an Brotli Decompression operation
-class _BrotliDecodingResult extends CodecResult {
-  /// Next state of the decoder.
-  final int nextReadState;
-
-  const _BrotliDecodingResult(
-      int bytesRead, int bytesWritten, this.nextReadState)
-      : super(bytesRead, bytesWritten);
 }

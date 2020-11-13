@@ -2,7 +2,7 @@
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
-/// Zstd (ZStandard) encoder and decoder using a fast FFI-based implementation.
+/// Zstd (Zstandard) encoder and decoder using a fast FFI-based implementation.
 ///
 /// To use this library in your code:
 /// ```

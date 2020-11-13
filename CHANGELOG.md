@@ -1,3 +1,8 @@
+## 0.9.6
+
+- Refactored and provided stubs for native/js library import compat.
+- Additional comments.
+
 ## 0.9.5
 
 - Extended library export for direct access to encoder/decoder/version/option objects.

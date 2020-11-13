@@ -18,6 +18,7 @@ class BrotliLibrary
   /// Library path the user can define to override normal resolution.
   static String userDefinedLibraryPath;
 
+  /// Singleton instance.
   static final BrotliLibrary _instance =
       BrotliLibrary._(userDefinedLibraryPath);
 

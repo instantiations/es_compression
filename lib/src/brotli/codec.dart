@@ -5,8 +5,8 @@
 import 'dart:convert';
 
 import '../../framework.dart';
-import 'codec_stub.dart' if (dart.library.io) 'codec_io.dart';
 import 'options.dart';
+import 'stubs/codec.dart' if (dart.library.io) 'ffi/codec.dart';
 import 'validation.dart';
 import 'version.dart';
 
@@ -53,7 +53,7 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
   /// Default: 0 (means the total input size if unknown).
   final int sizeHint;
 
-  /// Flag that determines if "Large Window Brotli" is ued.
+  /// Flag that determines if "Large Window Brotli" is used.
   /// If set to [:true:], then the LZ-Window can be set up to 30-bits but the
   /// result will not be RFC7932 compliant.
   /// Default: [:false:]
