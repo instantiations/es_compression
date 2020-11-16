@@ -8,6 +8,19 @@ import '../../../zstd.dart';
 import 'dispatcher.dart';
 import 'library.dart';
 
+/// Library function used by [ZstdCodec] static function that gets the custom
+/// library path.
+///
+/// Return the [String] library path or [:null:] if none is set.
+String zstdGetLibraryPath() => ZstdLibrary.userDefinedLibraryPath;
+
+/// Library function used by [ZstdCodec] static function that sets a custom
+/// library path.
+///
+/// This forwards the request to the [ZstdLibrary].
+void zstdSetLibraryPath(String path) =>
+    ZstdLibrary.userDefinedLibraryPath = path;
+
 /// Extension that provides the `dart:io` dependent part of [ZstdCodec].
 ///
 /// This includes:

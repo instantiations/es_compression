@@ -15,10 +15,28 @@ import 'types.dart';
 /// functions that are described in C header files.
 class ZstdLibrary with OpenLibrary, ZstdConstants, ZstdFunctions, ZstdTypes {
   /// Library path the user can define to override normal resolution.
-  static String userDefinedLibraryPath;
+  static String _userDefinedLibraryPath;
+
+  /// Return the library path defined by the user.
+  static String get userDefinedLibraryPath => _userDefinedLibraryPath;
+
+  /// Set the library [path] defined by the user.
+  ///
+  /// Throw a [StateError] if this library has already been initialized.
+  static set userDefinedLibraryPath(String path) {
+    if (_initialized == true) {
+      throw StateError('ZstdLibrary already initialized.');
+    }
+    _userDefinedLibraryPath = path;
+  }
 
   /// Singleton instance.
-  static final ZstdLibrary _instance = ZstdLibrary._(userDefinedLibraryPath);
+  static final ZstdLibrary _instance = ZstdLibrary._(_userDefinedLibraryPath);
+
+  /// Tracks library init state.
+  ///
+  /// Set to [:true:] if this library is opened and all functions are resolved.
+  static bool _initialized = false;
 
   /// Dart native library object.
   DynamicLibrary _libraryImpl;
@@ -40,5 +58,6 @@ class ZstdLibrary with OpenLibrary, ZstdConstants, ZstdFunctions, ZstdTypes {
   ZstdLibrary._(String libraryPath) {
     _libraryImpl = openLibrary(path: libraryPath);
     resolveFunctions(_libraryImpl);
+    _initialized = true;
   }
 }

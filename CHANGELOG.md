@@ -1,5 +1,7 @@
 ## 0.9.7
 
+- **(Breaking Change: Codec Users)** Removed (user-override library) path argument in constructors for BrotliCodec, Lz4Codec
+and ZstdCodec in favor of static getters/setters BrotliCodec.libraryPath, Lz4Codec.libraryPath, ZstdCodec.libraryPath. 
 - Refactored [open_library.dart](lib/src/framework/native/library/open_library.dart) by splitting out the various shared
 library resolving mechanisms into an ordered list of strategy objects.
 - Stubbed [OpenViaPackageRelativeStrategy](lib/src/framework/native/library/stubs/package_relative_strategy.dart) to more

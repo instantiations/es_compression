@@ -27,16 +27,19 @@ mixin OpenLibrary {
   String get moduleId;
 
   /// Ordered list of strategies for resolving and opening shared libraries.
-  List<OpenLibraryStrategy> strategies = [];
+  final List<OpenLibraryStrategy> _strategies = [];
 
   /// Open the shared library whose path is resolved either by the supplied
   /// [path] or by the mixer [moduleId].
   ///
-  /// Each strategy in [strategies] will be requested to open the shared
+  /// If [path] is provided, then it acts as an override to any other lookup
+  /// mechanisms.
+  ///
+  /// Each strategy in [_strategies] will be requested to open the shared
   /// library in order.
   DynamicLibrary openLibrary({String path}) {
     _initStrategies(path);
-    for (final strategy in strategies) {
+    for (final strategy in _strategies) {
       final library = strategy.openFor(this);
       if (library != null) return library;
     }
@@ -69,16 +72,20 @@ mixin OpenLibrary {
     return '$_esprefix$moduleId-$result.$extension';
   }
 
+  /// Add the [strategy] to the list of [_strategies].
+  void add(OpenLibraryStrategy strategy) => strategy?.addTo(_strategies);
+
   /// Initialize the strategies used to open shared libraries.
   void _initStrategies(String userDefinedPath) {
-    strategies.clear();
+    _strategies.clear();
     if (userDefinedPath != null) {
-      strategies.add(OpenViaOsResolutionStrategy(userDefinedPath));
+      _strategies.add(OpenViaOsResolutionStrategy(userDefinedPath));
+    } else {
+      _strategies
+        ..add(OpenViaEnvVarStrategy())
+        ..add(OpenViaPackageRelativeStrategy())
+        ..add(OpenViaScriptRelativeStrategy())
+        ..add(OpenViaOsResolutionStrategy(defaultLibraryFileName));
     }
-    strategies
-      ..add(OpenViaEnvVarStrategy())
-      ..add(OpenViaPackageRelativeStrategy())
-      ..add(OpenViaScriptRelativeStrategy())
-      ..add(OpenViaOsResolutionStrategy(defaultLibraryFileName));
   }
 }

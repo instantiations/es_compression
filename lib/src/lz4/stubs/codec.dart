@@ -6,6 +6,18 @@ import 'dart:convert';
 
 import '../codec.dart';
 
+/// Library function used by [Lz4Codec] static function that gets the custom
+/// library path.
+///
+/// This is the stubbed version that be a no-op.
+String lz4GetLibraryPath() => null;
+
+/// Library function used by [Lz4Codec] static function that sets a custom
+/// library path.
+///
+/// This is the stubbed version that be a no-op.
+void lz4SetLibraryPath(String path) => null;
+
 /// Extension that provides suitable stubs for [Lz4Codec]s in non-IO
 /// environments.
 ///

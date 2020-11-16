@@ -12,6 +12,14 @@ import 'version.dart';
 
 /// The [BrotliCodec] encodes/decodes raw bytes using the Brotli algorithm
 class BrotliCodec extends Codec<List<int>, List<int>> {
+  /// Return the library path [String] or [:null:] if not set.
+  static String get libraryPath => brotliGetLibraryPath();
+
+  /// Set the custom library [path]
+  ///
+  /// Throw a [StateError] if the library has already been initialized.
+  static set libraryPath(String path) => brotliSetLibraryPath(path);
+
   /// The compression-[level] or quality can be set in the range of
   /// [BrotliOption.minLevel]..[BrotliOption.maxLevel].
   /// The higher the level, the slower the compression.
@@ -109,13 +117,11 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
       this.directDistanceCodeCount,
       this.ringBufferReallocation = true,
       this.inputBufferLength = CodecBufferHolder.autoLength,
-      this.outputBufferLength = CodecBufferHolder.autoLength,
-      String libraryPath}) {
+      this.outputBufferLength = CodecBufferHolder.autoLength}) {
     validateBrotliLevel(level);
     validateBrotliWindowBits(windowBits);
     validateBrotliBlockBits(blockBits);
     validateBrotliPostfixBits(postfixBits);
-    if (libraryPath != null) userDefinedLibraryPath = libraryPath;
   }
 
   /// Internal Constructor for building the [brotli] instance.

@@ -10,6 +10,19 @@ import '../encoder.dart';
 import 'dispatcher.dart';
 import 'library.dart';
 
+/// Library function used by [BrotliLibrary] static function that gets the
+/// custom library path.
+///
+/// Return the [String] library path or [:null:] if none is set.
+String brotliGetLibraryPath() => BrotliLibrary.userDefinedLibraryPath;
+
+/// Library function used by [BrotliCodec] static function that sets a custom
+/// library path.
+///
+/// This forwards the request to the [BrotliLibrary].
+void brotliSetLibraryPath(String path) =>
+    BrotliLibrary.userDefinedLibraryPath = path;
+
 /// Extension that provides the `dart:io` dependent part of [BrotliCodec].
 ///
 /// This includes:

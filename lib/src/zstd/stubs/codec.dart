@@ -6,6 +6,18 @@ import 'dart:convert';
 
 import '../../../zstd.dart';
 
+/// Library function used by [ZstdCodec] static function that gets the custom
+/// library path.
+///
+/// This is the stubbed version that be a no-op.
+String zstdGetLibraryPath() => null;
+
+/// Library function used by [ZstdCodec] static function that sets a custom
+/// library path.
+///
+/// This is the stubbed version that be a no-op.
+void zstdSetLibraryPath(String path) => null;
+
 /// Extension that provides suitable stubs for [ZstdCodec]s in non-IO
 /// environments.
 ///
