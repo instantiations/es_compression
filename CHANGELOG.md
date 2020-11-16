@@ -1,3 +1,11 @@
+## 0.9.7
+
+- Refactored [open_library.dart](lib/src/framework/native/library/open_library.dart) by splitting out the various shared
+library resolving mechanisms into an ordered list of strategy objects.
+- Stubbed [OpenViaPackageRelativeStrategy](lib/src/framework/native/library/stubs/package_relative_strategy.dart) to more
+easily allow for use within flutter.
+- CMake corrections to allow for building Android shared libraries on Win/Clang/Ninja configurations.
+
 ## 0.9.6
 
 - Refactored and provided stubs for native/js library import compat.
@@ -39,7 +47,7 @@ and `CodecBuffer.resetWrite()`.
 - Implemented general codec framework.
 - Implemented FFI read/write streamable buffers.
 - Implemented Dart Heap read/write streamable buffers.
-- Implemented flexible library loading with [OpenLibrary](lib/src/framework/native/open_library.dart) mixin.
+- Implemented flexible library loading with [OpenLibrary](lib/src/framework/native/library/open_library.dart) mixin.
 - Implemented FFI bindings for [Brotli v1.0.9](https://github.com/google/brotli/tree/v1.0.9).
 - Implemented Brotli codec framework extensions (encoder/decoders).
 - Implemented shared library and Brotli [Cmake build instructions](tool/blob_builder/brotli/CMakeLists.txt).

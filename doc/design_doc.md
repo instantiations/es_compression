@@ -82,7 +82,7 @@ Especially with FFI-based codecs that interface with external shared libraries, 
 libraries are to be located by the program.
 
 #### Locating Shared Libraries
-[open_library.dart](../lib/src/framework/native/open_library.dart) is a library module whose responsibility is to locate
+[open_library.dart](../lib/src/framework/native/library/open_library.dart) is a library module whose responsibility is to locate
 and open OS shared libraries for use with FFI-codec implementations.
 
 See the comment for the `OpenLibrary` mixin for an explanation of the ways a given shared library is found and loaded.
