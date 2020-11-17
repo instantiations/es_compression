@@ -135,6 +135,73 @@ To run (lz4 shown below):
 > dart benchmark/lz4_benchmark.dart
 ```
 
+## Deployment
+FFI-based implementations will need access to the low-level shared libraries (i.e. .dll, .so, .dylib).
+This package offers a flexible library loader that can be customized for end-user deployment needs.
+
+By default, the resolution order is:
+- Environment Variable
+- Package-Relative
+- Script-Relative
+- OS-Dependent
+
+User Provided Resolution: The user can override the above resolution with a user provided library path. The different
+strategies for locating shared libraries are described below.
+
+### Environment Variable Resolution
+An environment variable can be defined that provides the path to the shared library. This is either the path to the shared
+library file or the directory which should contain the filename of the form *es{algo}_{os}{bitness}.{ext}*. For example,
+the filename for lz4 on 64-bit windows would be *eslz4_win64.dll*.
+
+| Codec      | Environment Variable  |
+| -----------| --------------------- |
+| `brotli`   | BROTLI_LIBRARY_PATH   |
+| `lz4`      | LZ4_LIBRARY_PATH      |
+| `zstd`     | ZSTD_LIBRARY_PATH     |
+
+### Package-Relative Resolution
+Prebuilt shared libraries for Win/Linux/Mac are provided in the `blob` directory of each FFI codec implementation. These
+have been built by the package maintainer using the [blob_builder](https://github.com/instantiations/es_compression/tree/master/tool/blob_builder)
+tool.
+
+The distributed shared libs for a codec named *'xxx'* is expected to be located in `lib/src/xxx/blobs` by default.
+
+### Script-Relative Resolution
+An attempt is made to find the shared library in the same directory as the running script. The name of the shared library
+is expected to be of the form *es{algo}_{os}{bitness}.{ext}*. For example, the filename for zstd on 64-bit linux would
+be *eszstd_linux64.dll*.
+
+### OS-Dependent Resolution
+A call to `DynamicLibrary.open()` is made for the filename of the form *es{algo}_{os}{bitness}.{ext}* which will use
+the resolution rules for the operating system.
+
+### User Provided Resolution
+Users of this package have the option to override the library path early in the program.
+
+Provided FFI Codecs have static getters/setters for the `libraryPath`. Users should be sure set the `libraryPath`
+early **before** the first use. A `StateError` will be thrown if a user attempts to set the `libraryPath` more than once.
+
+```dart
+final codec = ZstdCodec.libraryPath = '/path/to/shared/library.so';
+```
+
+### Code Signing
+
+#### Windows
+Provided dlls are digitally signed with an MS authenticode certificate owned by [Instantiations, Inc].
+
+#### Linux
+*N/A*
+
+#### Mac
+Provided dylibs are not currently signed, and recent versions of OSX will refuse to load them unless you allow
+it from the *Security & Privacy* dialog.
+
+The build scripts have been provided [blob_builder](https://github.com/instantiations/es_compression/tree/master/tool/blob_builder)
+and gives you access to build and sign them yourself, if desired.
+
+*Instantiations may sign the libraries in the future, and if so, it will be noted in the changelog and here.*
+
 ## Tools
 In the `tool` subdirectory, the following tools are provided.
 
@@ -167,53 +234,12 @@ The major compression framework abstractions are:
 - `CodecBuffer` - A buffer with a streaming API that is backed by either [native](https://github.com/instantiations/es_compression/blob/master/lib/src/framework/native/buffers.dart)
 or [dart](https://github.com/instantiations/es_compression/blob/master/lib/src/framework/dart/buffers.dart) heap bytes.
 
-### OS Shared Libraries
-FFI-based implementations will need access to the low-level shared libraries (i.e. .dll, .so, .dylib).
-Prebuilt shared libraries for Win/Linux/Mac are provided in the `blob` directory for each FFI codec implementation.
-The distributed shared libs for a codec named *'xxx'* is expected to be located in `lib/src/xxx/blobs` by default.
-A flexible [library loader] exists that allows these locations to be customized.
-
-#### Codec Configuration
-Provided FFI Codecs have constructors with a `libraryPath` named parameter.
-
-```dart
-final codec = ZstdCodec(libraryPath: '/path/to/shared/library.so');
-```
-
-#### Environment Variables
-An environment variable can be defined that provides the path to the shared library.
-This is either the path to the shared library file or the directory which contains it.
-See the comments for the mixin `OpenLibrary` in the [library loader];
-
-| Codec      | Environment Variable  |
-| -----------| --------------------- |
-| `brotli`   | BROTLI_LIBRARY_PATH   |
-| `lz4`      | LZ4_LIBRARY_PATH      |
-| `zstd`     | ZSTD_LIBRARY_PATH     |
-
-#### Code Signing
-
-##### Windows
-Provided dlls are digitally signed with an MS authenticode certificate owned by [Instantiations, Inc].
-
-##### Linux
-*N/A*
-
-##### Mac
-Provided dylibs are not currently signed, and recent versions of OSX will refuse to load them unless you allow
-it from the *Security & Privacy* dialog.
-
-The build scripts have been provided [blob_builder](https://github.com/instantiations/es_compression/tree/master/tool/blob_builder)
-and gives you access to build and sign them yourself, if desired.
-
-*Instantiations may sign the libraries in the future, and if so, it will be noted in the changelog and here.*
-
 ## Features and bugs
 Please file feature requests and bugs at the [issue tracker][tracker].
 
 They will be reviewed and addressed on a best-effort basis by [Instantiations, Inc].
 
-[library loader]: https://github.com/instantiations/es_compression/blob/master/lib/src/framework/native/open_library.dart
+[library loader]: https://github.com/instantiations/es_compression/blob/master/lib/src/framework/native/library/open_library.dart
 [tracker]: https://github.com/instantiations/es_compression/issues
 [VAST Platform]: https://www.instantiations.com/products/vasmalltalk/index.html
 [Instantiations, Inc]: https://www.instantiations.com
