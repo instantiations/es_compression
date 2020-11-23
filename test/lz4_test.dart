@@ -12,8 +12,9 @@ void main() {
   test('Test Lz4 Version Number', () {
     final codec = lz4;
     final bindingVersion = '1.9.2';
+    final libraryVersion = '1.9.3';
     expect(codec.bindingVersion.toString(), bindingVersion);
-    expect(codec.libraryVersion.toString(), bindingVersion);
+    expect(codec.libraryVersion.toString(), libraryVersion);
   });
 
   test('Test Bad Lz4 Decode', () {
