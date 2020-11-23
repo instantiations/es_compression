@@ -55,6 +55,18 @@
 #     >cmake .. -DES_64BIT=OFF -G"Unix Makefiles"
 #     >make
 #
+#  Mac
+#    Mac 64-bit - Unix Make
+#    >mkdir build && cd build
+#    >cmake .. -G"Unix Makefiles"
+#    >make
+#
+#    Mac 64-bit - Xcode
+#    >mkdir build && cd build
+#    >cmake .. -G"xcode"
+#    <open xcode>
+#    <switch to ALL_BUILD target>
+#    <Menu: Product -> Build For -> Running>
 #*******************************************************************************/
 cmake_minimum_required(VERSION 3.14)
 project(es_compression_blobs)
@@ -132,10 +144,10 @@ set(BROTLI_VERSION_MOD 9)
 #-- The period-delimited 3 position format (1.0.0)
 set(BROTLI_VERSION "${BROTLI_VERSION_MAJOR}.${BROTLI_VERSION_MINOR}.${BROTLI_VERSION_MOD}")
 
-#-- LZ4 Version: 1.9.2
+#-- LZ4 Version: 1.9.3
 set(LZ4_VERSION_MAJOR 1)
 set(LZ4_VERSION_MINOR 9)
-set(LZ4_VERSION_MOD 2)
+set(LZ4_VERSION_MOD 3)
 #-- The period-delimited 3 position format (1.0.0)
 set(LZ4_VERSION "${LZ4_VERSION_MAJOR}.${LZ4_VERSION_MINOR}.${LZ4_VERSION_MOD}")
 

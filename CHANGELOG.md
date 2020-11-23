@@ -3,6 +3,13 @@
 - Migrate to null safety
 - Update SDK constraints to >=2.12.0-0 <3.0.0 based on beta release guidelines.
 
+## 0.9.8
+
+- Updated [prebuilt libraries](lib/src/lz4/blobs) to [LZ4 v1.9.3](https://github.com/lz4/lz4/releases/tag/v1.9.3).
+- Rebuilt mac 64-bit libraries for win/linux/mac using xcode project.
+- Updated [cmake instructions](tool/blob_builder/CMakeLists.txt) for building prebuilt libraries on mac.
+- Fix comments.
+
 ## 0.9.7
 
 - **(Breaking Change: Codec Users)** Removed (user-override library) path argument in constructors for BrotliCodec, Lz4Codec
