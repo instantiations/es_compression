@@ -55,6 +55,18 @@
 #     >cmake .. -DES_64BIT=OFF -G"Unix Makefiles"
 #     >make
 #
+#  Mac
+#    Mac 64-bit - Unix Make
+#    >mkdir build && cd build
+#    >cmake .. -G"Unix Makefiles"
+#    >make
+#
+#    Mac 64-bit - Xcode
+#    >mkdir build && cd build
+#    >cmake .. -G"xcode"
+#    <open xcode>
+#    <switch to ALL_BUILD target>
+#    <Menu: Product -> Build For -> Running>
 #*******************************************************************************/
 cmake_minimum_required(VERSION 3.14)
 project(es_compression_blobs)
