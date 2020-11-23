@@ -15,8 +15,8 @@ class OpenViaScriptRelativeStrategy extends OpenLibraryStrategy {
   @override
   String get strategyId => 'Script-Relative-Strategy';
 
-  /// Return [:true:] if the library was resolved via script location
-  /// and successfully opened, [:false:] otherwise.
+  /// Return the opened [DynamicLibrary] if the library was resolved via
+  /// script relative resolution, [:null:] otherwise.
   @override
   DynamicLibrary openFor(OpenLibrary openLibrary) {
     final libraryName = openLibrary.defaultLibraryFileName;

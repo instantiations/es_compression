@@ -41,9 +41,6 @@ class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
   /// Dart native library object.
   DynamicLibrary _libraryImpl;
 
-  /// Lz4 Version Number.
-  int versionNumber;
-
   /// Unique id of this library module.
   @override
   String get moduleId => 'lz4';

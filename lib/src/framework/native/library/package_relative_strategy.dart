@@ -31,8 +31,8 @@ class OpenViaPackageRelativeStrategy extends OpenLibraryStrategy {
   @override
   String get strategyId => 'Package-Relative-Strategy';
 
-  /// Return [:true:] if the library was resolved via environment variable
-  /// and successfully opened, [:false:] otherwise.
+  /// Return the opened [DynamicLibrary] if the library was resolved via
+  /// package relative resolution, [:null:] otherwise.
   @override
   DynamicLibrary openFor(OpenLibrary openLibrary) {
     final moduleId = openLibrary.moduleId;

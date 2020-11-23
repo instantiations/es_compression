@@ -89,8 +89,7 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
       this.blockSize = Lz4Option.defaultBlockSize,
       this.optimizeForDecompression = false,
       this.inputBufferLength = CodecBufferHolder.autoLength,
-      this.outputBufferLength = CodecBufferHolder.autoLength,
-      String libraryPath}) {
+      this.outputBufferLength = CodecBufferHolder.autoLength}) {
     validateLz4Level(level);
     validateLz4BlockSize(blockSize);
     if (libraryPath != null) userDefinedLibraryPath = libraryPath;

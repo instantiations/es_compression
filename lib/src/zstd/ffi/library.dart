@@ -41,9 +41,6 @@ class ZstdLibrary with OpenLibrary, ZstdConstants, ZstdFunctions, ZstdTypes {
   /// Dart native library object.
   DynamicLibrary _libraryImpl;
 
-  /// Zstd Version Number.
-  int versionNumber;
-
   /// Unique id of this library module.
   @override
   String get moduleId => 'zstd';
