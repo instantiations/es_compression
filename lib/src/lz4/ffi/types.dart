@@ -27,42 +27,42 @@ class Lz4FrameInfo extends Struct {
   /// [Lz4Constants.LZ4F_max4MB],
   /// Default: [Lz4Constants.LZ4F_max64KB].
   @Int32()
-  int blockSizeID;
+  external int blockSizeID;
 
   /// [Lz4Constants.LZ4F_blockLinked],
   /// [Lz4Constants.LZ4F_blockIndependent],
   /// Default: [Lz4Constants.LZ4F_blockLinked].
   @Int32()
-  int blockMode;
+  external int blockMode;
 
   /// [Lz4Constants.LZ4F_noContentChecksum],
   /// [Lz4Constants.LZ4F_contentChecksumEnabled],
   /// Default: [Lz4Constants.LZ4F_noContentChecksum].
   @Int32()
-  int contentChecksumFlag;
+  external int contentChecksumFlag;
 
   /// [Lz4Constants.LZ4F_frame],
   /// [Lz4Constants.LZ4F_skippableFrame],
   /// Default: [Lz4Constants.LZ4F_frame].
   @Int32()
-  int frameType;
+  external int frameType;
 
   /// Size of uncompressed content.
   /// Default: 0 (unknown).
   @Uint64()
-  int contentSize;
+  external int contentSize;
 
   /// Dictionary ID, sent by compressor to help decoder select correct
   /// dictionary.
   /// Default: 0 (no dictID provided).
   @Int32()
-  int dictID;
+  external int dictID;
 
   /// [Lz4Constants.LZ4F_noBlockChecksum],
   /// [Lz4Constants.LZ4F_blockChecksumEnabled],
   /// Default: [Lz4Constants.LZ4F_noBlockChecksum].
   @Int32()
-  int blockChecksumFlag;
+  external int blockChecksumFlag;
 
   /// Return the block size, in bytes, for the id.
   int get blockSize => _blockSizeForId(blockSizeID);
@@ -94,37 +94,37 @@ class Lz4Preferences extends Struct {
   /// Nested Struct Field
   /// @see [Lz4FrameInfo.blockSizeID]
   @Int32()
-  int frameInfoBlockSizeID;
+  external int frameInfoBlockSizeID;
 
   /// Nested Struct Field
   /// @see [Lz4FrameInfo.blockMode]
   @Int32()
-  int frameInfoBlockMode;
+  external int frameInfoBlockMode;
 
   /// Nested Struct Field
   /// @see [Lz4FrameInfo.contentChecksumFlag]
   @Int32()
-  int frameInfoContentChecksumFlag;
+  external int frameInfoContentChecksumFlag;
 
   /// Nested Struct Field
   /// @see [Lz4FrameInfo.frameType]
   @Int32()
-  int frameInfoFrameType;
+  external int frameInfoFrameType;
 
   /// Nested Struct Field
   /// @see [Lz4FrameInfo.contentSize]
   @Uint64()
-  int frameInfoContentSize;
+  external int frameInfoContentSize;
 
   /// Nested Struct Field
   /// @see [Lz4FrameInfo.dictID]
   @Uint32()
-  int frameInfoDictID;
+  external int frameInfoDictID;
 
   /// Nested Struct Field
   /// @see [Lz4FrameInfo.blockChecksumFlag]
   @Int32()
-  int frameInfoBlockChecksumFlag;
+  external int frameInfoBlockChecksumFlag;
 
   // End Nested Lz4FrameInfo
 
@@ -133,17 +133,17 @@ class Lz4Preferences extends Struct {
   /// [Lz4Constants.LZ4HC_CLEVEL_MAX];
   /// values < 0 trigger "fast acceleration"
   @Int32()
-  int compressionLevel;
+  external int compressionLevel;
 
   /// 1: always flush: reduces usage of internal buffers
   @Uint32()
-  int autoFlush;
+  external int autoFlush;
 
   /// 1: parser favors decompression speed vs compression ratio.
   /// Only works for high compression modes
   /// (>= [Lz4Constants.LZ4HC_CLEVEL_OPT_MIN].
   @Uint32()
-  int favorDecSpeed;
+  external int favorDecSpeed;
 
   /// Return the block size, in bytes, for the id.
   int get blockSize => _blockSizeForId(frameInfoBlockSizeID);
@@ -173,19 +173,19 @@ class Lz4CompressOptions extends Struct {
   /// 1 == src content will remain present on future calls to LZ4F_compress();
   /// skip copying src content within tmp buffer
   @Uint32()
-  int stableSrc;
+  external int stableSrc;
 
   /// reserved[0]
   @Uint8()
-  int reserved1;
+  external int reserved1;
 
   /// reserved[1]
   @Uint8()
-  int reserved2;
+  external int reserved2;
 
   /// reserved[2]
   @Uint8()
-  int reserved3;
+  external int reserved3;
 
   /// Free the memory associated with this struct.
   void free() => ffi.free(addressOf);
@@ -206,19 +206,19 @@ class Lz4DecompressOptions extends Struct {
   /// 1 == src content will remain present on future calls to LZ4F_compress();
   /// skip copying src content within tmp buffer
   @Uint32()
-  int stableSrc;
+  external int stableSrc;
 
   /// reserved[0]
   @Uint8()
-  int reserved1;
+  external int reserved1;
 
   /// reserved[1]
   @Uint8()
-  int reserved2;
+  external int reserved2;
 
   /// reserved[2]
   @Uint8()
-  int reserved3;
+  external int reserved3;
 
   /// Free the memory associated with this struct.
   void free() => ffi.free(addressOf);
@@ -240,22 +240,23 @@ class Lz4DecompressOptions extends Struct {
 mixin Lz4Types {
   /// Return an allocated [Lz4Preferences] struct.
   Lz4Preferences newPreferences(
-      {int level,
-      bool fastAcceleration = false,
-      bool contentChecksum = false,
-      bool blockChecksum = false,
-      bool blockLinked = true,
-      int blockSize = Lz4Constants.LZ4F_max64KB,
-      bool optimizeForCompression = false}) {
+      {int? level = 0,
+      bool? fastAcceleration = false,
+      bool? contentChecksum = false,
+      bool? blockChecksum = false,
+      bool? blockLinked = true,
+      int? blockSize = Lz4Constants.LZ4F_max64KB,
+      bool? optimizeForCompression = false}) {
     return Lz4Preferences.allocate()
-      ..compressionLevel = (fastAcceleration) ? -level : level
-      ..frameInfoContentChecksumFlag = contentChecksum ? 1 : 0
-      ..frameInfoBlockChecksumFlag = blockChecksum ? 1 : 0
-      ..frameInfoBlockMode = blockLinked
+      ..compressionLevel =
+          (fastAcceleration ?? false) ? -(level ?? 0) : level ?? 0
+      ..frameInfoContentChecksumFlag = (contentChecksum ?? false) ? 1 : 0
+      ..frameInfoBlockChecksumFlag = (blockChecksum ?? false) ? 1 : 0
+      ..frameInfoBlockMode = (blockLinked ?? true)
           ? Lz4Constants.LZ4F_blockLinked
           : Lz4Constants.LZ4F_blockIndependent
-      ..frameInfoBlockSizeID = blockSize
-      ..favorDecSpeed = optimizeForCompression ? 1 : 0;
+      ..frameInfoBlockSizeID = blockSize ?? Lz4Constants.LZ4F_max64KB
+      ..favorDecSpeed = (optimizeForCompression ?? false) ? 1 : 0;
   }
 
   /// Return an allocated [Lz4FrameInfo] struct.

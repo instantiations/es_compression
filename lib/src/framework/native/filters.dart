@@ -9,7 +9,8 @@ import 'buffers.dart';
 abstract class NativeCodecFilterBase
     extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer> {
   /// Constructor which allows the user to set the input/output buffer lengths.
-  NativeCodecFilterBase({int inputBufferLength, int outputBufferLength})
+  NativeCodecFilterBase(
+      {int inputBufferLength = 16386, int outputBufferLength = 16386})
       : super(
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength);

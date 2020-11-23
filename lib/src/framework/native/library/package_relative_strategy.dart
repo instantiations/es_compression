@@ -31,21 +31,22 @@ class OpenViaPackageRelativeStrategy extends OpenLibraryStrategy {
   @override
   String get strategyId => 'Package-Relative-Strategy';
 
-  /// Return [:true:] if the library was resolved via environment variable
-  /// and successfully opened, [:false:] otherwise.
+  /// Return the opened [DynamicLibrary] if the library was resolved via
+  /// package relative resolution, [:null:] otherwise.
   @override
-  DynamicLibrary openFor(OpenLibrary openLibrary) {
+  DynamicLibrary? openFor(OpenLibrary openLibrary) {
     final moduleId = openLibrary.moduleId;
     final packageLibrary = 'package:$_espackage/$moduleId.dart';
     final packageUri = _resolvePackagedLibraryLocation(packageLibrary);
     final blobs = packageUri?.resolve('src/$moduleId/blobs/');
     final filePath = blobs?.resolve(openLibrary.defaultLibraryFileName);
-    return open(filePath?.toFilePath());
+    if (filePath == null) return null;
+    return open(filePath.toFilePath());
   }
 
   /// Resolve package-relative [packagePath] by converting it to a non-package
   /// relative [Uri].
-  Uri _resolvePackagedLibraryLocation(String packagePath) {
+  Uri? _resolvePackagedLibraryLocation(String packagePath) {
     const timeoutSeconds = 5;
     final libraryUri = Uri.parse(packagePath);
     final packageUriFuture = Isolate.resolvePackageUri(libraryUri);

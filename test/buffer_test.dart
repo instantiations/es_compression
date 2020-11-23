@@ -7,14 +7,14 @@ import 'package:es_compression/src/framework/dart/buffers.dart';
 import 'package:es_compression/src/framework/native/buffers.dart';
 import 'package:test/test.dart';
 
+late CodecBuffer buffer;
+
 void main() {
   doTest('DartCodecBuffer', (length) => DartCodecBuffer(length));
   doTest('NativeCodecBuffer', (length) => NativeCodecBuffer(length));
 }
 
 void doTest(String name, CodecBuffer Function(int length) newBuffer) {
-  CodecBuffer buffer;
-
   test('Test $name default size', () {
     buffer = newBuffer(16384);
     expect(buffer.length, 16384);
@@ -218,23 +218,22 @@ void doTest(String name, CodecBuffer Function(int length) newBuffer) {
   });
 
   test('Test codec buffer holder', () {
-    final bufferHolder =
-        CodecBufferHolder<DartHeapPointer, DartCodecBuffer>(10);
+    final bufferHolder = CodecBufferHolder<DartHeapPointer, DartCodecBuffer>(
+        10, (length) => DartCodecBuffer(length));
     expect(bufferHolder.length, 10);
     bufferHolder.length = 20;
     expect(bufferHolder.length, 20);
     expect(bufferHolder.isLengthSet(), true);
     expect(bufferHolder.isBufferSet(), false);
-    expect(bufferHolder.buffer == null, true);
     bufferHolder.bufferBuilderFunc = (length) => DartCodecBuffer(length);
-    expect(bufferHolder.buffer is DartCodecBuffer, true);
+    buffer = bufferHolder.buffer;
+    expect(buffer is DartCodecBuffer, true);
     expect(() => bufferHolder.length = 100, throwsStateError);
     bufferHolder.release();
     expect(bufferHolder.isBufferSet(), false);
   });
 
   tearDown(() {
-    buffer?.release();
-    buffer = null;
+    buffer.release();
   });
 }

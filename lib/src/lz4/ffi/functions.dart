@@ -160,23 +160,23 @@ typedef Lz4FResetDecompressionContextDart = void Function(Pointer<Lz4Dctx>);
 /// *lz4.h*
 /// *lz4frame.h*
 mixin Lz4Functions {
-  Lz4VersionNumberDart lz4VersionNumber;
-  Lz4FIsErrorDart lz4FIsError;
-  Lz4FGetErrorNameDart lz4FGetErrorName;
-  Lz4FCreateCompressionContextDart lz4FCreateCompressionContext;
-  Lz4FFreeCompressionContextDart lz4FFreeCompressionContext;
-  Lz4FCompressBeginDart lz4FCompressBegin;
-  Lz4FCompressBoundDart lz4FCompressBound;
-  Lz4FCompressFrameDart lz4FCompressFrame;
-  Lz4FCompressFrameBoundDart lz4FCompressFrameBound;
-  Lz4FCompressUpdateDart lz4FCompressUpdate;
-  Lz4FCompressEndDart lz4FCompressEnd;
-  Lz4FFlushDart lz4FFlush;
-  Lz4FCreateDecompressionContextDart lz4FCreateDecompressionContext;
-  Lz4FFreeDecompressionContextDart lz4FFreeDecompressionContext;
-  Lz4FGetFrameInfoDart lz4FGetFrameInfo;
-  Lz4FResetDecompressionContextDart lz4FResetDecompressionContext;
-  Lz4FDecompressDart lz4FDecompress;
+  late final Lz4VersionNumberDart lz4VersionNumber;
+  late final Lz4FIsErrorDart lz4FIsError;
+  late final Lz4FGetErrorNameDart lz4FGetErrorName;
+  late final Lz4FCreateCompressionContextDart lz4FCreateCompressionContext;
+  late final Lz4FFreeCompressionContextDart lz4FFreeCompressionContext;
+  late final Lz4FCompressBeginDart lz4FCompressBegin;
+  late final Lz4FCompressBoundDart lz4FCompressBound;
+  late final Lz4FCompressFrameDart lz4FCompressFrame;
+  late final Lz4FCompressFrameBoundDart lz4FCompressFrameBound;
+  late final Lz4FCompressUpdateDart lz4FCompressUpdate;
+  late final Lz4FCompressEndDart lz4FCompressEnd;
+  late final Lz4FFlushDart lz4FFlush;
+  late final Lz4FCreateDecompressionContextDart lz4FCreateDecompressionContext;
+  late final Lz4FFreeDecompressionContextDart lz4FFreeDecompressionContext;
+  late final Lz4FGetFrameInfoDart lz4FGetFrameInfo;
+  late final Lz4FResetDecompressionContextDart lz4FResetDecompressionContext;
+  late final Lz4FDecompressDart lz4FDecompress;
 
   /// Resolve all functions using the [library]
   void resolveFunctions(DynamicLibrary library) {

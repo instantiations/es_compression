@@ -40,7 +40,7 @@ class CodecConverter extends Converter<List<int>, List<int>> {
     if (sink is! ByteConversionSink) {
       byteSink = ByteConversionSink.from(sink);
     } else {
-      byteSink = sink as ByteConversionSink;
+      byteSink = sink;
     }
     return byteSink;
   }

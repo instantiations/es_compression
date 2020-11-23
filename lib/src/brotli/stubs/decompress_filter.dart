@@ -14,8 +14,8 @@ class BrotliDecompressFilter extends DartCodecFilterBase {
   BrotliDecompressFilter(
       {bool ringBufferReallocation = true,
       bool largeWindow = false,
-      int inputBufferLength,
-      int outputBufferLength})
+      int inputBufferLength = 16386,
+      int outputBufferLength = 16386})
       : super(
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength) {

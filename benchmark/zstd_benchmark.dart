@@ -20,7 +20,7 @@ import 'utils/benchmark_utils.dart';
 class ZstdEncodeBenchmark extends BenchmarkBase {
   final ZstdData data;
   final ZstdCodec codec;
-  List<int> encoded;
+  late List<int> encoded;
 
   ZstdEncodeBenchmark(this.data,
       {ScoreEmitter emitter = const PrintEmitter(),
@@ -57,7 +57,7 @@ class ZstdEncodeBenchmark extends BenchmarkBase {
 class ZstdDecodeBenchmark extends BenchmarkBase {
   final ZstdData data;
   final ZstdCodec codec;
-  List<int> decoded;
+  late List<int> decoded;
 
   ZstdDecodeBenchmark(this.data,
       {ScoreEmitter emitter = const PrintEmitter(),

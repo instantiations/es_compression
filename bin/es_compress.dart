@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:args/args.dart';
 import 'package:es_compression/brotli.dart';
 import 'package:es_compression/lz4.dart';
@@ -52,7 +53,7 @@ Future<int> main(List<String> arguments) async {
   } else {
     // Read/Interpret arguments
     final algorithm =
-        argResults[algorithmArg] as String ?? _guessAlgorithm(argResults);
+        argResults[algorithmArg] as String? ?? _guessAlgorithm(argResults);
     final level = argResults[levelArg] as String;
     final encode = _shouldEncode(argResults);
     final codec = _selectCodec(algorithm, level);
@@ -96,14 +97,14 @@ Future<int> main(List<String> arguments) async {
       numChunks++;
       outputSink.add(chunk);
     }, onDone: () {
-      outputSink.close().then((Object f) {
+      outputSink.close().then<dynamic>((dynamic f) {
         stopwatch.stop();
         print('Completed $algorithm ${encode ? 'encoding' : 'decoding'}');
         _printStats(stopwatch);
         completer.complete(0);
       });
     }, onError: (Object e) {
-      outputSink.close().then((Object f) {
+      outputSink.close().then<dynamic>((dynamic f) {
         print(e.toString());
         completer.complete(-1);
       });
@@ -136,15 +137,15 @@ String _guessAlgorithm(ArgResults argResults) {
   // Guess based on file extension
   final input = _toFile(argResults[inputFileArg]);
   var algo = algorithms.keys
-      .firstWhere((ext) => input.path.endsWith(ext), orElse: () => null);
-  if (algo != null) return algo;
+      .firstWhere((ext) => input.path.endsWith(ext), orElse: () => '');
+  if (algo.isNotEmpty) return algo;
 
   final output = _toFile(argResults[outputFileArg], mustExist: false);
   algo = algorithms.keys
-      .firstWhere((ext) => output.path.endsWith(ext), orElse: () => null);
-  if (algo != null) return algo;
+      .firstWhere((ext) => output.path.endsWith(ext), orElse: () => '');
+  if (algo.isNotEmpty) return algo;
 
-  return null;
+  return 'unknown';
 }
 
 /// Convert the [path] to a [File].
@@ -153,7 +154,7 @@ File _toFile(dynamic path, {bool mustExist = true}) {
   if (path is! String) {
     throw Exception('File is not defined');
   }
-  final file = File(path as String);
+  final file = File(path);
   if (mustExist && file.existsSync() == false) {
     throw Exception('File does not exist: $path');
   }
@@ -181,7 +182,7 @@ ArgParser _buildArgParser() {
 
 /// Select the appropriate codec class based on the [algorithm].
 /// Configure it with the level provided.
-Codec<List<int>, List<int>> _selectCodec(String algorithm, String levelStr) {
+Codec<List<int>, List<int>> _selectCodec(String algorithm, String? levelStr) {
   final level = levelStr == null ? null : int.parse(levelStr);
   switch (algorithm) {
     case 'lz4':

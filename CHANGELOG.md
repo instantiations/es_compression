@@ -1,3 +1,8 @@
+## 1.0.0-nullsafety
+
+- Migrate to null safety
+- Update SDK constraints to >=2.12.0-0 <3.0.0 based on beta release guidelines.
+
 ## 0.9.7
 
 - **(Breaking Change: Codec Users)** Removed (user-override library) path argument in constructors for BrotliCodec, Lz4Codec

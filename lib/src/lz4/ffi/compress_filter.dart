@@ -20,25 +20,25 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
   final Lz4Dispatcher _dispatcher = Lz4Dispatcher();
 
   /// FFI Struct exposed by lz4 shared lib for configuration.
-  Lz4Preferences _preferences;
+  late final Lz4Preferences _preferences;
 
   /// Native lz4 context.
-  Lz4Cctx _context;
+  late final Lz4Cctx _context;
 
   /// Native lz4 compress options.
-  Lz4CompressOptions _options;
+  late final Lz4CompressOptions _options;
 
   /// Construct the [Lz4CompressFilter] with the optional parameters.
   Lz4CompressFilter(
-      {int level,
-      bool fastAcceleration,
-      bool contentChecksum,
-      bool blockChecksum,
-      bool blockLinked,
-      int blockSize,
-      bool optimizeForCompression,
-      int inputBufferLength,
-      int outputBufferLength})
+      {int? level,
+      bool? fastAcceleration,
+      bool? contentChecksum,
+      bool? blockChecksum,
+      bool? blockLinked,
+      int? blockSize,
+      bool? optimizeForCompression,
+      int inputBufferLength = 16386,
+      int outputBufferLength = 16386})
       : super(
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength) {
@@ -181,25 +181,17 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
   ///
   /// A [StateError] is thrown if the context is invalid and can not be freed.
   void _destroyContext() {
-    if (_context != null) {
-      try {
-        _dispatcher.callLz4FFreeCompressionContext(_context);
-      } finally {
-        _context = null;
-      }
-    }
+    _dispatcher.callLz4FFreeCompressionContext(_context);
   }
 
   /// Free the native memory from the allocated [_preferences].
   void _destroyPreferences() {
-    _preferences?.free();
-    _preferences = null;
+    _preferences.free();
   }
 
   /// Free the native memory from the allocated [_options].
   void _destroyCompressOptions() {
-    _options?.free();
-    _options = null;
+    _options.free();
   }
 
   /// Release the Lz4 FFI call dispatcher.

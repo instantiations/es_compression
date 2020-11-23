@@ -31,10 +31,10 @@ class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
   }
 
   /// Library accessor to the Lz4 shared lib.
-  Lz4Library library;
+  final Lz4Library library;
 
   /// Version number of the shared library.
-  int _versionNumber;
+  late final int _versionNumber;
 
   /// For safety to prevent double free.
   bool released = false;
@@ -44,8 +44,7 @@ class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
   final Pointer<IntPtr> _destSizePtr = ffi.allocate<IntPtr>();
 
   /// Construct the [Lz4Dispatcher].
-  Lz4Dispatcher() {
-    library = Lz4Library();
+  Lz4Dispatcher() : library = Lz4Library() {
     _versionNumber = callLz4VersionNumber();
   }
 

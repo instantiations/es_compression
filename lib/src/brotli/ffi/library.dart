@@ -16,15 +16,15 @@ import 'types.dart';
 class BrotliLibrary
     with OpenLibrary, BrotliConstants, BrotliFunctions, BrotliTypes {
   /// Library path the user can define to override normal resolution.
-  static String _userDefinedLibraryPath;
+  static String? _userDefinedLibraryPath;
 
   /// Return the library path defined by the user.
-  static String get userDefinedLibraryPath => _userDefinedLibraryPath;
+  static String? get userDefinedLibraryPath => _userDefinedLibraryPath;
 
   /// Set the library [path] defined by the user.
   ///
   /// Throw a [StateError] if this library has already been initialized.
-  static set userDefinedLibraryPath(String path) {
+  static set userDefinedLibraryPath(String? path) {
     if (_initialized == true) {
       throw StateError('BrotliLibrary already initialized.');
     }
@@ -41,7 +41,7 @@ class BrotliLibrary
   static bool _initialized = false;
 
   /// Dart native library object.
-  DynamicLibrary _libraryImpl;
+  late final DynamicLibrary? _libraryImpl;
 
   /// Unique id of this library module.
   @override
@@ -54,9 +54,11 @@ class BrotliLibrary
 
   /// Internal constructor that opens the native shared library and resolves
   /// all the functions.
-  BrotliLibrary._(String libraryPath) {
+  BrotliLibrary._(String? libraryPath) {
     _libraryImpl = openLibrary(path: libraryPath);
-    resolveFunctions(_libraryImpl);
-    _initialized = true;
+    if (_libraryImpl != null) {
+      resolveFunctions(_libraryImpl!);
+      _initialized = true;
+    }
   }
 }

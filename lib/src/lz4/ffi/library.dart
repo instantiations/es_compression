@@ -15,15 +15,15 @@ import 'types.dart';
 /// functions that are described in C header files.
 class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
   /// Library path the user can define to override normal resolution.
-  static String _userDefinedLibraryPath;
+  static String? _userDefinedLibraryPath;
 
   /// Return the library path defined by the user.
-  static String get userDefinedLibraryPath => _userDefinedLibraryPath;
+  static String? get userDefinedLibraryPath => _userDefinedLibraryPath;
 
   /// Set the library [path] defined by the user.
   ///
   /// Throw a [StateError] if this library has already been initialized.
-  static set userDefinedLibraryPath(String path) {
+  static set userDefinedLibraryPath(String? path) {
     if (_initialized == true) {
       throw StateError('Lz4Library already initialized.');
     }
@@ -39,10 +39,7 @@ class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
   static bool _initialized = false;
 
   /// Dart native library object.
-  DynamicLibrary _libraryImpl;
-
-  /// Lz4 Version Number.
-  int versionNumber;
+  late final DynamicLibrary? _libraryImpl;
 
   /// Unique id of this library module.
   @override
@@ -55,9 +52,11 @@ class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
 
   /// Internal constructor that opens the native shared library and resolves
   /// all the functions.
-  Lz4Library._(String libraryPath) {
+  Lz4Library._(String? libraryPath) {
     _libraryImpl = openLibrary(path: libraryPath);
-    resolveFunctions(_libraryImpl);
-    _initialized = true;
+    if (_libraryImpl != null) {
+      resolveFunctions(_libraryImpl!);
+      _initialized = true;
+    }
   }
 }

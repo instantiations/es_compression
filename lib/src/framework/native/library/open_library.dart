@@ -37,7 +37,7 @@ mixin OpenLibrary {
   ///
   /// Each strategy in [_strategies] will be requested to open the shared
   /// library in order.
-  DynamicLibrary openLibrary({String path}) {
+  DynamicLibrary? openLibrary({String? path}) {
     _initStrategies(path);
     for (final strategy in _strategies) {
       final library = strategy.openFor(this);
@@ -73,10 +73,10 @@ mixin OpenLibrary {
   }
 
   /// Add the [strategy] to the list of [_strategies].
-  void add(OpenLibraryStrategy strategy) => strategy?.addTo(_strategies);
+  void add(OpenLibraryStrategy strategy) => strategy.addTo(_strategies);
 
   /// Initialize the strategies used to open shared libraries.
-  void _initStrategies(String userDefinedPath) {
+  void _initStrategies(String? userDefinedPath) {
     _strategies.clear();
     if (userDefinedPath != null) {
       _strategies.add(OpenViaOsResolutionStrategy(userDefinedPath));

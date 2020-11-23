@@ -1,7 +1,7 @@
 language: dart
 
 dart:
-  - stable
+  - dev
 
 matrix:
   include:
@@ -16,6 +16,10 @@ matrix:
 install: pub get
 
 script: pub run test
+
+branches:
+  only:
+    - master
 
 cache:
   directories:

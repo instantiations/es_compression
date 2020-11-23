@@ -28,11 +28,9 @@ abstract class OpenLibraryStrategy {
 
   /// Open the shared library located at the provided [path].
   ///
-  /// Return [:null:] if path is null or there is a problem opening the library
-  /// at the [path].
+  /// Return [:null:] if there is a problem opening the library at the [path].
   /// Return the opened [DynamicLibrary] on success.
-  DynamicLibrary open(String path) {
-    if (path == null) return null;
+  DynamicLibrary? open(String path) {
     try {
       return DynamicLibrary.open(path);
     } on Exception {
@@ -44,5 +42,5 @@ abstract class OpenLibraryStrategy {
   /// mixin.
   ///
   /// Return the opened [DynamicLibrary] on success, [:null:] on failure.
-  DynamicLibrary openFor(OpenLibrary openLibrary);
+  DynamicLibrary? openFor(OpenLibrary openLibrary);
 }

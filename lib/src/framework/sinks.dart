@@ -34,7 +34,6 @@ class CodecSink extends ByteConversionSink {
     // TODO(40614): Remove once non-nullability is sound.
     ArgumentError.checkNotNull(end, 'end');
     if (_closed) return;
-    if (end == null) throw ArgumentError.notNull('end');
     RangeError.checkValidRange(start, end, data.length);
     try {
       _empty = false;
@@ -49,7 +48,7 @@ class CodecSink extends ByteConversionSink {
       }
     } on Exception {
       _closed = true;
-      _filter?.close();
+      _filter.close();
       rethrow;
     }
 
@@ -68,11 +67,11 @@ class CodecSink extends ByteConversionSink {
       }
     } on Exception {
       _closed = true;
-      _filter?.close();
+      _filter.close();
       rethrow;
     }
     _closed = true;
-    _filter?.close();
+    _filter.close();
     _sink.close();
   }
 }
@@ -92,15 +91,7 @@ class _PositionableBuffer {
     }
     var length = end - start;
     var newBuffer = Uint8List(length);
-    var j = start;
-    for (var i = 0; i < length; i++) {
-      var value = buffer[j];
-      if (value == null) {
-        throw ArgumentError('List element is null at index $j');
-      }
-      newBuffer[i] = value;
-      j++;
-    }
+    newBuffer.setRange(0, length, buffer, start);
     return _PositionableBuffer(newBuffer, 0);
   }
 

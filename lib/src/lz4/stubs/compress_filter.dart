@@ -12,15 +12,15 @@ import '../../../framework.dart';
 class Lz4CompressFilter extends DartCodecFilterBase {
   /// Create a stubbed [Lz4CompressFilter] filter.
   Lz4CompressFilter(
-      {int level,
-      bool fastAcceleration,
-      bool contentChecksum,
-      bool blockChecksum,
-      bool blockLinked,
-      int blockSize,
-      bool optimizeForCompression,
-      int inputBufferLength,
-      int outputBufferLength})
+      {int? level,
+      bool? fastAcceleration,
+      bool? contentChecksum,
+      bool? blockChecksum,
+      bool? blockLinked,
+      int? blockSize,
+      bool? optimizeForCompression,
+      int inputBufferLength = 16386,
+      int outputBufferLength = 16386})
       : super(
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength);

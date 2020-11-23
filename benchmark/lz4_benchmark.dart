@@ -20,7 +20,7 @@ import 'utils/benchmark_utils.dart';
 class Lz4EncodeBenchmark extends BenchmarkBase {
   final Lz4Data data;
   final Lz4Codec codec;
-  List<int> encoded;
+  late List<int> encoded;
 
   Lz4EncodeBenchmark(this.data,
       {ScoreEmitter emitter = const PrintEmitter(),
@@ -57,7 +57,7 @@ class Lz4EncodeBenchmark extends BenchmarkBase {
 class Lz4DecodeBenchmark extends BenchmarkBase {
   final Lz4Data data;
   final Lz4Codec codec;
-  List<int> decoded;
+  late List<int> decoded;
 
   Lz4DecodeBenchmark(this.data,
       {ScoreEmitter emitter = const PrintEmitter(),

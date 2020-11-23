@@ -21,7 +21,7 @@ void validateBrotliWindowBits(int windowBits) {
 }
 
 /// Validate the brotli block bits is within range.
-void validateBrotliBlockBits(int blockBits) {
+void validateBrotliBlockBits(int? blockBits) {
   if (blockBits != null &&
       blockBits != 0 &&
       (BrotliOption.minBlockBits > blockBits ||
@@ -32,7 +32,7 @@ void validateBrotliBlockBits(int blockBits) {
 }
 
 /// Validate the brotli postfix bits is within range.
-void validateBrotliPostfixBits(int postfixBits) {
+void validateBrotliPostfixBits(int? postfixBits) {
   if (postfixBits != null &&
       (BrotliOption.minPostfixBits > postfixBits ||
           BrotliOption.maxPostfixBits < postfixBits)) {

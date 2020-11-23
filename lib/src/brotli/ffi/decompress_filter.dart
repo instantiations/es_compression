@@ -19,17 +19,17 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
   final BrotliDispatcher _dispatcher = BrotliDispatcher();
 
   /// Option holder.
-  final List<int> parameters = List(5);
+  final List<int> parameters = List.filled(5, 0);
 
   /// Native brotli state object.
-  BrotliDecoderState _brotliState;
+  BrotliDecoderState _brotliState = BrotliDecoderState();
 
   /// Construct an [BrotliDecompressFilter] with the supplied options.
   BrotliDecompressFilter(
       {bool ringBufferReallocation = true,
       bool largeWindow = false,
-      int inputBufferLength,
-      int outputBufferLength})
+      int inputBufferLength = 16386,
+      int outputBufferLength = 16386})
       : super(
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength) {
@@ -114,9 +114,7 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
   /// Apply the parameter value to the encoder.
   void _applyParameter(int parameter) {
     final value = parameters[parameter];
-    if (value != null) {
-      _dispatcher.callBrotliDecoderSetParameter(_brotliState, parameter, value);
-    }
+    _dispatcher.callBrotliDecoderSetParameter(_brotliState, parameter, value);
   }
 
   /// Allocate and initialize the native brotli decoder state.
@@ -135,13 +133,8 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
 
   /// Free the native context.
   void _destroyState() {
-    if (_brotliState != null) {
-      try {
-        _dispatcher.callBrotliDecoderDestroyInstance(_brotliState);
-      } finally {
-        _brotliState = null;
-      }
-    }
+    _dispatcher.callBrotliDecoderDestroyInstance(_brotliState);
+    _brotliState = BrotliDecoderState();
   }
 
   /// Release the Brotli FFI call dispatcher.

@@ -30,10 +30,10 @@ class ZstdDispatcher with ZstdDispatchErrorCheckerMixin {
   }
 
   /// Library accessor to the Zstd shared lib.
-  ZstdLibrary library;
+  final ZstdLibrary library;
 
   /// Version number of the shared library.
-  int _versionNumber;
+  late final int _versionNumber;
 
   /// For safety to prevent double free.
   bool released = false;
@@ -43,8 +43,7 @@ class ZstdDispatcher with ZstdDispatchErrorCheckerMixin {
   final ZstdOutBuffer _outBuffer = ffi.allocate<ZstdOutBuffer>().ref;
 
   /// Construct the [ZstdDispatcher].
-  ZstdDispatcher() {
-    library = ZstdLibrary();
+  ZstdDispatcher() : library = ZstdLibrary() {
     _versionNumber = callZstdVersionNumber();
   }
 

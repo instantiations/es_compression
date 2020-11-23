@@ -9,14 +9,14 @@ import '../codec.dart';
 /// Library function used by [BrotliCodec] static function that gets the custom
 /// library path.
 ///
-/// This is the stubbed version that be a no-op.
-String brotliGetLibraryPath() => null;
+/// This is the stubbed version that just returns null.
+String? brotliGetLibraryPath() => null;
 
 /// Library function used by [BrotliCodec] static function that sets a custom
 /// library path.
 ///
 /// This is the stubbed version that be a no-op.
-void brotliSetLibraryPath(String path) => null;
+void brotliSetLibraryPath(String? path) => null;
 
 /// Extension that provides suitable stubs for [BrotliCodec]s in non-IO
 /// environments.

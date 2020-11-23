@@ -43,16 +43,16 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   }
 
   /// Library accessor to the Brotli shared lib.
-  BrotliLibrary library;
+  final BrotliLibrary library;
 
   /// Version number of the encoder (part) of the shared library.
-  int _encoderVersionNumber;
+  late final int _encoderVersionNumber;
 
   /// Version number of the decoder (part) of the shared library.
-  int _decoderVersionNumber;
+  late final int _decoderVersionNumber;
 
   /// For safety to prevent double free.
-  bool released;
+  bool released = false;
 
   // These are used in codec routines to cut down on alloc/free
   final Pointer<Pointer<Uint8>> nextInPtr = ffi.allocate<Pointer<Uint8>>();
@@ -62,8 +62,7 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   final Pointer<IntPtr> bufferLengthPtr = ffi.allocate<IntPtr>();
 
   /// Return the [BrotliDispatcher] singleton instance
-  BrotliDispatcher() {
-    library = BrotliLibrary();
+  BrotliDispatcher() : library = BrotliLibrary() {
     _encoderVersionNumber = callBrotliEncoderVersion();
     _decoderVersionNumber = callBrotliDecoderVersion();
   }
@@ -186,7 +185,6 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
       case BrotliConstants.BROTLI_DECODER_RESULT_ERROR:
         throw FormatException('$cFunctionName failed. error code: '
             '${callBrotliDecoderGetErrorCode(state)}');
-        break;
       case BrotliConstants.BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT:
         break;
       case BrotliConstants.BROTLI_DECODER_NEEDS_MORE_INPUT:

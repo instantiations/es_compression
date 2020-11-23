@@ -201,28 +201,28 @@ typedef BrotliEncoderVersionDart = int Function();
 /// Contains required functions referenced by the following header files:
 /// *decode.h*, *encode.h*
 mixin BrotliFunctions {
-  BrotliDecoderCreateInstanceDart brotliDecoderCreateInstance;
-  BrotliDecoderDecompressDart brotliDecoderDecompress;
-  BrotliDecoderDecompressStreamDart brotliDecoderDecompressStream;
-  BrotliDecoderDestroyInstanceDart brotliDecoderDestroyInstance;
-  BrotliDecoderErrorStringDart brotliDecoderErrorString;
-  BrotliDecoderGetErrorCodeDart brotliDecoderGetErrorCode;
-  BrotliDecoderHasMoreOutputDart brotliDecoderHasMoreOutput;
-  BrotliDecoderIsFinishedDart brotliDecoderIsFinished;
-  BrotliDecoderIsUsedDart brotliDecoderIsUsed;
-  BrotliDecoderSetParameterDart brotliDecoderSetParameter;
-  BrotliDecoderTakeOutputDart brotliDecoderTakeOutput;
-  BrotliDecoderVersionDart brotliDecoderVersion;
-  BrotliEncoderCompressDart brotliEncoderCompress;
-  BrotliEncoderCompressStreamDart brotliEncoderCompressStream;
-  BrotliEncoderCreateInstanceDart brotliEncoderCreateInstance;
-  BrotliEncoderDestroyInstanceDart brotliEncoderDestroyInstance;
-  BrotliEncoderHasMoreOutputDart brotliEncoderHasMoreOutput;
-  BrotliEncoderIsFinishedDart brotliEncoderIsFinished;
-  BrotliEncoderMaxCompressedSizeDart brotliEncoderMaxCompressedSize;
-  BrotliEncoderSetParameterDart brotliEncoderSetParameter;
-  BrotliEncoderTakeOutputDart brotliEncoderTakeOutput;
-  BrotliEncoderVersionDart brotliEncoderVersion;
+  late final BrotliDecoderCreateInstanceDart brotliDecoderCreateInstance;
+  late final BrotliDecoderDecompressDart brotliDecoderDecompress;
+  late final BrotliDecoderDecompressStreamDart brotliDecoderDecompressStream;
+  late final BrotliDecoderDestroyInstanceDart brotliDecoderDestroyInstance;
+  late final BrotliDecoderErrorStringDart brotliDecoderErrorString;
+  late final BrotliDecoderGetErrorCodeDart brotliDecoderGetErrorCode;
+  late final BrotliDecoderHasMoreOutputDart brotliDecoderHasMoreOutput;
+  late final BrotliDecoderIsFinishedDart brotliDecoderIsFinished;
+  late final BrotliDecoderIsUsedDart brotliDecoderIsUsed;
+  late final BrotliDecoderSetParameterDart brotliDecoderSetParameter;
+  late final BrotliDecoderTakeOutputDart brotliDecoderTakeOutput;
+  late final BrotliDecoderVersionDart brotliDecoderVersion;
+  late final BrotliEncoderCompressDart brotliEncoderCompress;
+  late final BrotliEncoderCompressStreamDart brotliEncoderCompressStream;
+  late final BrotliEncoderCreateInstanceDart brotliEncoderCreateInstance;
+  late final BrotliEncoderDestroyInstanceDart brotliEncoderDestroyInstance;
+  late final BrotliEncoderHasMoreOutputDart brotliEncoderHasMoreOutput;
+  late final BrotliEncoderIsFinishedDart brotliEncoderIsFinished;
+  late final BrotliEncoderMaxCompressedSizeDart brotliEncoderMaxCompressedSize;
+  late final BrotliEncoderSetParameterDart brotliEncoderSetParameter;
+  late final BrotliEncoderTakeOutputDart brotliEncoderTakeOutput;
+  late final BrotliEncoderVersionDart brotliEncoderVersion;
 
   /// Resolve all functions using the [library]
   void resolveFunctions(DynamicLibrary library) {

@@ -16,34 +16,34 @@ class ZstdDStream extends Struct {}
 /// File: *zstd.h*
 class ZstdInBuffer extends Struct {
   /// Start of input buffer.
-  Pointer<Void> src;
+  external Pointer<Void> src;
 
   /// Size of input buffer
   @IntPtr()
-  int size;
+  external int size;
 
   /// Position where reading stopped.
   /// Will be updated.
   /// Necessarily 0 <= pos <= size
   @IntPtr()
-  int pos;
+  external int pos;
 }
 
 /// Struct: *ZSTD_outBuffer_s
 /// File: *zstd.h*
 class ZstdOutBuffer extends Struct {
   /// Start of output buffer.
-  Pointer<Void> dst;
+  external Pointer<Void> dst;
 
   /// Size of output buffer
   @IntPtr()
-  int size;
+  external int size;
 
   /// Position where writing stopped.
   /// Will be updated.
   /// Necessarily 0 <= pos <= size
   @IntPtr()
-  int pos;
+  external int pos;
 }
 
 /// Contains refs to required types (structs...) referenced by the

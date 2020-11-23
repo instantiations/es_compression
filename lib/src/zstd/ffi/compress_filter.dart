@@ -18,17 +18,21 @@ class ZstdCompressFilter extends NativeCodecFilterBase {
   final ZstdDispatcher _dispatcher = ZstdDispatcher();
 
   /// Compression level.
-  final int level;
+  late final int level;
 
   /// Native zstd context object.
-  ZstdCStream _cStream;
+  late final ZstdCStream _cStream;
 
   /// Construct the [ZstdCompressFilter] with the optional parameters.
   ZstdCompressFilter(
-      {this.level, int inputBufferLength, int outputBufferLength})
+      {int? level,
+      int inputBufferLength = 16386,
+      int outputBufferLength = 16386})
       : super(
             inputBufferLength: inputBufferLength,
-            outputBufferLength: outputBufferLength);
+            outputBufferLength: outputBufferLength) {
+    if (level != null) this.level = level;
+  }
 
   /// Init the filter.
   ///
@@ -124,13 +128,7 @@ class ZstdCompressFilter extends NativeCodecFilterBase {
   /// A [FormatException] is thrown if the context is invalid and can not be
   /// freed.
   void _destroyCStream() {
-    if (_cStream != null) {
-      try {
-        _dispatcher.callZstdFreeCStream(_cStream);
-      } finally {
-        _cStream = null;
-      }
-    }
+    _dispatcher.callZstdFreeCStream(_cStream);
   }
 
   /// Release the Zstd FFI call dispatcher.

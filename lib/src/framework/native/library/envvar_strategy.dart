@@ -25,17 +25,18 @@ class OpenViaEnvVarStrategy extends OpenLibraryStrategy {
   @override
   String get strategyId => 'Env-Var-Strategy';
 
-  /// Return [:true:] if the library was resolved via environment variable
-  /// and successfully opened, [:false:] otherwise.
+  /// Return the opened [DynamicLibrary] if the library was resolved via
+  /// environment variable, [:null:] otherwise.
   @override
-  DynamicLibrary openFor(OpenLibrary openLibrary) {
+  DynamicLibrary? openFor(OpenLibrary openLibrary) {
     final path = _envLibraryFilePath(openLibrary);
+    if (path == null) return null;
     return open(path);
   }
 
   /// Returns the absolute path of the shared library defined by the user-def
   /// library path.
-  String _envLibraryFilePath(OpenLibrary openLibrary) {
+  String? _envLibraryFilePath(OpenLibrary openLibrary) {
     final moduleId = openLibrary.moduleId;
     var envPath =
         Platform.environment['${moduleId.toUpperCase()}_LIBRARY_PATH'];

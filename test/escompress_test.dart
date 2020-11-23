@@ -8,8 +8,8 @@ import '../bin/es_compress.dart' as escompress;
 void main() {
   const tempFilename = 'helloDart.dart';
   const tempContents = 'hello dart';
-  Directory tempDir;
-  String inputFile;
+  late final Directory tempDir;
+  late final String inputFile;
 
   setUpAll(() {
     tempDir = Directory.systemTemp.createTempSync('es_');
@@ -53,7 +53,8 @@ void main() {
 
 /// Perform an encode/decode having the program guess the algorithm and context
 /// based on the filename
-void _verifyEncodeDecodeImplicitAlgo(String inputFile, String algo) async {
+Future<void> _verifyEncodeDecodeImplicitAlgo(
+    String inputFile, String algo) async {
   final outputFile = '$inputFile.$algo';
   final compressed = await escompress.main(['-i$inputFile', '-o$outputFile']);
   expect(compressed, 0);
@@ -66,7 +67,8 @@ void _verifyEncodeDecodeImplicitAlgo(String inputFile, String algo) async {
 
 /// Perform an encode/decode having providing the algorithm and context
 /// from the command line
-void _verifyEncodeDecodeExplicitAlgo(String inputFile, String algo) async {
+Future<void> _verifyEncodeDecodeExplicitAlgo(
+    String inputFile, String algo) async {
   final outputFile = '$inputFile.$algo';
   final compressed =
       await escompress.main(['-e', '-a$algo', '-i$inputFile', '-o$outputFile']);

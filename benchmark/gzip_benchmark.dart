@@ -19,7 +19,7 @@ import 'utils/benchmark_utils.dart';
 class GZipEncodeBenchmark extends BenchmarkBase {
   final GZipData data;
   final GZipCodec codec;
-  List<int> encoded;
+  late List<int> encoded;
 
   GZipEncodeBenchmark(this.data,
       {ScoreEmitter emitter = const PrintEmitter(),
@@ -53,7 +53,7 @@ class GZipEncodeBenchmark extends BenchmarkBase {
 class GZipDecodeBenchmark extends BenchmarkBase {
   final GZipData data;
   final GZipCodec codec;
-  List<int> decoded;
+  late List<int> decoded;
 
   GZipDecodeBenchmark(this.data,
       {ScoreEmitter emitter = const PrintEmitter(),

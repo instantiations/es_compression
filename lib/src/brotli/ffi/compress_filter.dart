@@ -20,24 +20,24 @@ class BrotliCompressFilter extends NativeCodecFilterBase {
   final BrotliDispatcher _dispatcher = BrotliDispatcher();
 
   /// Option holder.
-  final List<int> parameters = List<int>(10);
+  final List<int?> parameters = List.filled(10, 0);
 
   /// Native brotli context object.
-  BrotliEncoderState _brotliState;
+  BrotliEncoderState _brotliState = BrotliEncoderState();
 
   /// Construct an [BrotliCompressFilter] with the provided options.
   BrotliCompressFilter(
-      {int level,
-      int mode,
-      int windowBits,
-      int blockBits,
-      int postfixBits,
-      bool literalContextModeling,
-      int sizeHint,
-      bool largeWindow,
-      int directDistanceCodeCount,
-      int inputBufferLength,
-      int outputBufferLength})
+      {int? level,
+      int? mode,
+      int? windowBits,
+      int? blockBits,
+      int? postfixBits,
+      bool? literalContextModeling,
+      int? sizeHint,
+      bool? largeWindow,
+      int? directDistanceCodeCount,
+      int inputBufferLength = 16386,
+      int outputBufferLength = 16386})
       : super(
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength) {
@@ -180,13 +180,8 @@ class BrotliCompressFilter extends NativeCodecFilterBase {
 
   /// Free the native context.
   void _destroyState() {
-    if (_brotliState != null) {
-      try {
-        _dispatcher.callBrotliEncoderDestroyInstance(_brotliState);
-      } finally {
-        _brotliState = null;
-      }
-    }
+    _dispatcher.callBrotliEncoderDestroyInstance(_brotliState);
+    _brotliState = BrotliEncoderState();
   }
 
   /// Release the Brotli FFI call dispatcher.

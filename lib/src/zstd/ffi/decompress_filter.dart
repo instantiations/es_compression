@@ -18,7 +18,7 @@ class ZstdDecompressFilter extends NativeCodecFilterBase {
   final ZstdDispatcher _dispatcher = ZstdDispatcher();
 
   /// Native zstd context object
-  ZstdDStream _dStream;
+  late final ZstdDStream _dStream;
 
   /// Construct the [ZstdDecompressFilter] with the optional parameters.
   ZstdDecompressFilter(int inputBufferLength, int outputBufferLength)
@@ -95,13 +95,7 @@ class ZstdDecompressFilter extends NativeCodecFilterBase {
   /// A [FormatException] is thrown if the context is invalid and can not be
   /// freed
   void _destroyDStream() {
-    if (_dStream != null) {
-      try {
-        _dispatcher.callZstdFreeDStream(_dStream);
-      } finally {
-        _dStream = null;
-      }
-    }
+    _dispatcher.callZstdFreeDStream(_dStream);
   }
 
   /// Release the Zstd FFI call dispatcher.

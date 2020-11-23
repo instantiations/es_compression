@@ -13,12 +13,12 @@ import 'version.dart';
 /// The [BrotliCodec] encodes/decodes raw bytes using the Brotli algorithm
 class BrotliCodec extends Codec<List<int>, List<int>> {
   /// Return the library path [String] or [:null:] if not set.
-  static String get libraryPath => brotliGetLibraryPath();
+  static String? get libraryPath => brotliGetLibraryPath();
 
   /// Set the custom library [path]
   ///
   /// Throw a [StateError] if the library has already been initialized.
-  static set libraryPath(String path) => brotliSetLibraryPath(path);
+  static set libraryPath(String? path) => brotliSetLibraryPath(path);
 
   /// The compression-[level] or quality can be set in the range of
   /// [BrotliOption.minLevel]..[BrotliOption.maxLevel].
@@ -45,12 +45,13 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
   /// the input block size.
   /// Range: [BrotliOption.minBlockBits]..[BrotliOption.maxBlockBits].
   /// Default: nil (dynamically computed).
-  final int blockBits;
+  final int? blockBits;
 
   /// Recommended number of postfix bits.
   /// Encode may change this value.
   /// Range: [BrotliOption.minPostfixBits]..[BrotliOption.maxPostfixBits]
-  final int postfixBits;
+  /// Default: nil (dynamically computed).
+  final int? postfixBits;
 
   /// Flag that affects usage of "literal context modeling" format feature.
   /// This flag is a "decoding-speed vs compression ratio" trade-off.
@@ -69,7 +70,8 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
 
   /// Recommended number of direct distance codes.
   /// Encoder may change this value.
-  final int directDistanceCodeCount;
+  /// Default: nil (dynamically computed).
+  final int? directDistanceCodeCount;
 
   /// Flag the determines if "canny" ring buffer allocation is enabled.
   /// Ring buffer is allocated according to window size, despite the real size

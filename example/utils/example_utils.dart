@@ -29,7 +29,7 @@ bool verifyEquality(List<int> list1, List<int> list2, {String header = ''}) {
 List<List<int>> splitIntoChunks(List<int> list, int chunkCount) {
   var chunks = <List<int>>[];
   var perPart = list.length ~/ chunkCount;
-  var leftOver = list.length.remainder(chunkCount) as int;
+  var leftOver = list.length.remainder(chunkCount);
   for (var i = 0, j = 0; i < chunkCount; i++, j += perPart) {
     chunks.add(list.sublist(
         j, i + 1 == chunkCount ? j + perPart + leftOver : j + perPart));

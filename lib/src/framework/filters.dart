@@ -46,10 +46,10 @@ enum CodecFilterState {
 /// (i.e. processing vs closed)
 abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
   /// Buffer holder for the input buffer
-  CodecBufferHolder<P, CB> _inputBufferHolder;
+  late final CodecBufferHolder<P, CB> _inputBufferHolder;
 
   /// Buffer holder for the output buffer
-  CodecBufferHolder<P, CB> _outputBufferHolder;
+  late final CodecBufferHolder<P, CB> _outputBufferHolder;
 
   /// Buffers incoming bytes to be processed
   CB get _inputBuffer => _inputBufferHolder.buffer;
@@ -83,7 +83,8 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
   ///
   /// The filter will transition from the [CodecFilterState.closed] to the
   /// [CodecFilterState.init] state after the call.
-  CodecFilter({int inputBufferLength, int outputBufferLength}) {
+  CodecFilter(
+      {required int inputBufferLength, required int outputBufferLength}) {
     state = CodecFilterState.init;
     _inputBufferHolder = newBufferHolder(inputBufferLength);
     _outputBufferHolder = newBufferHolder(outputBufferLength);
@@ -123,7 +124,7 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
   /// The last call to [processed] should have [end] set to [:true:]. This will
   /// ensure the stream has an opportunity to be finalized with any trailing
   /// data.
-  List<int> processed({bool flush = true, bool end = false}) {
+  List<int>? processed({bool flush = true, bool end = false}) {
     if (!processing) return null;
     if (!end && !hasMoreToProcess()) return null;
     final builder = BytesBuilder(copy: false);
@@ -244,7 +245,7 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
   /// Subclasses will typically choose to return a `NativeCodecBufferHolder` or
   /// a `DartCodecBufferHolder` depending on if the buffer is FFI-based or pure
   /// Dart heap-based.
-  CodecBufferHolder<P, CB> newBufferHolder(int inputBufferLength);
+  CodecBufferHolder<P, CB> newBufferHolder(int bufferLength);
 
   /// Subclass Responsibility: Init the filter
   ///

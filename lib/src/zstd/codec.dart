@@ -14,12 +14,12 @@ import 'version.dart';
 /// algorithm.
 class ZstdCodec extends Codec<List<int>, List<int>> {
   /// Return the library path [String] or [:null:] if not set.
-  static String get libraryPath => zstdGetLibraryPath();
+  static String? get libraryPath => zstdGetLibraryPath();
 
   /// Set the custom library [path]
   ///
   /// Throw a [StateError] if the library has already been initialized.
-  static set libraryPath(String path) => zstdSetLibraryPath(path);
+  static set libraryPath(String? path) => zstdSetLibraryPath(path);
 
   /// The compression-[level] can be set in the range of `0..16`, with
   /// 0 (fast mode) being the default compression level.

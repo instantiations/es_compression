@@ -7,7 +7,8 @@ import 'buffers.dart';
 abstract class DartCodecFilterBase
     extends CodecFilter<DartHeapPointer, DartCodecBuffer> {
   /// Constructor which allows the user to set the input/output buffer lengths.
-  DartCodecFilterBase({int inputBufferLength, int outputBufferLength})
+  DartCodecFilterBase(
+      {int inputBufferLength = 16386, int outputBufferLength = 16386})
       : super(
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength);

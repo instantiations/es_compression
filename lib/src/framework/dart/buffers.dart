@@ -20,25 +20,21 @@ class DartCodecBuffer extends CodecBuffer<DartHeapPointer> {
 
   /// Wrapped pointer to the first element in the list
   @override
-  DartHeapPointer basePtr;
+  late final DartHeapPointer basePtr = DartHeapPointer(_list);
 
   /// Wrapped pointer to the memory at the [readCount] offset from the
   /// first element in the list.
-  DartHeapPointer _readPtr;
+  late final DartHeapPointer _readPtr = DartHeapPointer(_list);
 
   /// Wrapped pointer to the memory at the [writeCount] offset from the
   /// first element in the list.
-  DartHeapPointer _writePtr;
+  late final DartHeapPointer _writePtr = DartHeapPointer(_list);
 
   /// Constructs a [DartCodecBuffer] that is backed by a [Uint8List] with the
   /// provided [length].
   DartCodecBuffer(int length)
       : _list = Uint8List(length),
-        super(length) {
-    basePtr = DartHeapPointer(_list);
-    _readPtr = DartHeapPointer(_list);
-    _writePtr = DartHeapPointer(_list);
-  }
+        super(length);
 
   /// Updates the read offset of the wrapped pointer and returns it.
   @override
@@ -76,9 +72,7 @@ class DartCodecBuffer extends CodecBuffer<DartHeapPointer> {
 
   /// Always true
   @override
-  bool isAvailable() {
-    return true;
-  }
+  bool isAvailable() => true;
 
   /// No action required.
   @override
@@ -118,7 +112,6 @@ class DartHeapPointer {
 class DartCodecBufferHolder
     extends CodecBufferHolder<DartHeapPointer, DartCodecBuffer> {
   /// Construct a [DartCodecBufferHolder] which generates [DartCodecBuffer]s
-  DartCodecBufferHolder(int length) : super(length) {
-    bufferBuilderFunc = (length) => DartCodecBuffer(length);
-  }
+  DartCodecBufferHolder(int length)
+      : super(length, (length) => DartCodecBuffer(length));
 }

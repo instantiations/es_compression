@@ -47,12 +47,13 @@ class BrotliEncoder extends CodecConverter {
   /// the input block size.
   /// Range: [BrotliOption.minBlockBits]..[BrotliOption.maxBlockBits].
   /// Default: nil (dynamically computed).
-  final int blockBits;
+  final int? blockBits;
 
   /// Recommended number of postfix bits.
   /// Encode may change this value.
   /// Range: [BrotliOption.minPostfixBits]..[BrotliOption.maxPostfixBits].
-  final int postfixBits;
+  /// Default: nil (dynamically computed).
+  final int? postfixBits;
 
   /// Flag that affects usage of "literal context modeling" format feature.
   /// This flag is a "decoding-speed vs compression ratio" trade-off.
@@ -71,7 +72,8 @@ class BrotliEncoder extends CodecConverter {
 
   /// Recommended number of direct distance codes.
   /// Encoder may change this value.
-  final int directDistanceCodeCount;
+  /// Default: nil (dynamically computed).
+  final int? directDistanceCodeCount;
 
   /// Length in bytes of the buffer used for input data.
   final int inputBufferLength;
@@ -133,12 +135,12 @@ class _BrotliEncoderSink extends CodecSink {
       int level,
       int mode,
       int windowBits,
-      int blockBits,
-      int postfixBits,
+      int? blockBits,
+      int? postfixBits,
       bool literalContextModeling,
       int sizeHint,
       bool largeWindow,
-      int directDistanceCodeCount,
+      int? directDistanceCodeCount,
       int inputBufferLength,
       int outputBufferLength)
       : super(
@@ -166,12 +168,12 @@ CodecFilter _makeBrotliCompressFilter(
     int level,
     int mode,
     int windowBits,
-    int blockBits,
-    int postfixBits,
+    int? blockBits,
+    int? postfixBits,
     bool literalContextModeling,
     int sizeHint,
     bool largeWindow,
-    int directDistanceCodeCount,
+    int? directDistanceCodeCount,
     int inputBufferLength,
     int outputBufferLength) {
   return BrotliCompressFilter(

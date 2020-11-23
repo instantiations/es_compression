@@ -14,7 +14,7 @@ class OpenViaPackageRelativeStrategy extends OpenLibraryStrategy {
 
   /// Return [:null:].
   @override
-  DynamicLibrary openFor(OpenLibrary openLibrary) {
+  DynamicLibrary? openFor(OpenLibrary openLibrary) {
     return null;
   }
 }

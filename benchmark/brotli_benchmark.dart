@@ -20,7 +20,7 @@ import 'utils/benchmark_utils.dart';
 class BrotliEncodeBenchmark extends BenchmarkBase {
   final BrotliData data;
   final BrotliCodec codec;
-  List<int> encoded;
+  late List<int> encoded;
 
   BrotliEncodeBenchmark(this.data,
       {ScoreEmitter emitter = const PrintEmitter(),
@@ -57,7 +57,7 @@ class BrotliEncodeBenchmark extends BenchmarkBase {
 class BrotliDecodeBenchmark extends BenchmarkBase {
   final BrotliData data;
   final BrotliCodec codec;
-  List<int> decoded;
+  late List<int> decoded;
 
   BrotliDecodeBenchmark(this.data,
       {ScoreEmitter emitter = const PrintEmitter(),

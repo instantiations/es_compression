@@ -12,17 +12,17 @@ import '../../../framework.dart';
 class BrotliCompressFilter extends DartCodecFilterBase {
   /// Create a stubbed [BrotliCompressFilter] filter.
   BrotliCompressFilter(
-      {int level,
-      int mode,
-      int windowBits,
-      int blockBits,
-      int postfixBits,
-      bool literalContextModeling,
-      int sizeHint,
-      bool largeWindow,
-      int directDistanceCodeCount,
-      int inputBufferLength,
-      int outputBufferLength})
+      {int? level,
+      int? mode,
+      int? windowBits,
+      int? blockBits,
+      int? postfixBits,
+      bool? literalContextModeling,
+      int? sizeHint,
+      bool? largeWindow,
+      int? directDistanceCodeCount,
+      int inputBufferLength = 16386,
+      int outputBufferLength = 16386})
       : super(
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength) {

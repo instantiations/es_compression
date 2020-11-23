@@ -94,7 +94,7 @@ abstract class CodecBuffer<T> {
   /// If there are no [unreadCount] left, then evaluate the optional
   /// [onEnd] function and return the result.
   /// If no function is provided, then return -1.
-  int next({int Function() onEnd}) {
+  int next({int Function()? onEnd}) {
     if (atEnd() == false) return basicNext();
     return onEnd?.call() ?? -1;
   }
@@ -126,7 +126,7 @@ abstract class CodecBuffer<T> {
   /// If there are no [unwrittenCount] left, then evaluate the optional
   /// [onEnd] function and return the result.
   /// If no function is provided, then return -1.
-  int peek({int Function() onEnd}) {
+  int peek({int Function()? onEnd}) {
     if (atEnd() == false) return basicPeek();
     return onEnd?.call() ?? -1;
   }
@@ -142,7 +142,7 @@ abstract class CodecBuffer<T> {
   /// If there are no [unwrittenCount] left, then evaluate the optional
   /// [onEnd] function and return false.
   /// Otherwise, return true.
-  bool nextPut(int byte, {void Function() onEnd}) {
+  bool nextPut(int byte, {void Function()? onEnd}) {
     if (isFull()) {
       onEnd?.call();
       return false;
@@ -169,7 +169,7 @@ abstract class CodecBuffer<T> {
   /// remaining [unwrittenCount].
   ///
   /// Return the number of bytes from [bytes] put into the buffer.
-  int nextPutAll(List<int> bytes, [int start, int end]) {
+  int nextPutAll(List<int> bytes, [int? start, int? end]) {
     start ??= 0;
     end = RangeError.checkValidRange(start, end, bytes.length);
     final putAmount = min(end - start, unwrittenCount);
@@ -334,7 +334,7 @@ class CodecBufferHolder<T, CB extends CodecBuffer<T>> {
   static const autoLength = -1;
 
   /// Buffer that was constructed.
-  CB _buffer;
+  CB? _buffer;
 
   /// Length of the buffer to construct.
   int _length;
@@ -343,23 +343,13 @@ class CodecBufferHolder<T, CB extends CodecBuffer<T>> {
   CB Function(int length) bufferBuilderFunc;
 
   /// Construct a new buffer holder with the specific length.
-  CodecBufferHolder(this._length) {
-    bufferBuilderFunc = nullBuffer;
-  }
-
-  /// [bufferBuilderFunc] that returns [:null:].
-  ///
-  /// This is used in [CodecBufferHolder] construction as the default
-  /// [bufferBuilderFunc].
-  CB nullBuffer(int length) {
-    return null;
-  }
+  CodecBufferHolder(this._length, this.bufferBuilderFunc);
 
   /// Returns a constructed [CodecBuffer].
   CB get buffer => _buffer ??= bufferBuilderFunc(length);
 
   /// Returns buffer length (bytes) or a default value.
-  int get length => _length ?? 16384;
+  int get length => _length;
 
   /// Set the buffer length (bytes).
   ///

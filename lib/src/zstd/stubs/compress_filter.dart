@@ -11,7 +11,10 @@ import '../../../framework.dart';
 /// - [doProcessing] stubs that throw [UnsupportedError].
 class ZstdCompressFilter extends DartCodecFilterBase {
   /// Construct the [ZstdCompressFilter] with the optional parameters.
-  ZstdCompressFilter({int level, int inputBufferLength, int outputBufferLength})
+  ZstdCompressFilter(
+      {int? level,
+      int inputBufferLength = 16386,
+      int outputBufferLength = 16386})
       : super(
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength);

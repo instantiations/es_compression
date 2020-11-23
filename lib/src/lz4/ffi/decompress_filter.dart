@@ -20,13 +20,13 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
   final Lz4Dispatcher _dispatcher = Lz4Dispatcher();
 
   /// Native lz4 frame info.
-  Lz4FrameInfo _frameInfo;
+  Lz4FrameInfo? _frameInfo;
 
   /// Native lz4 context.
-  Lz4Dctx _context;
+  Lz4Dctx? _context;
 
   /// Native lz4 decompress options.
-  Lz4DecompressOptions _options;
+  late final Lz4DecompressOptions _options;
 
   /// Construct the [Lz4DecompressFilter] with the defined buffer lengths.
   Lz4DecompressFilter(int inputBufferLength, int outputBufferLength)
@@ -64,7 +64,7 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
     if (numBytes > 0) _readFrameInfo(inputBufferHolder.buffer);
 
     outputBufferHolder.length = max(
-        _frameInfo.blockSize,
+        _frameInfo!.blockSize,
         outputBufferHolder.isLengthSet()
             ? outputBufferHolder.length
             : max(lz4DecoderOutputBufferLength, inputBufferHolder.length));
@@ -80,7 +80,7 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
   CodecResult doProcessing(
       NativeCodecBuffer inputBuffer, NativeCodecBuffer outputBuffer) {
     final result = _dispatcher.callLz4FDecompress(
-        _context,
+        _checkedContext(),
         outputBuffer.writePtr,
         outputBuffer.unwrittenCount,
         inputBuffer.readPtr,
@@ -108,10 +108,19 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
     _context = _dispatcher.callLz4FCreateDecompressionContext();
   }
 
+  /// Perform a null-check on the context and throw a [StateError] if [_context]
+  /// is [:null:].
+  ///
+  /// Return the null-checked [_context].
+  Lz4Dctx _checkedContext() {
+    if (_context == null) throw StateError('null _context is unexpected');
+    return _context!;
+  }
+
   /// Read the [Lz4FrameInfo] from the [encoderBuffer].
   int _readFrameInfo(NativeCodecBuffer encoderBuffer, {bool reset = false}) {
     final result = _dispatcher.callLz4FGetFrameInfo(
-        _context, encoderBuffer.readPtr, encoderBuffer.unreadCount);
+        _checkedContext(), encoderBuffer.readPtr, encoderBuffer.unreadCount);
     _frameInfo = result[1] as Lz4FrameInfo;
     final read = result[2] as int;
     encoderBuffer.incrementBytesRead(read);
@@ -121,9 +130,7 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
 
   /// Restores the [_context] to a clean state.
   void _reset() {
-    if (_context != null) {
-      _dispatcher.callLz4FResetDecompressionContext(_context);
-    }
+    _dispatcher.callLz4FResetDecompressionContext(_checkedContext());
   }
 
   /// Free the native context.
@@ -131,18 +138,13 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
   /// A [StateError] is thrown if the context is invalid and can not be freed.
   void _destroyContext() {
     if (_context != null) {
-      try {
-        _dispatcher.callLz4FFreeDecompressionContext(_context);
-      } finally {
-        _context = null;
-      }
+      _dispatcher.callLz4FFreeDecompressionContext(_context!);
     }
   }
 
   /// Free the native memory from the allocated [_frameInfo].
   void _destroyFrameInfo() {
-    _frameInfo?.free();
-    _frameInfo = null;
+    if (_frameInfo != null) _frameInfo!.free();
   }
 
   /// Release the Lz4 FFI call dispatcher.

@@ -14,12 +14,12 @@ import 'version.dart';
 /// compressed bytes to raw bytes using the Lz4 frame format.
 class Lz4Codec extends Codec<List<int>, List<int>> {
   /// Return the library path [String] or [:null:] if not set.
-  static String get libraryPath => lz4GetLibraryPath();
+  static String? get libraryPath => lz4GetLibraryPath();
 
   /// Set the custom library [path]
   ///
   /// Throw a [StateError] if the library has already been initialized.
-  static set libraryPath(String path) => lz4SetLibraryPath(path);
+  static set libraryPath(String? path) => lz4SetLibraryPath(path);
 
   /// The compression-[level] can be set in the range of `0..16`, with
   /// 0 (fast mode) being the default compression level.
@@ -89,11 +89,9 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
       this.blockSize = Lz4Option.defaultBlockSize,
       this.optimizeForDecompression = false,
       this.inputBufferLength = CodecBufferHolder.autoLength,
-      this.outputBufferLength = CodecBufferHolder.autoLength,
-      String libraryPath}) {
+      this.outputBufferLength = CodecBufferHolder.autoLength}) {
     validateLz4Level(level);
     validateLz4BlockSize(blockSize);
-    if (libraryPath != null) userDefinedLibraryPath = libraryPath;
   }
 
   /// Internal Constructor for building the [lz4] instance.

@@ -18,10 +18,10 @@ class OpenViaOsResolutionStrategy extends OpenLibraryStrategy {
   @override
   String get strategyId => 'Os-Resolution-Strategy';
 
-  /// Return [:true:] if the library was resolved via the os shared library
-  /// looking rules and successfully opened, [:false:] otherwise.
+  /// Return the opened [DynamicLibrary] if the library was resolved via
+  /// os path resolution, [:null:] otherwise.
   @override
-  DynamicLibrary openFor(OpenLibrary openLibrary) {
+  DynamicLibrary? openFor(OpenLibrary openLibrary) {
     if (Platform.isIOS) return DynamicLibrary.process();
     return open(path);
   }
