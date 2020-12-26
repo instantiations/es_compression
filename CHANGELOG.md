@@ -1,3 +1,7 @@
+## 0.9.9
+
+- Fixed List initializer issues reported by dart static analysis on pub.dev
+
 ## 0.9.8
 
 - Updated [prebuilt libraries](lib/src/lz4/blobs) to [LZ4 v1.9.3](https://github.com/lz4/lz4/releases/tag/v1.9.3).

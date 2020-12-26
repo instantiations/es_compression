@@ -19,7 +19,7 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
   final BrotliDispatcher _dispatcher = BrotliDispatcher();
 
   /// Option holder.
-  final List<int> parameters = List(5);
+  final List<int> parameters = List.filled(5, 0);
 
   /// Native brotli state object.
   BrotliDecoderState _brotliState;
