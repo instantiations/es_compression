@@ -1,6 +1,6 @@
 ## 1.0.0
 
-- New examples for building the provided native libraries on Android (special thanks to [isong0623](https://github.com/isong0623) for providing this.
+- New examples for building the provided native libraries on Android (special thanks to [isong0623](https://github.com/isong0623) for providing this).
 - Updated [prebuilt libraries](lib/src/zstd/blobs) to [ZSTD v1.4.8](https://github.com/facebook/zstd/releases/tag/v1.4.8).
 - Updated the default build mode in [cmake instructions](tool/blob_builder/CMakeLists.txt) to be Release mode.
 
