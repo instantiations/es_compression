@@ -40,7 +40,7 @@ class ZstdCodec extends Codec<List<int>, List<int>> {
   final int outputBufferLength;
 
   /// Return the base binding version this binding code was developed for.
-  ZstdVersion get bindingVersion => ZstdVersion(10405);
+  ZstdVersion get bindingVersion => ZstdVersion(10408);
 
   /// Return the actual library version of the shared library.
   ZstdVersion get libraryVersion => ZstdVersion(libraryVersionNumber);

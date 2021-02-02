@@ -1,0 +1,59 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
+
+    defaultConfig {
+        applicationId "es_compression.example.jniLibs"
+        minSdkVersion 16
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    /**
+     * @params path :
+     *      The es_compression(.so file) cmake build scripts path.
+     *
+     * @params version :
+     *      The CMake version which above 3.12 in your computer.
+     *
+     *
+     * To config your local cmake path @see {../../local.properties}
+     *
+     * If you are not a android developer,
+     * make sure after you change the settings
+     * click the 'Sync Now' button where in the top right area.
+     */
+    externalNativeBuild {
+        cmake {
+            path "${rootDir.getParentFile().getParentFile().getAbsolutePath()}/tool/blob_builder/CMakeLists.txt"
+            version "3.17.2"
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+}
