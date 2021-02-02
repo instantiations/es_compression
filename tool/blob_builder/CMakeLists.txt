@@ -63,7 +63,7 @@
 #
 #    Mac 64-bit - Xcode
 #    >mkdir build && cd build
-#    >cmake .. -G"xcode"
+#    >cmake .. -G"Xcode"
 #    <open xcode>
 #    <switch to ALL_BUILD target>
 #    <Menu: Product -> Build For -> Running>
@@ -79,7 +79,7 @@ endif ()
 
 #-- RelWithDebInfo (None Debug Release RelWithDebInfo MinSizeRel)
 if (CMAKE_BUILD_TYPE STREQUAL "")
-    set(DEFAULT_BUILD_TYPE "Debug")
+    set(DEFAULT_BUILD_TYPE "Release")
     message(STATUS "CMake build type not specified. DEFAULT: ${DEFAULT_BUILD_TYPE}")
     set(CMAKE_BUILD_TYPE ${DEFAULT_BUILD_TYPE}
             CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel" FORCE)
@@ -151,10 +151,10 @@ set(LZ4_VERSION_MOD 3)
 #-- The period-delimited 3 position format (1.0.0)
 set(LZ4_VERSION "${LZ4_VERSION_MAJOR}.${LZ4_VERSION_MINOR}.${LZ4_VERSION_MOD}")
 
-#-- ZSTD Version: 1.4.5
+#-- ZSTD Version: 1.4.8
 set(ZSTD_VERSION_MAJOR 1)
 set(ZSTD_VERSION_MINOR 4)
-set(ZSTD_VERSION_MOD 5)
+set(ZSTD_VERSION_MOD 8)
 #-- The period-delimited 3 position format (1.0.0)
 set(ZSTD_VERSION "${ZSTD_VERSION_MAJOR}.${ZSTD_VERSION_MINOR}.${ZSTD_VERSION_MOD}")
 

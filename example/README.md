@@ -1,7 +1,8 @@
 ## Examples
-The examples provided in this directory serve two purposes:
+The examples provided in this directory serve three purposes:
 1. Provide users a consumable usage example for each codec.
 2. Provide codec implementors a simple demonstration of how to integrate with the compression framework.
+3. Provide an example/generator for those wishing to use this library for Android. See [Readme.md](android_jniLibs_generate/README.md) for instructions.
 
 ### Codec Implementations
 An example is provided for each codec implementation.\
