@@ -6,6 +6,7 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart' as ffi;
 
+import '../../framework/native/allocation.dart';
 import 'constants.dart';
 import 'library.dart';
 import 'types.dart';
@@ -55,11 +56,11 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   bool released = false;
 
   // These are used in codec routines to cut down on alloc/free
-  final Pointer<Pointer<Uint8>> nextInPtr = ffi.allocate<Pointer<Uint8>>();
-  final Pointer<Pointer<Uint8>> nextOutPtr = ffi.allocate<Pointer<Uint8>>();
-  final Pointer<IntPtr> availableInPtr = ffi.allocate<IntPtr>();
-  final Pointer<IntPtr> availableOutPtr = ffi.allocate<IntPtr>();
-  final Pointer<IntPtr> bufferLengthPtr = ffi.allocate<IntPtr>();
+  final Pointer<Pointer<Uint8>> nextInPtr = malloc<Pointer<Uint8>>();
+  final Pointer<Pointer<Uint8>> nextOutPtr = malloc<Pointer<Uint8>>();
+  final Pointer<IntPtr> availableInPtr = malloc<IntPtr>();
+  final Pointer<IntPtr> availableOutPtr = malloc<IntPtr>();
+  final Pointer<IntPtr> bufferLengthPtr = malloc<IntPtr>();
 
   /// Return the [BrotliDispatcher] singleton instance
   BrotliDispatcher() : library = BrotliLibrary() {
@@ -70,11 +71,11 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   /// Release native resources.
   void release() {
     if (released == false) {
-      ffi.free(nextInPtr);
-      ffi.free(nextOutPtr);
-      ffi.free(availableInPtr);
-      ffi.free(availableOutPtr);
-      ffi.free(bufferLengthPtr);
+      malloc.free(nextInPtr);
+      malloc.free(nextOutPtr);
+      malloc.free(availableInPtr);
+      malloc.free(availableOutPtr);
+      malloc.free(bufferLengthPtr);
     }
   }
 
@@ -82,8 +83,8 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
 
   int callBrotliDecoderVersion() => library.brotliDecoderVersion();
 
-  int callBrotliDecoderGetErrorCode(BrotliDecoderState state) =>
-      library.brotliDecoderGetErrorCode(state.addressOf);
+  int callBrotliDecoderGetErrorCode(Pointer<BrotliDecoderState> state) =>
+      library.brotliDecoderGetErrorCode(state);
 
   Pointer<ffi.Utf8> callBrotliDecoderErrorString(int code) =>
       library.brotliDecoderErrorString(code);
@@ -91,21 +92,21 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   Pointer<BrotliDecoderState> callBrotliDecoderCreateInstance() =>
       library.brotliDecoderCreateInstance(nullptr, nullptr, nullptr);
 
-  void callBrotliDecoderDestroyInstance(BrotliDecoderState state) =>
-      library.brotliDecoderDestroyInstance(state.addressOf);
+  void callBrotliDecoderDestroyInstance(Pointer<BrotliDecoderState> state) =>
+      library.brotliDecoderDestroyInstance(state);
 
   Pointer<BrotliEncoderState> callBrotliEncoderCreateInstance() =>
       library.brotliEncoderCreateInstance(nullptr, nullptr, nullptr);
 
-  void callBrotliEncoderDestroyInstance(BrotliEncoderState state) =>
-      library.brotliEncoderDestroyInstance(state.addressOf);
+  void callBrotliEncoderDestroyInstance(Pointer<BrotliEncoderState> state) =>
+      library.brotliEncoderDestroyInstance(state);
 
   int callBrotliEncoderMaxCompressedSize(int uncompressedSize) {
     return library.brotliEncoderMaxCompressedSize(uncompressedSize);
   }
 
   List<int> callBrotliEncoderCompressStream(
-      BrotliEncoderState state,
+      Pointer<BrotliEncoderState> state,
       int op,
       int availableIn,
       Pointer<Uint8> nextIn,
@@ -116,8 +117,8 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
     nextOutPtr.value = nextOut;
     availableOutPtr.value = availableOut;
 
-    final ret = library.brotliEncoderCompressStream(state.addressOf, op,
-        availableInPtr, nextInPtr, availableOutPtr, nextOutPtr, nullptr);
+    final ret = library.brotliEncoderCompressStream(state, op, availableInPtr,
+        nextInPtr, availableOutPtr, nextOutPtr, nullptr);
     _testEncoderCompressionResult(op, ret);
 
     return <int>[
@@ -145,23 +146,23 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
     }
   }
 
-  bool callBrotliEncoderIsFinished(BrotliEncoderState state) {
-    return library.brotliEncoderIsFinished(state.addressOf) ==
+  bool callBrotliEncoderIsFinished(Pointer<BrotliEncoderState> state) {
+    return library.brotliEncoderIsFinished(state) ==
         BrotliConstants.BROTLI_TRUE;
   }
 
-  bool callBrotliDecoderIsFinished(BrotliDecoderState state) {
-    return library.brotliDecoderIsFinished(state.addressOf) ==
+  bool callBrotliDecoderIsFinished(Pointer<BrotliDecoderState> state) {
+    return library.brotliDecoderIsFinished(state) ==
         BrotliConstants.BROTLI_TRUE;
   }
 
-  bool callBrotliDecoderHasMoreOutput(BrotliDecoderState state) {
-    return library.brotliDecoderHasMoreOutput(state.addressOf) ==
+  bool callBrotliDecoderHasMoreOutput(Pointer<BrotliDecoderState> state) {
+    return library.brotliDecoderHasMoreOutput(state) ==
         BrotliConstants.BROTLI_TRUE;
   }
 
   List<int> callBrotliDecoderDecompressStream(
-      BrotliDecoderState state,
+      Pointer<BrotliDecoderState> state,
       int availableIn,
       Pointer<Uint8> nextIn,
       int availableOut,
@@ -172,8 +173,8 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
     nextOutPtr.value = nextOut;
     availableOutPtr.value = availableOut;
 
-    final result = library.brotliDecoderDecompressStream(state.addressOf,
-        availableInPtr, nextInPtr, availableOutPtr, nextOutPtr, nullptr);
+    final result = library.brotliDecoderDecompressStream(
+        state, availableInPtr, nextInPtr, availableOutPtr, nextOutPtr, nullptr);
 
     final remainingIn = availableInPtr.value;
     switch (result) {
@@ -199,31 +200,29 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   }
 
   void callBrotliDecoderSetParameter(
-      BrotliDecoderState state, int param, int value) {
-    final ret =
-        library.brotliDecoderSetParameter(state.addressOf, param, value);
+      Pointer<BrotliDecoderState> state, int param, int value) {
+    final ret = library.brotliDecoderSetParameter(state, param, value);
     if (ret == BrotliConstants.BROTLI_FALSE) {
       throw ArgumentError('BrotliDecoderSetParameter failed');
     }
   }
 
   void callBrotliEncoderSetParameter(
-      BrotliEncoderState state, int param, int value) {
-    final ret =
-        library.brotliEncoderSetParameter(state.addressOf, param, value);
+      Pointer<BrotliEncoderState> state, int param, int value) {
+    final ret = library.brotliEncoderSetParameter(state, param, value);
     if (ret == BrotliConstants.BROTLI_FALSE) {
       throw ArgumentError('BrotliEncoderSetParameter failed');
     }
   }
 
   Pointer<Uint8> callBrotliDecoderTakeOutput(
-      BrotliDecoderState state, Pointer<IntPtr> size) {
-    return library.brotliDecoderTakeOutput(state.addressOf, size);
+      Pointer<BrotliDecoderState> state, Pointer<IntPtr> size) {
+    return library.brotliDecoderTakeOutput(state, size);
   }
 
   Pointer<Uint8> callBrotliEncoderTakeOutput(
-      BrotliEncoderState state, Pointer<IntPtr> size) {
-    return library.brotliEncoderTakeOutput(state.addressOf, size);
+      Pointer<BrotliEncoderState> state, Pointer<IntPtr> size) {
+    return library.brotliEncoderTakeOutput(state, size);
   }
 
   @override
@@ -238,7 +237,7 @@ mixin BrotliDispatchErrorCheckerMixin {
 
   /// This function wraps brotli calls and throws a [FormatException] if [code]
   /// is an error code.
-  int checkDecoderError(BrotliDecoderState state, int code) {
+  int checkDecoderError(Pointer<BrotliDecoderState> state, int code) {
     if (code == BrotliConstants.BROTLI_DECODER_RESULT_ERROR) {
       final errorCode = dispatcher.callBrotliDecoderGetErrorCode(state);
       final errorNamePtr = dispatcher.callBrotliDecoderErrorString(errorCode);

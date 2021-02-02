@@ -22,7 +22,7 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
   final List<int> parameters = List.filled(5, 0);
 
   /// Native brotli state object.
-  BrotliDecoderState _brotliState = BrotliDecoderState();
+  late final Pointer<BrotliDecoderState> _brotliState;
 
   /// Construct an [BrotliDecompressFilter] with the supplied options.
   BrotliDecompressFilter(
@@ -125,7 +125,7 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
     if (result == nullptr) {
       throw StateError('Could not allocate brotli decoder state');
     }
-    _brotliState = result.ref;
+    _brotliState = result;
     _applyParameter(
         BrotliConstants.BROTLI_DECODER_PARAM_DISABLE_RING_BUFFER_REALLOCATION);
     _applyParameter(BrotliConstants.BROTLI_DECODER_PARAM_LARGE_WINDOW);
@@ -134,7 +134,6 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
   /// Free the native context.
   void _destroyState() {
     _dispatcher.callBrotliDecoderDestroyInstance(_brotliState);
-    _brotliState = BrotliDecoderState();
   }
 
   /// Release the Brotli FFI call dispatcher.

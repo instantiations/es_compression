@@ -6,6 +6,7 @@ import 'dart:ffi';
 import 'dart:math';
 
 import '../../../framework.dart';
+import '../../framework/native/allocation.dart';
 import '../../framework/native/buffers.dart';
 import '../../framework/native/filters.dart';
 import '../encoder.dart';
@@ -20,13 +21,13 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
   final Lz4Dispatcher _dispatcher = Lz4Dispatcher();
 
   /// FFI Struct exposed by lz4 shared lib for configuration.
-  late final Lz4Preferences _preferences;
+  late final Pointer<Lz4Preferences> _preferences;
 
   /// Native lz4 context.
-  late final Lz4Cctx _context;
+  late final Pointer<Lz4Cctx> _context;
 
   /// Native lz4 compress options.
-  late final Lz4CompressOptions _options;
+  late final Pointer<Lz4CompressOptions> _options;
 
   /// Construct the [Lz4CompressFilter] with the optional parameters.
   Lz4CompressFilter(
@@ -128,7 +129,8 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
   int doFinalize(NativeCodecBuffer outputBuffer) {
     final writeLength = outputBuffer.unwrittenCount;
     if (writeLength < 4 ||
-        (_preferences.frameInfoContentChecksumFlag != 0 && writeLength < 8)) {
+        (_preferences.ref.frameInfoContentChecksumFlag != 0 &&
+            writeLength < 8)) {
       FormatException(
           'buffer capacity is too small to properly finish the lz4 frame');
     }
@@ -186,12 +188,12 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
 
   /// Free the native memory from the allocated [_preferences].
   void _destroyPreferences() {
-    _preferences.free();
+    malloc.free(_preferences);
   }
 
   /// Free the native memory from the allocated [_options].
   void _destroyCompressOptions() {
-    _options.free();
+    malloc.free(_options);
   }
 
   /// Release the Lz4 FFI call dispatcher.

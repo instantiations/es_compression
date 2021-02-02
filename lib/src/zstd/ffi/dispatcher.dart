@@ -6,6 +6,7 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart' as ffi;
 
+import '../../framework/native/allocation.dart';
 import 'library.dart';
 import 'types.dart';
 
@@ -39,8 +40,8 @@ class ZstdDispatcher with ZstdDispatchErrorCheckerMixin {
   bool released = false;
 
   // These 2 Used in decompression routine to cut down on alloc/free
-  final ZstdInBuffer _inBuffer = ffi.allocate<ZstdInBuffer>().ref;
-  final ZstdOutBuffer _outBuffer = ffi.allocate<ZstdOutBuffer>().ref;
+  final Pointer<ZstdInBuffer> _inBuffer = malloc<ZstdInBuffer>();
+  final Pointer<ZstdOutBuffer> _outBuffer = malloc<ZstdOutBuffer>();
 
   /// Construct the [ZstdDispatcher].
   ZstdDispatcher() : library = ZstdLibrary() {
@@ -50,8 +51,7 @@ class ZstdDispatcher with ZstdDispatchErrorCheckerMixin {
   /// Release native resources.
   void release() {
     if (released == false) {
-      ffi.free(_inBuffer.addressOf);
-      ffi.free(_outBuffer.addressOf);
+      malloc.free(_inBuffer);
       released = true;
     }
   }
@@ -59,20 +59,24 @@ class ZstdDispatcher with ZstdDispatchErrorCheckerMixin {
   int callZstdCompressBound(int srcSize) =>
       checkError(library.zstdCompressBound(srcSize));
 
-  List<int> callZstdCompressStream(ZstdCStream zcs, Pointer<Uint8> destBuffer,
-      int destSize, Pointer<Uint8> srcBuffer, int srcSize) {
-    _inBuffer
+  List<int> callZstdCompressStream(
+      Pointer<ZstdCStream> zcs,
+      Pointer<Uint8> destBuffer,
+      int destSize,
+      Pointer<Uint8> srcBuffer,
+      int srcSize) {
+    _inBuffer.ref
       ..src = srcBuffer.cast()
       ..size = srcSize
       ..pos = 0;
-    _outBuffer
+    _outBuffer.ref
       ..dst = destBuffer.cast()
       ..size = destSize
       ..pos = 0;
-    final hint = checkError(library.zstdCompressStream(
-        zcs.addressOf, _outBuffer.addressOf, _inBuffer.addressOf));
-    final read = _inBuffer.pos;
-    final written = _outBuffer.pos;
+    final hint =
+        checkError(library.zstdCompressStream(zcs, _outBuffer, _inBuffer));
+    final read = _inBuffer.ref.pos;
+    final written = _outBuffer.ref.pos;
     return <int>[read, written, hint];
   }
 
@@ -84,20 +88,24 @@ class ZstdDispatcher with ZstdDispatchErrorCheckerMixin {
 
   int callZstdCStreamOutSize() => library.zstdCStreamOutSize();
 
-  List<int> callZstdDecompressStream(ZstdDStream zds, Pointer<Uint8> destBuffer,
-      int destSize, Pointer<Uint8> srcBuffer, int srcSize) {
-    _inBuffer
+  List<int> callZstdDecompressStream(
+      Pointer<ZstdDStream> zds,
+      Pointer<Uint8> destBuffer,
+      int destSize,
+      Pointer<Uint8> srcBuffer,
+      int srcSize) {
+    _inBuffer.ref
       ..src = srcBuffer.cast()
       ..size = srcSize
       ..pos = 0;
-    _outBuffer
+    _outBuffer.ref
       ..dst = destBuffer.cast()
       ..size = destSize
       ..pos = 0;
-    final hint = checkError(library.zstdDecompressStream(
-        zds.addressOf, _outBuffer.addressOf, _inBuffer.addressOf));
-    final read = _inBuffer.pos;
-    final written = _outBuffer.pos;
+    final hint =
+        checkError(library.zstdDecompressStream(zds, _outBuffer, _inBuffer));
+    final read = _inBuffer.ref.pos;
+    final written = _outBuffer.ref.pos;
     return <int>[read, written, hint];
   }
 
@@ -106,41 +114,41 @@ class ZstdDispatcher with ZstdDispatchErrorCheckerMixin {
   int callZstdDStreamOutSize() => library.zstdDStreamOutSize();
 
   int callZstdEndStream(
-      ZstdCStream zcs, Pointer<Uint8> destBuffer, int destSize) {
-    _outBuffer
+      Pointer<ZstdCStream> zcs, Pointer<Uint8> destBuffer, int destSize) {
+    _outBuffer.ref
       ..dst = destBuffer.cast()
       ..size = destSize
       ..pos = 0;
-    checkError(library.zstdEndStream(zcs.addressOf, _outBuffer.addressOf));
-    return _outBuffer.pos;
+    checkError(library.zstdEndStream(zcs, _outBuffer));
+    return _outBuffer.ref.pos;
   }
 
   int callZstdFlushStream(
-      ZstdCStream zcs, Pointer<Uint8> destBuffer, int destSize) {
-    _outBuffer
+      Pointer<ZstdCStream> zcs, Pointer<Uint8> destBuffer, int destSize) {
+    _outBuffer.ref
       ..dst = destBuffer.cast()
       ..size = destSize
       ..pos = 0;
-    checkError(library.zstdFlushStream(zcs.addressOf, _outBuffer.addressOf));
-    return _outBuffer.pos;
+    checkError(library.zstdFlushStream(zcs, _outBuffer));
+    return _outBuffer.ref.pos;
   }
 
-  int callZstdFreeCStream(ZstdCStream zcs) =>
-      checkError(library.zstdFreeCStream(zcs.addressOf));
+  int callZstdFreeCStream(Pointer<ZstdCStream> zcs) =>
+      checkError(library.zstdFreeCStream(zcs));
 
-  int callZstdFreeDStream(ZstdDStream zds) =>
-      checkError(library.zstdFreeDStream(zds.addressOf));
+  int callZstdFreeDStream(Pointer<ZstdDStream> zds) =>
+      checkError(library.zstdFreeDStream(zds));
 
   Pointer<ffi.Utf8> callZstdGetErrorName(int code) =>
       library.zstdGetErrorName(code);
 
   int callZstdIsError(int code) => library.zstdIsError(code);
 
-  int callZstdInitCStream(ZstdCStream zcs, int compressionLevel) =>
-      checkError(library.zstdInitCStream(zcs.addressOf, compressionLevel));
+  int callZstdInitCStream(Pointer<ZstdCStream> zcs, int compressionLevel) =>
+      checkError(library.zstdInitCStream(zcs, compressionLevel));
 
-  int callZstdInitDStream(ZstdDStream zds) =>
-      checkError(library.zstdInitDStream(zds.addressOf));
+  int callZstdInitDStream(Pointer<ZstdDStream> zds) =>
+      checkError(library.zstdInitDStream(zds));
 
   int callZstdVersionNumber() => library.zstdVersionNumber();
 

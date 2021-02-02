@@ -21,7 +21,7 @@ class ZstdCompressFilter extends NativeCodecFilterBase {
   late final int level;
 
   /// Native zstd context object.
-  late final ZstdCStream _cStream;
+  late final Pointer<ZstdCStream> _cStream;
 
   /// Construct the [ZstdCompressFilter] with the optional parameters.
   ZstdCompressFilter(
@@ -115,7 +115,7 @@ class ZstdCompressFilter extends NativeCodecFilterBase {
   void _initCStream() {
     final result = _dispatcher.callZstdCreateCStream();
     if (result == nullptr) throw StateError('Could not allocate zstd context');
-    _cStream = result.ref;
+    _cStream = result;
     _dispatcher.callZstdInitCStream(_cStream, level);
   }
 

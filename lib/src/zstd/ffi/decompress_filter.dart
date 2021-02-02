@@ -18,7 +18,7 @@ class ZstdDecompressFilter extends NativeCodecFilterBase {
   final ZstdDispatcher _dispatcher = ZstdDispatcher();
 
   /// Native zstd context object
-  late final ZstdDStream _dStream;
+  late final Pointer<ZstdDStream> _dStream;
 
   /// Construct the [ZstdDecompressFilter] with the optional parameters.
   ZstdDecompressFilter(int inputBufferLength, int outputBufferLength)
@@ -86,7 +86,7 @@ class ZstdDecompressFilter extends NativeCodecFilterBase {
   void _initDStream() {
     final result = _dispatcher.callZstdCreateDStream();
     if (result == nullptr) throw StateError('Could not allocate zstd context');
-    _dStream = result.ref;
+    _dStream = result;
     _dispatcher.callZstdInitDStream(_dStream);
   }
 

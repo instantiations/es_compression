@@ -1,9 +1,8 @@
 import 'dart:ffi';
 import 'dart:typed_data';
 
-import 'package:ffi/ffi.dart' as ffi;
-
 import '../buffers.dart';
+import 'allocation.dart';
 
 /// Implementation of a [CodecBuffer] backed by bytes allocated from the native
 /// OS heap.
@@ -24,7 +23,7 @@ class NativeCodecBuffer extends CodecBuffer<Pointer<Uint8>> {
 
   /// Constructs a buffer that allocates [length] bytes from the native OS-heap.
   NativeCodecBuffer(int length)
-      : _bytes = ffi.allocate<Uint8>(count: length),
+      : _bytes = malloc<Uint8>(length),
         super(length);
 
   /// Return the native byte pointer to the [_bytes] base address.
@@ -73,7 +72,7 @@ class NativeCodecBuffer extends CodecBuffer<Pointer<Uint8>> {
   @override
   void release() {
     if (isAvailable()) {
-      ffi.free(_bytes);
+      malloc.free(_bytes);
       _released = true;
     }
   }

@@ -1,7 +1,13 @@
-## 1.0.0-nullsafety
+## 2.0.0-nullsafety.0
 
 - Migrate to null safety
-- Update SDK constraints to >=2.12.0-0 <3.0.0 based on beta release guidelines.
+- Updated memory allocation due to FFI breaking changes.
+- Updated empty structs (implicit opaque) to subclass new FFI Opaque native type.
+- Update SDK constraints to >=2.12.0-253 <3.0.0 based on beta release guidelines.
+
+## 0.9.9
+
+- Fixed List initializer issues reported by dart static analysis on pub.dev
 
 ## 0.9.8
 

@@ -4,17 +4,16 @@
 
 import 'dart:ffi';
 
-import 'package:ffi/ffi.dart' as ffi;
-
+import '../../framework/native/allocation.dart';
 import 'constants.dart';
 
 /// Opaque Struct: *LZ4F_cctx*
 /// File: *lz4frame.h*
-class Lz4Cctx extends Struct {}
+class Lz4Cctx extends Opaque {}
 
 /// Opaque Struct: *LZ4F_dctx*
 /// File: *lz4frame.h*
-class Lz4Dctx extends Struct {}
+class Lz4Dctx extends Opaque {}
 
 /// Struct: *LZ4F_frameInfo_t*
 /// File: *lz4frame.h*
@@ -67,12 +66,10 @@ class Lz4FrameInfo extends Struct {
   /// Return the block size, in bytes, for the id.
   int get blockSize => _blockSizeForId(blockSizeID);
 
-  /// Free the memory associated with this struct.
-  void free() => ffi.free(addressOf);
-
   /// Allocate a [Lz4FrameInfo] struct and provide default values.
-  factory Lz4FrameInfo.allocate() {
-    return ffi.allocate<Lz4FrameInfo>().ref
+  static Pointer<Lz4FrameInfo> allocate() {
+    final frameInfo = malloc<Lz4FrameInfo>();
+    frameInfo.ref
       ..blockSizeID = Lz4Constants.LZ4F_max64KB
       ..blockMode = Lz4Constants.LZ4F_blockLinked
       ..contentChecksumFlag = Lz4Constants.LZ4F_noContentChecksum
@@ -80,6 +77,7 @@ class Lz4FrameInfo extends Struct {
       ..contentSize = 0
       ..dictID = 0
       ..blockChecksumFlag = Lz4Constants.LZ4F_noBlockChecksum;
+    return frameInfo;
   }
 }
 
@@ -148,12 +146,10 @@ class Lz4Preferences extends Struct {
   /// Return the block size, in bytes, for the id.
   int get blockSize => _blockSizeForId(frameInfoBlockSizeID);
 
-  /// Free the memory associated with this struct.
-  void free() => ffi.free(addressOf);
-
   /// Allocate a [Lz4Preferences] struct and provide default values.
-  factory Lz4Preferences.allocate() {
-    return ffi.allocate<Lz4Preferences>().ref
+  static Pointer<Lz4Preferences> allocate() {
+    final prefs = malloc<Lz4Preferences>();
+    prefs.ref
       ..frameInfoBlockSizeID = Lz4Constants.LZ4F_default
       ..frameInfoBlockMode = Lz4Constants.LZ4F_blockLinked
       ..frameInfoContentChecksumFlag = Lz4Constants.LZ4F_noContentChecksum
@@ -164,6 +160,7 @@ class Lz4Preferences extends Struct {
       ..compressionLevel = 0
       ..autoFlush = 0
       ..favorDecSpeed = 0;
+    return prefs;
   }
 }
 
@@ -187,16 +184,15 @@ class Lz4CompressOptions extends Struct {
   @Uint8()
   external int reserved3;
 
-  /// Free the memory associated with this struct.
-  void free() => ffi.free(addressOf);
-
   /// Allocate a [Lz4CompressOptions] struct and provide default values.
-  factory Lz4CompressOptions.allocate() {
-    return ffi.allocate<Lz4CompressOptions>().ref
+  static Pointer<Lz4CompressOptions> allocate() {
+    final options = malloc<Lz4CompressOptions>();
+    options.ref
       ..stableSrc = 0
       ..reserved1 = 0
       ..reserved2 = 0
       ..reserved3 = 0;
+    return options;
   }
 }
 
@@ -220,16 +216,15 @@ class Lz4DecompressOptions extends Struct {
   @Uint8()
   external int reserved3;
 
-  /// Free the memory associated with this struct.
-  void free() => ffi.free(addressOf);
-
   /// Allocate a [Lz4DecompressOptions] struct and provide default values.
-  factory Lz4DecompressOptions.allocate() {
-    return ffi.allocate<Lz4DecompressOptions>().ref
+  static Pointer<Lz4DecompressOptions> allocate() {
+    final options = malloc<Lz4DecompressOptions>();
+    options.ref
       ..stableSrc = 0
       ..reserved1 = 0
       ..reserved2 = 0
       ..reserved3 = 0;
+    return options;
   }
 }
 
@@ -239,7 +234,7 @@ class Lz4DecompressOptions extends Struct {
 /// *lz4frame.h*
 mixin Lz4Types {
   /// Return an allocated [Lz4Preferences] struct.
-  Lz4Preferences newPreferences(
+  Pointer<Lz4Preferences> newPreferences(
       {int? level = 0,
       bool? fastAcceleration = false,
       bool? contentChecksum = false,
@@ -247,7 +242,8 @@ mixin Lz4Types {
       bool? blockLinked = true,
       int? blockSize = Lz4Constants.LZ4F_max64KB,
       bool? optimizeForCompression = false}) {
-    return Lz4Preferences.allocate()
+    final prefs = Lz4Preferences.allocate();
+    prefs.ref
       ..compressionLevel =
           (fastAcceleration ?? false) ? -(level ?? 0) : level ?? 0
       ..frameInfoContentChecksumFlag = (contentChecksum ?? false) ? 1 : 0
@@ -257,16 +253,18 @@ mixin Lz4Types {
           : Lz4Constants.LZ4F_blockIndependent
       ..frameInfoBlockSizeID = blockSize ?? Lz4Constants.LZ4F_max64KB
       ..favorDecSpeed = (optimizeForCompression ?? false) ? 1 : 0;
+    return prefs;
   }
 
   /// Return an allocated [Lz4FrameInfo] struct.
-  Lz4FrameInfo newFrameInfo() => Lz4FrameInfo.allocate();
+  Pointer<Lz4FrameInfo> newFrameInfo() => Lz4FrameInfo.allocate();
 
   /// Return an allocated [Lz4CompressOptions] struct.
-  Lz4CompressOptions newCompressOptions() => Lz4CompressOptions.allocate();
+  Pointer<Lz4CompressOptions> newCompressOptions() =>
+      Lz4CompressOptions.allocate();
 
   /// Return an allocated [Lz4DecompressOptions] struct.
-  Lz4DecompressOptions newDecompressOptions() =>
+  Pointer<Lz4DecompressOptions> newDecompressOptions() =>
       Lz4DecompressOptions.allocate();
 }
 

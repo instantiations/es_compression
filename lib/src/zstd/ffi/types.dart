@@ -6,11 +6,11 @@ import 'dart:ffi';
 
 /// Opaque Struct: *ZSTD_CStream*
 /// File: *zstd.h*
-class ZstdCStream extends Struct {}
+class ZstdCStream extends Opaque {}
 
 /// Opaque Struct: *ZSTD_DStream*
 /// File: *zstd.h*
-class ZstdDStream extends Struct {}
+class ZstdDStream extends Opaque {}
 
 /// Struct: *ZSTD_inBuffer_s
 /// File: *zstd.h*

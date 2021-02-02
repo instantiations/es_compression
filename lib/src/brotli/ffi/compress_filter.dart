@@ -23,7 +23,7 @@ class BrotliCompressFilter extends NativeCodecFilterBase {
   final List<int?> parameters = List.filled(10, 0);
 
   /// Native brotli context object.
-  BrotliEncoderState _brotliState = BrotliEncoderState();
+  late final Pointer<BrotliEncoderState> _brotliState;
 
   /// Construct an [BrotliCompressFilter] with the provided options.
   BrotliCompressFilter(
@@ -165,7 +165,7 @@ class BrotliCompressFilter extends NativeCodecFilterBase {
     if (result == nullptr) {
       throw StateError('Could not allocate brotli encoder state');
     }
-    _brotliState = result.ref;
+    _brotliState = result;
     _applyParameter(BrotliConstants.BROTLI_PARAM_QUALITY);
     _applyParameter(BrotliConstants.BROTLI_PARAM_MODE);
     _applyParameter(BrotliConstants.BROTLI_PARAM_LGWIN);
@@ -181,7 +181,6 @@ class BrotliCompressFilter extends NativeCodecFilterBase {
   /// Free the native context.
   void _destroyState() {
     _dispatcher.callBrotliEncoderDestroyInstance(_brotliState);
-    _brotliState = BrotliEncoderState();
   }
 
   /// Release the Brotli FFI call dispatcher.

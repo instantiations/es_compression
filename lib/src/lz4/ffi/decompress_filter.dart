@@ -7,6 +7,7 @@ import 'dart:math';
 
 import '../../../framework.dart';
 import '../../../lz4.dart';
+import '../../framework/native/allocation.dart';
 import '../../framework/native/buffers.dart';
 import '../../framework/native/filters.dart';
 import 'constants.dart';
@@ -20,13 +21,13 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
   final Lz4Dispatcher _dispatcher = Lz4Dispatcher();
 
   /// Native lz4 frame info.
-  Lz4FrameInfo? _frameInfo;
+  Pointer<Lz4FrameInfo>? _frameInfo;
 
   /// Native lz4 context.
-  Lz4Dctx? _context;
+  Pointer<Lz4Dctx>? _context;
 
   /// Native lz4 decompress options.
-  late final Lz4DecompressOptions _options;
+  late final Pointer<Lz4DecompressOptions> _options;
 
   /// Construct the [Lz4DecompressFilter] with the defined buffer lengths.
   Lz4DecompressFilter(int inputBufferLength, int outputBufferLength)
@@ -64,7 +65,7 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
     if (numBytes > 0) _readFrameInfo(inputBufferHolder.buffer);
 
     outputBufferHolder.length = max(
-        _frameInfo!.blockSize,
+        _frameInfo!.ref.blockSize,
         outputBufferHolder.isLengthSet()
             ? outputBufferHolder.length
             : max(lz4DecoderOutputBufferLength, inputBufferHolder.length));
@@ -112,7 +113,7 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
   /// is [:null:].
   ///
   /// Return the null-checked [_context].
-  Lz4Dctx _checkedContext() {
+  Pointer<Lz4Dctx> _checkedContext() {
     if (_context == null) throw StateError('null _context is unexpected');
     return _context!;
   }
@@ -121,7 +122,7 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
   int _readFrameInfo(NativeCodecBuffer encoderBuffer, {bool reset = false}) {
     final result = _dispatcher.callLz4FGetFrameInfo(
         _checkedContext(), encoderBuffer.readPtr, encoderBuffer.unreadCount);
-    _frameInfo = result[1] as Lz4FrameInfo;
+    _frameInfo = result[1] as Pointer<Lz4FrameInfo>;
     final read = result[2] as int;
     encoderBuffer.incrementBytesRead(read);
     if (reset == true) _reset();
@@ -144,7 +145,7 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
 
   /// Free the native memory from the allocated [_frameInfo].
   void _destroyFrameInfo() {
-    if (_frameInfo != null) _frameInfo!.free();
+    if (_frameInfo != null) malloc.free(_frameInfo!);
   }
 
   /// Release the Lz4 FFI call dispatcher.
