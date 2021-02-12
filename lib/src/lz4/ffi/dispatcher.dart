@@ -1,12 +1,11 @@
-// Copyright (c) 2020, Instantiations, Inc. Please see the AUTHORS
+// Copyright (c) 2021, Instantiations, Inc. Please see the AUTHORS
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ffi';
 
-import 'package:ffi/ffi.dart' as ffi;
+import 'package:ffi/ffi.dart';
 
-import '../../framework/native/allocation.dart';
 import 'constants.dart';
 import 'library.dart';
 import 'types.dart';
@@ -66,7 +65,7 @@ class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
     return library.lz4FIsError(code);
   }
 
-  Pointer<ffi.Utf8> callLz4FGetErrorName(int code) {
+  Pointer<Utf8> callLz4FGetErrorName(int code) {
     return library.lz4FGetErrorName(code);
   }
 
@@ -191,7 +190,7 @@ mixin Lz4DispatchErrorCheckerMixin {
   int checkError(int code) {
     if (dispatcher.callLz4FIsError(code) != 0) {
       final errorNamePtr = dispatcher.callLz4FGetErrorName(code);
-      final errorName = ffi.Utf8.fromUtf8(errorNamePtr);
+      final errorName = errorNamePtr.toDartString();
       throw FormatException(errorName);
     } else {
       return code;

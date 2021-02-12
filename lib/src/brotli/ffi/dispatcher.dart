@@ -1,12 +1,11 @@
-// Copyright (c) 2020, Instantiations, Inc. Please see the AUTHORS
+// Copyright (c) 2021, Instantiations, Inc. Please see the AUTHORS
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ffi';
 
-import 'package:ffi/ffi.dart' as ffi;
+import 'package:ffi/ffi.dart';
 
-import '../../framework/native/allocation.dart';
 import 'constants.dart';
 import 'library.dart';
 import 'types.dart';
@@ -86,7 +85,7 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   int callBrotliDecoderGetErrorCode(Pointer<BrotliDecoderState> state) =>
       library.brotliDecoderGetErrorCode(state);
 
-  Pointer<ffi.Utf8> callBrotliDecoderErrorString(int code) =>
+  Pointer<Utf8> callBrotliDecoderErrorString(int code) =>
       library.brotliDecoderErrorString(code);
 
   Pointer<BrotliDecoderState> callBrotliDecoderCreateInstance() =>
@@ -241,7 +240,7 @@ mixin BrotliDispatchErrorCheckerMixin {
     if (code == BrotliConstants.BROTLI_DECODER_RESULT_ERROR) {
       final errorCode = dispatcher.callBrotliDecoderGetErrorCode(state);
       final errorNamePtr = dispatcher.callBrotliDecoderErrorString(errorCode);
-      final errorName = ffi.Utf8.fromUtf8(errorNamePtr);
+      final errorName = errorNamePtr.toDartString();
       throw FormatException(errorName);
     } else {
       return code;

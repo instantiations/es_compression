@@ -1,22 +1,22 @@
 name: es_compression
 description: Compression framework providing FFI implementations for Brotli, Lz4, Zstd (Zstandard) with ready-to-use prebuilt binaries for Win/Linux/Mac.
-version: 2.0.0-nullsafety.0
+version: 2.0.0
 homepage: https://www.instantiations.com
 issue_tracker: https://github.com/instantiations/es_compression/issues
 repository: https://github.com/instantiations/es_compression
 
 environment:
-  sdk: '>=2.12.0-253 <3.0.0'
+  sdk: '>=2.12.0-0 <3.0.0'
 
 executables:
   escompress: es_compress
 
 dependencies:
-  args: ^1.6.0
-  ffi: ^0.2.0-nullsafety.1
+  args: ^2.0.0
+  ffi: ^1.0.0
 
 dev_dependencies:
-  benchmark_harness: ^2.0.0-nullsafety
-  collection: ^1.15.0-nullsafety.5
-  pedantic: ^1.10.0-nullsafety
-  test: ^1.16.0-nullsafety.17
+  benchmark_harness: ^2.0.0
+  collection: ^1.15.0
+  pedantic: ^1.10.0
+  test: ^1.16.0

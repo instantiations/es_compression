@@ -1,12 +1,11 @@
-// Copyright (c) 2020, Instantiations, Inc. Please see the AUTHORS
+// Copyright (c) 2021, Instantiations, Inc. Please see the AUTHORS
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ffi';
 
-import 'package:ffi/ffi.dart' as ffi;
+import 'package:ffi/ffi.dart';
 
-import '../../framework/native/allocation.dart';
 import 'library.dart';
 import 'types.dart';
 
@@ -139,7 +138,7 @@ class ZstdDispatcher with ZstdDispatchErrorCheckerMixin {
   int callZstdFreeDStream(Pointer<ZstdDStream> zds) =>
       checkError(library.zstdFreeDStream(zds));
 
-  Pointer<ffi.Utf8> callZstdGetErrorName(int code) =>
+  Pointer<Utf8> callZstdGetErrorName(int code) =>
       library.zstdGetErrorName(code);
 
   int callZstdIsError(int code) => library.zstdIsError(code);
@@ -167,7 +166,7 @@ mixin ZstdDispatchErrorCheckerMixin {
   int checkError(int code) {
     if (dispatcher.callZstdIsError(code) != 0) {
       final errorNamePtr = dispatcher.callZstdGetErrorName(code);
-      final errorName = ffi.Utf8.fromUtf8(errorNamePtr);
+      final errorName = errorNamePtr.toDartString();
       throw FormatException(errorName);
     } else {
       return code;

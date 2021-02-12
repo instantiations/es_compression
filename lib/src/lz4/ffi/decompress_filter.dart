@@ -1,13 +1,14 @@
-// Copyright (c) 2020, Instantiations, Inc. Please see the AUTHORS
+// Copyright (c) 2021, Instantiations, Inc. Please see the AUTHORS
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ffi';
 import 'dart:math';
 
+import 'package:ffi/ffi.dart';
+
 import '../../../framework.dart';
 import '../../../lz4.dart';
-import '../../framework/native/allocation.dart';
 import '../../framework/native/buffers.dart';
 import '../../framework/native/filters.dart';
 import 'constants.dart';

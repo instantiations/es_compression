@@ -1,8 +1,9 @@
 import 'dart:ffi';
 import 'dart:typed_data';
 
+import 'package:ffi/ffi.dart';
+
 import '../buffers.dart';
-import 'allocation.dart';
 
 /// Implementation of a [CodecBuffer] backed by bytes allocated from the native
 /// OS heap.
