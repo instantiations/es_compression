@@ -2,7 +2,7 @@
 
 - Stable null safety release.
 - Updated constraints to >=2.12.0-0 <3.0.0.
-- Migrate `package:ffi` `Alloator` uses (removed temporary internal malloc/free).
+- Migrate `package:ffi` `Allocator` uses (removed temporary internal malloc/free).
 - Migrate `package:ffi` `Utf8` uses.
 - Update copyright year
 
