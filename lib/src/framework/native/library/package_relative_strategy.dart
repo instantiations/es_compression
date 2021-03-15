@@ -27,7 +27,7 @@ const _espackage = 'es_compression';
 /// es$moduleId_c-$os$bitness.$extension.
 /// In the case of lz4 on Win64, it is named *eslz4_c-win64.dll*.
 class OpenViaPackageRelativeStrategy extends OpenLibraryStrategy {
-  /// Return the [String] id of the [OpenViaEnvironmentStrategy].
+  /// Return the [String] id of the [OpenViaPackageRelativeStrategy].
   @override
   String get strategyId => 'Package-Relative-Strategy';
 
