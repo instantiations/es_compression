@@ -1,3 +1,8 @@
+## 2.0.1
+
+- Updated [prebuilt libraries](lib/src/zstd/blobs) to [ZSTD v1.4.9](https://github.com/facebook/zstd/releases/tag/v1.4.9).
+- Comment tweaks.
+
 ## 2.0.0
 
 - Stable null safety release.
