@@ -7,7 +7,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:es_compression/framework.dart';
-import 'package:es_compression/src/framework/dart/filters.dart';
 
 import 'utils/example_utils.dart';
 
