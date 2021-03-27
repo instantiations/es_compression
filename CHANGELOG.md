@@ -1,6 +1,7 @@
 ## 2.0.2
 
 - Fix ios dynamic library resolution in [open_library.dart](lib/src/framework/native/library/open_library.dart)
+- Updated constraints to >=2.12.0 <3.0.0.
 
 ## 2.0.1
 
