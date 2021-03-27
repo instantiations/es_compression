@@ -64,6 +64,9 @@ mixin OpenLibrary {
     } else if (Platform.isAndroid) {
       os = 'android';
       extension = 'so';
+    } else if (Platform.isIOS) {
+      os = 'ios';
+      extension = 'dylib';
     } else {
       throw Exception('Unsupported platform!');
     }
