@@ -107,12 +107,15 @@ To run (brotli shown below):
 In the `test` subdirectory, the following tests are provided for the compression framework and encoder/decoder
 implementations.
 
-| Test                  | Description                                                   |
-| ----------------------| ------------------------------------------------------------- |
-| `brotli_tests.dart`   | Test encoding/decode of the Brotli FFI-based implementation   |
-| `buffer_tests.dart`   | Test `CodecBuffer` and friends in the compression framework   |
-| `lz4_tests.dart`      | Test encoding/decode of the Lz4 FFI-based implementation      |
-| `zstd_tests.dart`     | Test encoding/decode of the Zstd FFI-based implementation     |
+| Test                   | Description                                                   |
+| -----------------------| ------------------------------------------------------------- |
+| `benchmarks_test.dart` | Test benchmarks defined in `benchmark` subdirectory           |
+| `brotli_test.dart`     | Test encoding/decode of the Brotli FFI-based implementation   |
+| `buffer_test.dart`     | Test `CodecBuffer` and friends in the compression framework   |
+| `escompress_test.dart` | Test `escompress` binary in the `bin` subdirectory            |
+| `examples_test.dart`   | Test examples defined in the `example` subdirectory           |
+| `lz4_test.dart`        | Test encoding/decode of the Lz4 FFI-based implementation      |
+| `zstd_test.dart`       | Test encoding/decode of the Zstd FFI-based implementation     |
 
 To run test suite:
 ```console
