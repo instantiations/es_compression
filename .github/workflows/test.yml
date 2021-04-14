@@ -7,12 +7,11 @@ on: push
 #    branches: [main]
 
 jobs:
-  install:
-    runs-on: ${{ matrix.os }}
+  analyze:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
         # Test latest stable, beta, dev, and main channels
         sdk: [stable, beta, dev, main]
     steps:
@@ -26,4 +25,30 @@ jobs:
         if: always() && steps.install.outcome == 'success'
       - name: Analyze code
         run: dart analyze --fatal-infos
+        if: always() && steps.install.outcome == 'success'
+      - name: Analyze code
+        run: dart analyze --fatal-infos
+        if: always() && steps.install.outcome == 'success'
+
+  test:
+    needs: analyze
+    runs-on:  ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        sdk: [stable, beta, dev, main]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1.0
+        with:
+          sdk: ${{ matrix.sdk }}
+      - id: install
+        name: Install dependencies
+        run: dart pub get
+      - name: Run VM tests
+        run: dart test --platform vm
+        if: always() && steps.install.outcome == 'success'
+      - name: Run Chrome tests
+        run: dart test --platform chrome
         if: always() && steps.install.outcome == 'success'
