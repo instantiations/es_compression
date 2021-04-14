@@ -1,6 +1,6 @@
 [![Language](https://img.shields.io/badge/language-Dart-blue.svg)](https://dart.dev)
 [![pub package](https://img.shields.io/pub/v/es_compression.svg)](https://pub.dartlang.org/packages/es_compression)
-[![Build Status](https://travis-ci.com/instantiations/es_compression.svg?token=9nTaGMsgxFkfugqQqEZq&branch=master)](https://travis-ci.com/instantiations/es_compression)
+[![Status](https://github.com/instantiations/es_compression/actions/workflows/main.yml/badge.svg)](https://github.com/instantiations/es_compression/actions/workflows/main.yml)
 
 # ES Compression: A Compression Framework for Dart
 
@@ -244,7 +244,7 @@ They will be reviewed and addressed on a best-effort basis by [Instantiations, I
 
 [library loader]: https://github.com/instantiations/es_compression/blob/master/lib/src/framework/native/library/open_library.dart
 [tracker]: https://github.com/instantiations/es_compression/issues
-[VAST Platform]: https://www.instantiations.com/products/vasmalltalk/index.html
+[VAST Platform]: https://www.instantiations.com/vast-platform/
 [Instantiations, Inc]: https://www.instantiations.com
 
 ## About Us

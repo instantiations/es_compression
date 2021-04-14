@@ -32,7 +32,7 @@ from.
 
 #### Inspired-Port
 The compression framework from this library is based on the **Unified Compression Framework** from the
-[VAST Platform](https://www.instantiations.com/products/vasmalltalk/index.html) (which we will refer to as *VAST* for
+[VAST Platform](https://www.instantiations.com/vast-platform/) (which we will refer to as *VAST* for
 the remainder of this document). VAST's compression framework is integrated into its *Streams* library. These streams are more like Java synchronous
 streams and less like Dart asynchronous streams.
 
