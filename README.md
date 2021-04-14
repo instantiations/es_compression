@@ -1,6 +1,6 @@
 [![Language](https://img.shields.io/badge/language-Dart-blue.svg)](https://dart.dev)
 [![pub package](https://img.shields.io/pub/v/es_compression.svg)](https://pub.dartlang.org/packages/es_compression)
-[![Build Status](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)](https://travis-ci.com/instantiations/es_compression)
+[![Status](https://github.com/instantiations/es_compression/actions/workflows/main.yml/badge.svg)](https://github.com/instantiations/es_compression/actions/workflows/main.yml)
 
 # ES Compression: A Compression Framework for Dart
 
