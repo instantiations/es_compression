@@ -1,3 +1,8 @@
+## 2.0.3
+
+- Updated [prebuilt libraries](lib/src/zstd/blobs) to [ZSTD v1.5.0](https://github.com/facebook/zstd/releases/tag/v1.5.0).
+- Move CI to Github Actions
+
 ## 2.0.2
 
 - Fix ios dynamic library resolution in [open_library.dart](lib/src/framework/native/library/open_library.dart)

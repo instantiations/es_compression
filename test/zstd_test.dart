@@ -11,7 +11,7 @@ import 'package:test/test.dart';
 void main() {
   test('Test Zstd Version Number', () {
     final codec = zstd;
-    final bindingVersion = '1.4.9';
+    final bindingVersion = '1.5.0';
     expect(codec.bindingVersion.toString(), bindingVersion);
     expect(codec.libraryVersion.toString(), bindingVersion);
   });
