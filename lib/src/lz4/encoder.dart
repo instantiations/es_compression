@@ -7,7 +7,6 @@ import 'dart:convert';
 import '../framework/converters.dart';
 import '../framework/filters.dart';
 import '../framework/sinks.dart';
-import 'codec.dart';
 import 'options.dart';
 import 'stubs/compress_filter.dart'
     if (dart.library.io) 'ffi/compress_filter.dart';
@@ -19,7 +18,7 @@ const lz4EncoderInputBufferLength = 256 * 1024;
 /// Default output buffer length.
 const lz4EncoderOutputBufferLength = lz4EncoderInputBufferLength;
 
-/// The [Lz4Encoder] encoder is used by [Lz4Codec] to lz4 compress data.
+/// The [Lz4Encoder] encoder is used to lz4 compress data.
 class Lz4Encoder extends CodecConverter {
   /// The compression-[level] can be set in the range of `0..16`, with
   /// 0 (fast mode) being the default compression level.
@@ -135,23 +134,22 @@ class _Lz4EncoderSink extends CodecSink {
 /// There is a conditional import that determines the implementation of
 /// [Lz4CompressFilter] based on the environment.
 CodecFilter _makeLz4CompressFilter(
-    int level,
-    bool fastAcceleration,
-    bool contentChecksum,
-    bool blockChecksum,
-    bool blockLinked,
-    int blockSize,
-    bool optimizeForCompression,
-    int inputBufferLength,
-    int outputBufferLength) {
-  return Lz4CompressFilter(
-      level: level,
-      fastAcceleration: fastAcceleration,
-      contentChecksum: contentChecksum,
-      blockChecksum: blockChecksum,
-      blockLinked: blockLinked,
-      blockSize: blockSize,
-      optimizeForCompression: optimizeForCompression,
-      inputBufferLength: inputBufferLength,
-      outputBufferLength: outputBufferLength);
-}
+        int level,
+        bool fastAcceleration,
+        bool contentChecksum,
+        bool blockChecksum,
+        bool blockLinked,
+        int blockSize,
+        bool optimizeForCompression,
+        int inputBufferLength,
+        int outputBufferLength) =>
+    Lz4CompressFilter(
+        level: level,
+        fastAcceleration: fastAcceleration,
+        contentChecksum: contentChecksum,
+        blockChecksum: blockChecksum,
+        blockLinked: blockLinked,
+        blockSize: blockSize,
+        optimizeForCompression: optimizeForCompression,
+        inputBufferLength: inputBufferLength,
+        outputBufferLength: outputBufferLength);

@@ -40,7 +40,7 @@ class ZstdCodec extends Codec<List<int>, List<int>> {
   final int outputBufferLength;
 
   /// Return the base binding version this binding code was developed for.
-  ZstdVersion get bindingVersion => ZstdVersion(10500);
+  ZstdVersion get bindingVersion => const ZstdVersion(10500);
 
   /// Return the actual library version of the shared library.
   ZstdVersion get libraryVersion => ZstdVersion(libraryVersionNumber);
@@ -63,11 +63,11 @@ class ZstdCodec extends Codec<List<int>, List<int>> {
         inputBufferLength = CodecBufferHolder.autoLength,
         outputBufferLength = CodecBufferHolder.autoLength;
 
-  /// Return the [ZstdEncoder] configured implementation.
+  /// Return the zstd encoder configured implementation.
   @override
   Converter<List<int>, List<int>> get encoder => encoderImpl;
 
-  /// Return the [ZstdDecoder] configured implementation.
+  /// Return the zstd decoder configured implementation.
   @override
   Converter<List<int>, List<int>> get decoder => decoderImpl;
 }

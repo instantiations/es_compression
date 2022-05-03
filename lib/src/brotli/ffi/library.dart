@@ -48,9 +48,7 @@ class BrotliLibrary
   String get moduleId => 'brotli';
 
   /// Return the [BrotliLibrary] singleton library instance.
-  factory BrotliLibrary() {
-    return _instance;
-  }
+  factory BrotliLibrary() => _instance;
 
   /// Internal constructor that opens the native shared library and resolves
   /// all the functions.

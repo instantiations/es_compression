@@ -10,8 +10,8 @@ import 'package:test/test.dart';
 
 void main() {
   test('Test Zstd Version Number', () {
-    final codec = zstd;
-    final bindingVersion = '1.5.0';
+    const codec = zstd;
+    const bindingVersion = '1.5.0';
     expect(codec.bindingVersion.toString(), bindingVersion);
     expect(codec.libraryVersion.toString(), bindingVersion);
   });
@@ -21,7 +21,7 @@ void main() {
   });
 
   test('Test Empty Zstd Encode/Decode', () {
-    final data = '';
+    const data = '';
     final header = [40, 181, 47, 253, 0, 88, 1, 0, 0];
     final dataBytes = utf8.encode(data);
     final codec = ZstdCodec();
@@ -32,7 +32,7 @@ void main() {
   });
 
   test('Test Simple Zstd Encode/Decode', () {
-    final data = 'MyDart';
+    const data = 'MyDart';
     final expected = [
       40,
       181,

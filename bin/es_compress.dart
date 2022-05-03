@@ -111,8 +111,7 @@ Future<int> main(List<String> arguments) async {
     }, cancelOnError: true);
   }
 
-  exitCode = await exited;
-  return exitCode;
+  return await exited;
 }
 
 /// Return true if encoding, false if decoding.

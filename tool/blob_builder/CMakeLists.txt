@@ -151,10 +151,10 @@ set(LZ4_VERSION_MOD 3)
 #-- The period-delimited 3 position format (1.0.0)
 set(LZ4_VERSION "${LZ4_VERSION_MAJOR}.${LZ4_VERSION_MINOR}.${LZ4_VERSION_MOD}")
 
-#-- ZSTD Version: 1.4.9
+#-- ZSTD Version: 1.5.1
 set(ZSTD_VERSION_MAJOR 1)
 set(ZSTD_VERSION_MINOR 5)
-set(ZSTD_VERSION_MOD 0)
+set(ZSTD_VERSION_MOD 1)
 #-- The period-delimited 3 position format (1.0.0)
 set(ZSTD_VERSION "${ZSTD_VERSION_MAJOR}.${ZSTD_VERSION_MINOR}.${ZSTD_VERSION_MOD}")
 

@@ -93,7 +93,7 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
   final int outputBufferLength;
 
   /// Return the base binding version this binding code was developed for.
-  BrotliVersion get bindingVersion => BrotliVersion(0x1000009);
+  BrotliVersion get bindingVersion => const BrotliVersion(0x1000009);
 
   /// Return the encoder library version.
   BrotliVersion get encoderVersion => BrotliVersion(encoderVersionNumber);
@@ -141,11 +141,11 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
         inputBufferLength = CodecBufferHolder.autoLength,
         outputBufferLength = CodecBufferHolder.autoLength;
 
-  /// Return the [BrotliEncoder] configured implementation.
+  /// Return the brotli encoder configured implementation.
   @override
   Converter<List<int>, List<int>> get encoder => encoderImpl;
 
-  /// Return the [BrotliDecoder] configured implementation.
+  /// Return the brotli decoder configured implementation.
   @override
   Converter<List<int>, List<int>> get decoder => decoderImpl;
 }

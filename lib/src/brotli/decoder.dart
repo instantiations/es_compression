@@ -17,8 +17,7 @@ const brotliDecoderInputBufferLength = 64 * 1024;
 /// Default output buffer length.
 const brotliDecoderOutputBufferLength = brotliDecoderInputBufferLength;
 
-/// The [BrotliDecoder] decoder is used by [BrotliCodec] to decompress brotli
-/// data.
+/// The [BrotliDecoder] decoder is used to decompress brotli data.
 class BrotliDecoder extends CodecConverter {
   /// Flag the determines if "canny" ring buffer allocation is enabled.
   /// Ring buffer is allocated according to window size, despite the real size
@@ -73,7 +72,7 @@ class _BrotliDecoderSink extends CodecSink {
 /// There is a conditional import that determines the implementation of
 /// [BrotliDecompressFilter] based on the environment.
 CodecFilter _makeBrotliDecompressFilter(
-    bool ringBufferReallocation, bool largeWindow) {
-  return BrotliDecompressFilter(
-      ringBufferReallocation: ringBufferReallocation, largeWindow: largeWindow);
-}
+        bool ringBufferReallocation, bool largeWindow) =>
+    BrotliDecompressFilter(
+        ringBufferReallocation: ringBufferReallocation,
+        largeWindow: largeWindow);

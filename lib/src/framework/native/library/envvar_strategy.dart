@@ -8,7 +8,7 @@ import 'open_library_strategy.dart';
 /// via environment variable.
 ///
 /// The user may inject an environment variable of the form
-/// [moduleId]_LIBRARY_NAME. For example, if the [moduleId] is lz4, then the
+/// moduleId_LIBRARY_NAME. For example, if the moduleId is lz4, then the
 /// name of the env-var is LZ4_LIBRARY_PATH.
 ///
 /// The value of the environment variable may contain either the directory

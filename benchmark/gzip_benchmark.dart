@@ -6,11 +6,10 @@ import 'dart:io';
 
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:collection/collection.dart';
-import 'package:es_compression/framework.dart';
 
 import 'utils/benchmark_utils.dart';
 
-/// An [GZipEncodeBenchmark] calls [GZipCodec.encode] on the incoming data
+/// An [GZipEncodeBenchmark] calls [GZipCodec.encode()] on the incoming data
 /// supplied by [GZipData].
 ///
 /// [warmup] is used to store of the encoded result.
@@ -21,10 +20,7 @@ class GZipEncodeBenchmark extends BenchmarkBase {
   final GZipCodec codec;
   late List<int> encoded;
 
-  GZipEncodeBenchmark(this.data,
-      {ScoreEmitter emitter = const PrintEmitter(),
-      int inputBufferLength = CodecBufferHolder.autoLength,
-      int outputBufferLength = CodecBufferHolder.autoLength})
+  GZipEncodeBenchmark(this.data, {ScoreEmitter emitter = const PrintEmitter()})
       : codec = GZipCodec(level: -1),
         super('gzip encode()', emitter: emitter);
 
@@ -44,7 +40,7 @@ class GZipEncodeBenchmark extends BenchmarkBase {
   }
 }
 
-/// An [GZipDecodeBenchmark] calls [GZipCodec.decode] on the incoming data
+/// An [GZipDecodeBenchmark] calls [GZipCodec.decode()] on the incoming data
 /// supplied by [GZipData].
 ///
 /// [warmup] is used to store of the decoded result.
@@ -55,10 +51,7 @@ class GZipDecodeBenchmark extends BenchmarkBase {
   final GZipCodec codec;
   late List<int> decoded;
 
-  GZipDecodeBenchmark(this.data,
-      {ScoreEmitter emitter = const PrintEmitter(),
-      int inputBufferLength = CodecBufferHolder.autoLength,
-      int outputBufferLength = CodecBufferHolder.autoLength})
+  GZipDecodeBenchmark(this.data, {ScoreEmitter emitter = const PrintEmitter()})
       : codec = GZipCodec(level: -1),
         super('gzip decode()', emitter: emitter);
 
@@ -95,37 +88,34 @@ class GZipData {
 Future<int> main(List<String> arguments) async {
   final dataLength =
       arguments.isEmpty ? 50 * 1024 * 1024 : int.parse(arguments.first);
-  exitCode = await _runGZipBenchmark(dataLength);
-  return exitCode;
+  return await _runGZipBenchmark(dataLength);
 }
 
 /// GZip Benchmark which answers 0 on success, -1 on error
-Future<int> _runGZipBenchmark(int dataLength) async {
-  return Future(() {
-    print('generating $dataLength bytes of random data');
-    final bytes = generateRandomBytes(dataLength);
-    final emitter = CodecPerformanceEmitter(bytes.length);
+Future<int> _runGZipBenchmark(int dataLength) async => Future(() {
+      print('generating $dataLength bytes of random data');
+      final bytes = generateRandomBytes(dataLength);
+      final emitter = CodecPerformanceEmitter(bytes.length);
 
-    print('GZip encode/decode ${bytes.length} bytes of random data.');
-    var data = GZipData(bytes);
-    GZipEncodeBenchmark(data, emitter: emitter).report();
-    print('compression ratio:'
-        '${compressionRatio(bytes.length, data.bytes.length)}');
-    GZipDecodeBenchmark(data, emitter: emitter).report();
-    var bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
-    if (bytesMatch != true) return -1;
+      print('GZip encode/decode ${bytes.length} bytes of random data.');
+      var data = GZipData(bytes);
+      GZipEncodeBenchmark(data, emitter: emitter).report();
+      print('compression ratio:'
+          '${compressionRatio(bytes.length, data.bytes.length)}');
+      GZipDecodeBenchmark(data, emitter: emitter).report();
+      var bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
+      if (bytesMatch != true) return -1;
 
-    print('');
-    print('generating ${bytes.length} bytes of constant data');
-    bytes.fillRange(0, bytes.length, 1);
+      print('');
+      print('generating ${bytes.length} bytes of constant data');
+      bytes.fillRange(0, bytes.length, 1);
 
-    print('GZip encode/decode ${bytes.length} bytes of constant data.');
-    data = GZipData(bytes);
-    GZipEncodeBenchmark(data, emitter: emitter).report();
-    print('compression ratio: '
-        '${compressionRatio(bytes.length, data.bytes.length)}');
-    GZipDecodeBenchmark(data, emitter: emitter).report();
-    bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
-    return (bytesMatch != true) ? -1 : 0;
-  });
-}
+      print('GZip encode/decode ${bytes.length} bytes of constant data.');
+      data = GZipData(bytes);
+      GZipEncodeBenchmark(data, emitter: emitter).report();
+      print('compression ratio: '
+          '${compressionRatio(bytes.length, data.bytes.length)}');
+      GZipDecodeBenchmark(data, emitter: emitter).report();
+      bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
+      return (bytesMatch != true) ? -1 : 0;
+    });

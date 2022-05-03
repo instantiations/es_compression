@@ -16,7 +16,7 @@ String? zstdGetLibraryPath() => null;
 /// library path.
 ///
 /// This is the stubbed version that be a no-op.
-void zstdSetLibraryPath(String? path) => null;
+void zstdSetLibraryPath(String? path) {}
 
 /// Extension that provides suitable stubs for [ZstdCodec]s in non-IO
 /// environments.

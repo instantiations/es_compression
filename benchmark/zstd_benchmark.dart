@@ -2,8 +2,6 @@
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:collection/collection.dart';
 import 'package:es_compression/framework.dart';
@@ -11,7 +9,7 @@ import 'package:es_compression/zstd.dart';
 
 import 'utils/benchmark_utils.dart';
 
-/// An [ZstdEncodeBenchmark] calls [ZstdCodec.encode] on the incoming data
+/// An [ZstdEncodeBenchmark] calls [ZstdCodec.encode()] on the incoming data
 /// supplied by [ZstdData].
 ///
 /// [warmup] is used to store of the encoded result.
@@ -48,7 +46,7 @@ class ZstdEncodeBenchmark extends BenchmarkBase {
   }
 }
 
-/// An [ZstdDecodeBenchmark] calls [ZstdCodec.decode] on the incoming data
+/// An [ZstdDecodeBenchmark] calls [ZstdCodec.decode()] on the incoming data
 /// supplied by [ZstdData].
 ///
 /// [warmup] is used to store of the decoded result.
@@ -102,37 +100,34 @@ class ZstdData {
 Future<int> main(List<String> arguments) async {
   final dataLength =
       arguments.isEmpty ? 50 * 1024 * 1024 : int.parse(arguments.first);
-  exitCode = await _runZstdBenchmark(dataLength);
-  return exitCode;
+  return await _runZstdBenchmark(dataLength);
 }
 
 /// Zstd Benchmark which answers 0 on success, -1 on error
-Future<int> _runZstdBenchmark(int dataLength) async {
-  return Future(() {
-    print('generating $dataLength bytes of random data');
-    final bytes = generateRandomBytes(dataLength);
-    final emitter = CodecPerformanceEmitter(bytes.length);
+Future<int> _runZstdBenchmark(int dataLength) async => Future(() {
+      print('generating $dataLength bytes of random data');
+      final bytes = generateRandomBytes(dataLength);
+      final emitter = CodecPerformanceEmitter(bytes.length);
 
-    print('Zstd encode/decode ${bytes.length} bytes of random data.');
-    var data = ZstdData(bytes);
-    ZstdEncodeBenchmark(data, emitter: emitter).report();
-    print('compression ratio: '
-        '${compressionRatio(bytes.length, data.bytes.length)}');
-    ZstdDecodeBenchmark(data, emitter: emitter).report();
-    var bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
-    if (bytesMatch != true) return -1;
+      print('Zstd encode/decode ${bytes.length} bytes of random data.');
+      var data = ZstdData(bytes);
+      ZstdEncodeBenchmark(data, emitter: emitter).report();
+      print('compression ratio: '
+          '${compressionRatio(bytes.length, data.bytes.length)}');
+      ZstdDecodeBenchmark(data, emitter: emitter).report();
+      var bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
+      if (bytesMatch != true) return -1;
 
-    print('');
-    print('generating ${bytes.length} bytes of constant data');
-    bytes.fillRange(0, bytes.length, 1);
+      print('');
+      print('generating ${bytes.length} bytes of constant data');
+      bytes.fillRange(0, bytes.length, 1);
 
-    print('Zstd encode/decode ${bytes.length} bytes of constant data.');
-    data = ZstdData(bytes);
-    ZstdEncodeBenchmark(data, emitter: emitter).report();
-    print('compression ratio: '
-        '${compressionRatio(bytes.length, data.bytes.length)}');
-    ZstdDecodeBenchmark(data, emitter: emitter).report();
-    bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
-    return (bytesMatch != true) ? -1 : 0;
-  });
-}
+      print('Zstd encode/decode ${bytes.length} bytes of constant data.');
+      data = ZstdData(bytes);
+      ZstdEncodeBenchmark(data, emitter: emitter).report();
+      print('compression ratio: '
+          '${compressionRatio(bytes.length, data.bytes.length)}');
+      ZstdDecodeBenchmark(data, emitter: emitter).report();
+      bytesMatch = const ListEquality<int>().equals(bytes, data.bytes);
+      return (bytesMatch != true) ? -1 : 0;
+    });

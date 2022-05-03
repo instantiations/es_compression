@@ -46,9 +46,7 @@ class ZstdLibrary with OpenLibrary, ZstdConstants, ZstdFunctions, ZstdTypes {
   String get moduleId => 'zstd';
 
   /// Return the [ZstdLibrary] singleton library instance.
-  factory ZstdLibrary() {
-    return _instance;
-  }
+  factory ZstdLibrary() => _instance;
 
   /// Internal constructor that opens the native shared library and resolves
   /// all the functions.

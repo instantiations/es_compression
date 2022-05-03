@@ -163,7 +163,7 @@ abstract class CodecBuffer<T> {
   ///
   /// The range from [start] to [end] must be a valid range of [bytes].
   /// If [start] is omitted, it defaults to zero.
-  /// If [end] is omitted, it defaults to [bytes.length].
+  /// If [end] is omitted, it defaults to the length of [bytes].
   ///
   /// The number of bytes put may be additionally constrained by the
   /// remaining [unwrittenCount].
@@ -317,7 +317,7 @@ abstract class CodecBuffer<T> {
 /// Provides a simple buffer holder/builder with a customizable builder function
 /// [bufferBuilderFunc].
 ///
-/// The motivation is to help subclasses of [CodecFilter] to customize the
+/// The motivation is to help subclasses of `CodecFilter` to customize the
 /// building of [CodecBuffer] by adjusting either the length or the buffer
 /// construction call itself.
 ///

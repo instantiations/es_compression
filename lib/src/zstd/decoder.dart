@@ -5,9 +5,6 @@
 import 'dart:convert';
 
 import '../../framework.dart';
-import '../framework/buffers.dart';
-import '../framework/converters.dart';
-import '../framework/sinks.dart';
 import 'ffi/constants.dart';
 import 'stubs/decompress_filter.dart'
     if (dart.library.io) 'ffi/decompress_filter.dart';
@@ -18,7 +15,7 @@ const zstdDecoderInputBufferLength = ZstdConstants.ZSTD_BLOCKSIZE_MAX + 3;
 /// Default output buffer length.
 const zstdDecoderOutputBufferLength = CodecBufferHolder.autoLength;
 
-/// The [ZstdDecoder] decoder is used by [ZstdCodec] to decompress zstd data.
+/// The [ZstdDecoder] decoder is used to decompress zstd data.
 class ZstdDecoder extends CodecConverter {
   /// Length in bytes of the buffer used for input data.
   final int inputBufferLength;
@@ -57,6 +54,5 @@ class _ZstdDecoderSink extends CodecSink {
 /// There is a conditional import that determines the implementation of
 /// [ZstdDecompressFilter] based on the environment.
 CodecFilter _makeZstdCompressFilter(
-    int inputBufferLength, int outputBufferLength) {
-  return ZstdDecompressFilter(inputBufferLength, outputBufferLength);
-}
+        int inputBufferLength, int outputBufferLength) =>
+    ZstdDecompressFilter(inputBufferLength, outputBufferLength);

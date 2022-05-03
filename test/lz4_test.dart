@@ -10,9 +10,9 @@ import 'package:test/test.dart';
 
 void main() {
   test('Test Lz4 Version Number', () {
-    final codec = lz4;
-    final bindingVersion = '1.9.2';
-    final libraryVersion = '1.9.3';
+    const codec = lz4;
+    const bindingVersion = '1.9.2';
+    const libraryVersion = '1.9.3';
     expect(codec.bindingVersion.toString(), bindingVersion);
     expect(codec.libraryVersion.toString(), libraryVersion);
   });
@@ -22,7 +22,7 @@ void main() {
   });
 
   test('Test Empty Lz4 Encode/Decode', () {
-    final data = '';
+    const data = '';
     final header = [4, 34, 77, 24, 68, 64, 94, 0, 0, 0, 0, 5, 93, 204, 2];
     final dataBytes = utf8.encode(data);
     final codec = Lz4Codec(contentChecksum: true);
@@ -33,7 +33,7 @@ void main() {
   });
 
   test('Test Simple Lz4 Encode/Decode', () {
-    final data = 'MyDart';
+    const data = 'MyDart';
     final expected = [
       4,
       34,

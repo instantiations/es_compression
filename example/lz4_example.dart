@@ -16,10 +16,7 @@ const level = -1;
 ///
 /// The [exitCode] of this script is 0 if the decoded bytes match the original,
 /// otherwise the [exitCode] is -1.
-Future<int> main() async {
-  exitCode = await _runLz4Example();
-  return exitCode;
-}
+Future<int> main() async => await _runLz4Example();
 
 /// Lz4 Example which answers 0 on success, -1 on error
 Future<int> _runLz4Example() async {

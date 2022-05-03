@@ -20,7 +20,7 @@ const zstdEncoderInputBufferLength = ZstdConstants.ZSTD_BLOCKSIZE_MAX;
 /// Default output buffer length.
 const zstdEncoderOutputBufferLength = CodecBufferHolder.autoLength;
 
-/// The [ZstdEncoder] encoder is used by [ZstdCodec] to zstd compress data.
+/// The [ZstdEncoder] encoder is used to zstd compress data.
 class ZstdEncoder extends CodecConverter {
   /// The compression-[level] can be set in the range of
   /// `-[ZstdConstants.ZSTD_TARGETLENGTH_MAX]..22`,
@@ -74,9 +74,8 @@ class _ZstdEncoderSink extends CodecSink {
 /// There is a conditional import that determines the implementation of
 /// [ZstdCompressFilter] based on the environment.
 CodecFilter _makeZstdCompressFilter(
-    int level, int inputBufferLength, int outputBufferLength) {
-  return ZstdCompressFilter(
-      level: level,
-      inputBufferLength: inputBufferLength,
-      outputBufferLength: outputBufferLength);
-}
+        int level, int inputBufferLength, int outputBufferLength) =>
+    ZstdCompressFilter(
+        level: level,
+        inputBufferLength: inputBufferLength,
+        outputBufferLength: outputBufferLength);

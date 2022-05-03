@@ -46,9 +46,7 @@ class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
   String get moduleId => 'lz4';
 
   /// Return the [Lz4Library] singleton library instance.
-  factory Lz4Library() {
-    return _instance;
-  }
+  factory Lz4Library() => _instance;
 
   /// Internal constructor that opens the native shared library and resolves
   /// all the functions.

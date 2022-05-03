@@ -16,9 +16,8 @@ abstract class DartCodecFilterBase
   /// Return a [DartCodecBufferHolder] with the intended [length].
   @override
   CodecBufferHolder<DartHeapPointer, DartCodecBuffer> newBufferHolder(
-      int length) {
-    return DartCodecBufferHolder(length);
-  }
+          int length) =>
+      DartCodecBufferHolder(length);
 
   /// Init the filter.
   ///
@@ -26,31 +25,27 @@ abstract class DartCodecFilterBase
   /// the input [bytes].
   @override
   int doInit(
-      CodecBufferHolder<DartHeapPointer, DartCodecBuffer> inputBufferHolder,
-      CodecBufferHolder<DartHeapPointer, DartCodecBuffer> outputBufferHolder,
-      List<int> bytes,
-      int start,
-      int end) {
-    return 0;
-  }
+          CodecBufferHolder<DartHeapPointer, DartCodecBuffer> inputBufferHolder,
+          CodecBufferHolder<DartHeapPointer, DartCodecBuffer>
+              outputBufferHolder,
+          List<int> bytes,
+          int start,
+          int end) =>
+      0;
 
   /// Flush the internal-algorithm buffered output data.
   ///
   /// The default behavior is to return 0 for the number of bytes flushed to the
   /// [outputBuffer].
   @override
-  int doFlush(DartCodecBuffer outputBuffer) {
-    return 0;
-  }
+  int doFlush(DartCodecBuffer outputBuffer) => 0;
 
   /// Perform algorithm-specific finalization.
   ///
   /// The default behavior is to return 0 for the number of bytes written to
   /// the [outputBuffer].
   @override
-  int doFinalize(DartCodecBuffer outputBuffer) {
-    return 0;
-  }
+  int doFinalize(DartCodecBuffer outputBuffer) => 0;
 
   /// Perform tear-down procedures.
   ///

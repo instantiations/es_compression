@@ -58,10 +58,10 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
   /// Init the filter.
   ///
   /// 1. Provide appropriate buffer lengths to codec builders
-  /// [inputBufferHolder.length] decoding buffer length and
-  /// [outputBufferHolder.length] encoding buffer length.
-  /// Ensure that the [outputBufferHolder.length] is at least as large as the
-  /// maximum size of an lz4 block given the [inputBufferHolder.length].
+  /// `inputBufferHolder.length` decoding buffer length and
+  /// `outputBufferHolder.length` encoding buffer length.
+  /// Ensure that the `outputBufferHolder.length` is at least as large as the
+  /// maximum size of an lz4 block given the `inputBufferHolder.length`.
   ///
   /// 2. Allocate and setup the native lz4 context.
   ///
@@ -91,9 +91,9 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
     return 0;
   }
 
-  /// Perform an lz4 encoding of [inputBuffer.unreadCount] bytes in
+  /// Perform an lz4 encoding of `inputBuffer.unreadCount` bytes in
   /// and put the resulting encoded bytes into [outputBuffer] of length
-  /// [outputBuffer.unwrittenCount].
+  /// `outputBuffer.unwrittenCount`.
   ///
   /// Return an [CodecResult] which describes the amount read/write.
   @override
@@ -113,17 +113,15 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
   ///
   /// Return the number of bytes flushed.
   @override
-  int doFlush(NativeCodecBuffer outputBuffer) {
-    return _dispatcher.callLz4FFlush(
-        _context, outputBuffer.writePtr, outputBuffer.unwrittenCount, _options);
-  }
+  int doFlush(NativeCodecBuffer outputBuffer) => _dispatcher.callLz4FFlush(
+      _context, outputBuffer.writePtr, outputBuffer.unwrittenCount, _options);
 
   /// Lz4 finalize implementation.
   ///
   /// Only 1 round of finalization is required, put filter state into
   /// the finalized state.
   ///
-  /// A [FormatException] is thrown if [outputBufferLength] is not of sufficient
+  /// A [FormatException] is thrown if [outputBuffer] is not of sufficient
   /// length.
   /// A [FormatException] is thrown if writing out the lz4 trailer fails.
   @override
@@ -132,7 +130,7 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
     if (writeLength < 4 ||
         (_preferences.ref.frameInfoContentChecksumFlag != 0 &&
             writeLength < 8)) {
-      FormatException(
+      const FormatException(
           'buffer capacity is too small to properly finish the lz4 frame');
     }
     final numBytes = _dispatcher.callLz4FCompressEnd(
@@ -176,9 +174,8 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
 
   /// Return the maximum length of an lz4 block, given its uncompressed
   /// [uncompressedLength] and header size.
-  int _lz4CompressBound(int uncompressedLength) {
-    return _dispatcher.callLz4FCompressBound(uncompressedLength, _preferences);
-  }
+  int _lz4CompressBound(int uncompressedLength) =>
+      _dispatcher.callLz4FCompressBound(uncompressedLength, _preferences);
 
   /// Free the native context.
   ///

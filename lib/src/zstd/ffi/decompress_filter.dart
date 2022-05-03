@@ -29,8 +29,8 @@ class ZstdDecompressFilter extends NativeCodecFilterBase {
   /// Init the filter
   ///
   /// Provide appropriate buffer lengths to codec builders
-  /// [inputBufferHolder.length] decoding buffer length and
-  /// [outputBufferHolder.length] encoding buffer length.
+  /// [inputBufferHolder] decoding buffer length and
+  /// [outputBufferHolder] encoding buffer length.
   @override
   int doInit(
       CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> inputBufferHolder,

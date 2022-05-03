@@ -9,8 +9,6 @@ import '../buffers.dart';
 /// OS heap.
 ///
 /// The backing buffer is referenced by a [Pointer].
-/// There are base, read and write [DartHeapPointer]s required by the
-/// superclass which are also instances of [Pointer].
 ///
 /// This buffer is designed to be used by codec algorithms that are implemented
 /// using Dart's ffi framework..

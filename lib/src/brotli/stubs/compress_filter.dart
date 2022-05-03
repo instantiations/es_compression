@@ -4,6 +4,8 @@
 
 import '../../../framework.dart';
 
+// ignore_for_file: avoid_unused_constructor_parameters
+
 /// Class that provides suitable stubs for [BrotliCompressFilter]s in non-IO
 /// environments.
 ///

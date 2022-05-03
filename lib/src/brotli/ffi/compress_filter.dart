@@ -60,8 +60,8 @@ class BrotliCompressFilter extends NativeCodecFilterBase {
   /// Init the filter.
   ///
   /// Provide appropriate buffer lengths to codec builders
-  /// [inputBufferHolder.length] decoding buffer length and
-  /// [outputBufferHolder.length] encoding buffer length.
+  /// [inputBufferHolder] decoding buffer length and
+  /// [outputBufferHolder] encoding buffer length.
   @override
   int doInit(
       CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> inputBufferHolder,
@@ -76,7 +76,7 @@ class BrotliCompressFilter extends NativeCodecFilterBase {
     }
 
     // Formula from 'BROTLI_CStreamOutSize'
-    final outputLength = brotliEncoderOutputBufferLength;
+    const outputLength = brotliEncoderOutputBufferLength;
     outputBufferHolder.length = outputBufferHolder.isLengthSet()
         ? max(outputBufferHolder.length, outputLength)
         : outputLength;
@@ -84,9 +84,9 @@ class BrotliCompressFilter extends NativeCodecFilterBase {
     return 0;
   }
 
-  /// Perform an brotli encoding of [inputBuffer.unreadCount] bytes in
+  /// Perform an brotli encoding of `inputBuffer.unreadCount` bytes in
   /// and put the resulting encoded bytes into [outputBuffer] of length
-  /// [outputBuffer.unwrittenCount].
+  /// `outputBuffer.unwrittenCount`.
   ///
   /// Return an [CodecResult] which describes the amount read/write.
   @override
@@ -135,7 +135,7 @@ class BrotliCompressFilter extends NativeCodecFilterBase {
         outputBuffer.unwrittenCount,
         outputBuffer.writePtr);
     if (!_dispatcher.callBrotliEncoderIsFinished(_brotliState)) {
-      throw FormatException('Failure to finish the stream');
+      throw const FormatException('Failure to finish the stream');
     }
     state = CodecFilterState.finalized;
     final written = result[1];

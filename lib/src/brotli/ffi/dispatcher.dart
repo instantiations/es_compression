@@ -100,9 +100,8 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   void callBrotliEncoderDestroyInstance(Pointer<BrotliEncoderState> state) =>
       library.brotliEncoderDestroyInstance(state);
 
-  int callBrotliEncoderMaxCompressedSize(int uncompressedSize) {
-    return library.brotliEncoderMaxCompressedSize(uncompressedSize);
-  }
+  int callBrotliEncoderMaxCompressedSize(int uncompressedSize) =>
+      library.brotliEncoderMaxCompressedSize(uncompressedSize);
 
   List<int> callBrotliEncoderCompressStream(
       Pointer<BrotliEncoderState> state,
@@ -130,35 +129,29 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
     if (ret == BrotliConstants.BROTLI_FALSE) {
       switch (op) {
         case BrotliConstants.BROTLI_OPERATION_FINISH:
-          throw FormatException('BrotliEncoderCompressStream'
+          throw const FormatException('BrotliEncoderCompressStream'
               'failure while finishing the stream');
         case BrotliConstants.BROTLI_OPERATION_FLUSH:
-          throw FormatException('BrotliEncoderCompressStream'
+          throw const FormatException('BrotliEncoderCompressStream'
               'failure while flushing the stream');
         case BrotliConstants.BROTLI_OPERATION_PROCESS:
-          throw FormatException('BrotliEncoderCompressStream'
+          throw const FormatException('BrotliEncoderCompressStream'
               'failure while processing the stream');
         default:
-          throw FormatException('BrotliEncoderCompressStream'
+          throw const FormatException('BrotliEncoderCompressStream'
               'failure');
       }
     }
   }
 
-  bool callBrotliEncoderIsFinished(Pointer<BrotliEncoderState> state) {
-    return library.brotliEncoderIsFinished(state) ==
-        BrotliConstants.BROTLI_TRUE;
-  }
+  bool callBrotliEncoderIsFinished(Pointer<BrotliEncoderState> state) =>
+      library.brotliEncoderIsFinished(state) == BrotliConstants.BROTLI_TRUE;
 
-  bool callBrotliDecoderIsFinished(Pointer<BrotliDecoderState> state) {
-    return library.brotliDecoderIsFinished(state) ==
-        BrotliConstants.BROTLI_TRUE;
-  }
+  bool callBrotliDecoderIsFinished(Pointer<BrotliDecoderState> state) =>
+      library.brotliDecoderIsFinished(state) == BrotliConstants.BROTLI_TRUE;
 
-  bool callBrotliDecoderHasMoreOutput(Pointer<BrotliDecoderState> state) {
-    return library.brotliDecoderHasMoreOutput(state) ==
-        BrotliConstants.BROTLI_TRUE;
-  }
+  bool callBrotliDecoderHasMoreOutput(Pointer<BrotliDecoderState> state) =>
+      library.brotliDecoderHasMoreOutput(state) == BrotliConstants.BROTLI_TRUE;
 
   List<int> callBrotliDecoderDecompressStream(
       Pointer<BrotliDecoderState> state,
@@ -179,7 +172,7 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
     switch (result) {
       case BrotliConstants.BROTLI_DECODER_RESULT_SUCCESS:
         if (remainingIn > 0) {
-          throw FormatException('$cFunctionName failed. Excessive input');
+          throw const FormatException('$cFunctionName failed. Excessive input');
         }
         break;
       case BrotliConstants.BROTLI_DECODER_RESULT_ERROR:
@@ -215,14 +208,12 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   }
 
   Pointer<Uint8> callBrotliDecoderTakeOutput(
-      Pointer<BrotliDecoderState> state, Pointer<IntPtr> size) {
-    return library.brotliDecoderTakeOutput(state, size);
-  }
+          Pointer<BrotliDecoderState> state, Pointer<IntPtr> size) =>
+      library.brotliDecoderTakeOutput(state, size);
 
   Pointer<Uint8> callBrotliEncoderTakeOutput(
-      Pointer<BrotliEncoderState> state, Pointer<IntPtr> size) {
-    return library.brotliEncoderTakeOutput(state, size);
-  }
+          Pointer<BrotliEncoderState> state, Pointer<IntPtr> size) =>
+      library.brotliEncoderTakeOutput(state, size);
 
   @override
   BrotliDispatcher get dispatcher => this;

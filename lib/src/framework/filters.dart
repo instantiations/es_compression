@@ -146,11 +146,10 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
   ///
   /// There is more to process if data is remaining in either buffer to be read.
   /// There is more to process if a non-empty [_InputData] exists.
-  bool hasMoreToProcess() {
-    return _toProcess.isNotEmpty ||
-        (_inputBuffer.unreadCount > 0) ||
-        (_outputBuffer.unreadCount > 0);
-  }
+  bool hasMoreToProcess() =>
+      _toProcess.isNotEmpty ||
+      (_inputBuffer.unreadCount > 0) ||
+      (_outputBuffer.unreadCount > 0);
 
   /// Perform a coder/decoder routine where the bytes from the incoming buffer
   /// are processed by the algorithm and the resulting processed bytes are
@@ -172,9 +171,8 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
   /// Any bytes in the input buffer are first processed.
   /// This is followed by a series of flush calls, each of which
   /// will add the flushed bytes to [bytesBuilder] if available.
-  int _flush(final BytesBuilder bytesBuilder) {
-    return _flushOrFinalizeOperation(bytesBuilder, doFlush);
-  }
+  int _flush(final BytesBuilder bytesBuilder) =>
+      _flushOrFinalizeOperation(bytesBuilder, doFlush);
 
   /// Finalize the processing which may produce bytes to be added to
   /// [bytesBuilder]. Return the number of bytes finalized.
@@ -258,7 +256,7 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
   /// buffers are created.
   ///
   /// Other algorithms, such as encoders, can use this hook to write initial
-  /// header information to the [outputBufferHolder.buffer].
+  /// header information to the [outputBufferHolder] buffer.
   ///
   /// The framework needs to be able to detect how much was read from
   /// [bytes] and the caller should return this value.
@@ -280,14 +278,14 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
   /// A request is being made to process bytes from the [inputBuffer] and place
   /// the results in the [outputBuffer]
   ///
-  /// The [inputBuffer.readPtr] is a [CB] buffer to the read position and
-  /// [inputBuffer.unreadCount] is the maximum number of bytes that can be read
+  /// The `inputBuffer.readPtr` is a [CB] buffer to the read position and
+  /// `inputBuffer.unreadCount` is the maximum number of bytes that can be read
   /// from the buffer.
   ///
   /// The resulting bytes can be placed in the [outputBuffer]. Callers will need
   /// to take care to write only the amount that can be written.
-  /// The [outputBuffer.writePtr] is a [CB] buffer to the write position and
-  /// [outputBuffer.unwrittenCount] is the number of bytes that can be written
+  /// The `outputBuffer.writePtr` is a [CB] buffer to the write position and
+  /// `outputBuffer.unwrittenCount` is the number of bytes that can be written
   /// to the buffer.
   ///
   /// Callers do not need to adjust read/write positions of the [CodecBuffer].
@@ -303,15 +301,15 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
   /// Many algorithms have internal buffering applied within the native
   /// shared library in addition to the [CodecBuffer]s in the framework.
   ///
-  /// This call should flush up to [outputBuffer.unwrittenCount] into the output
-  /// buffer starting at [outputBuffer.writePtr].
+  /// This call should flush up to `outputBuffer.unwrittenCount` into the output
+  /// buffer starting at `outputBuffer.writePtr`.
   ///
   /// The framework will perform multiple rounds of this call until all data is
   /// flushed into the destination that the framework has.
   ///
   /// Callers should answer 0 if there is no additional data to flush.
   ///
-  /// Return the number of bytes flushed (<= [outputBuffer.unwrittenCount])
+  /// Return the number of bytes flushed (<= `outputBuffer.unwrittenCount`)
   int doFlush(CB outputBuffer);
 
   /// Subclass Responsibility: Perform algorithm-specific finalization.
@@ -325,7 +323,7 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
   /// Callers should answer 0 if there is no additional data to finalize.
   ///
   /// Return the number of bytes added for finalization
-  /// (<= [outputBuffer.unwrittenCount]).
+  /// (<= `outputBuffer.unwrittenCount`).
   int doFinalize(CB outputBuffer);
 
   /// Subclass Responsibility: Tear-down the filter

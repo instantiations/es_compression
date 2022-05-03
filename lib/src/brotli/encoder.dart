@@ -19,8 +19,7 @@ const brotliEncoderInputBufferLength = 64 * 1024;
 /// Default output buffer length.
 const brotliEncoderOutputBufferLength = brotliEncoderInputBufferLength;
 
-/// The [BrotliEncoder] encoder is used by [BrotliCodec] to brotli compress
-/// data.
+/// The [BrotliEncoder] encoder is used to brotli compress data.
 class BrotliEncoder extends CodecConverter {
   /// The compression-[level] or quality can be set in the range of
   /// [BrotliOption.minLevel]..[BrotliOption.maxLevel].
@@ -165,27 +164,26 @@ class _BrotliEncoderSink extends CodecSink {
 /// There is a conditional import that determines the implementation of
 /// [BrotliCompressFilter] based on the environment.
 CodecFilter _makeBrotliCompressFilter(
-    int level,
-    int mode,
-    int windowBits,
-    int? blockBits,
-    int? postfixBits,
-    bool literalContextModeling,
-    int sizeHint,
-    bool largeWindow,
-    int? directDistanceCodeCount,
-    int inputBufferLength,
-    int outputBufferLength) {
-  return BrotliCompressFilter(
-      level: level,
-      mode: mode,
-      windowBits: windowBits,
-      blockBits: blockBits,
-      postfixBits: postfixBits,
-      literalContextModeling: literalContextModeling,
-      sizeHint: sizeHint,
-      largeWindow: largeWindow,
-      directDistanceCodeCount: directDistanceCodeCount,
-      inputBufferLength: inputBufferLength,
-      outputBufferLength: outputBufferLength);
-}
+        int level,
+        int mode,
+        int windowBits,
+        int? blockBits,
+        int? postfixBits,
+        bool literalContextModeling,
+        int sizeHint,
+        bool largeWindow,
+        int? directDistanceCodeCount,
+        int inputBufferLength,
+        int outputBufferLength) =>
+    BrotliCompressFilter(
+        level: level,
+        mode: mode,
+        windowBits: windowBits,
+        blockBits: blockBits,
+        postfixBits: postfixBits,
+        literalContextModeling: literalContextModeling,
+        sizeHint: sizeHint,
+        largeWindow: largeWindow,
+        directDistanceCodeCount: directDistanceCodeCount,
+        inputBufferLength: inputBufferLength,
+        outputBufferLength: outputBufferLength);

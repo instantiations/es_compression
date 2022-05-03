@@ -16,7 +16,7 @@ String? brotliGetLibraryPath() => null;
 /// library path.
 ///
 /// This is the stubbed version that be a no-op.
-void brotliSetLibraryPath(String? path) => null;
+void brotliSetLibraryPath(String? path) {}
 
 /// Extension that provides suitable stubs for [BrotliCodec]s in non-IO
 /// environments.

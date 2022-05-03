@@ -46,16 +46,15 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
 
   /// Return [:true:] if there is more data to process, [:false:] otherwise.
   @override
-  bool hasMoreToProcess() {
-    return super.hasMoreToProcess() ||
-        _dispatcher.callBrotliDecoderHasMoreOutput(_brotliState);
-  }
+  bool hasMoreToProcess() =>
+      super.hasMoreToProcess() ||
+      _dispatcher.callBrotliDecoderHasMoreOutput(_brotliState);
 
   /// Init the filter.
   ///
   /// Provide appropriate buffer lengths to codec builders
-  /// [inputBufferHolder.length] decoding buffer length and
-  /// [outputBufferHolder.length] encoding buffer length.
+  /// [inputBufferHolder] decoding buffer length and
+  /// [outputBufferHolder] encoding buffer length.
   @override
   int doInit(
       CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> inputBufferHolder,
@@ -99,7 +98,7 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
   @override
   int doFinalize(CodecBuffer outputBuffer) {
     if (!_dispatcher.callBrotliDecoderIsFinished(_brotliState)) {
-      throw FormatException('Failure to finish decoding');
+      throw const FormatException('Failure to finish decoding');
     }
     return 0;
   }

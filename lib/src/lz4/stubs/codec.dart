@@ -16,7 +16,7 @@ String lz4GetLibraryPath() => '';
 /// library path.
 ///
 /// This is the stubbed version that be a no-op.
-void lz4SetLibraryPath(String? path) => null;
+void lz4SetLibraryPath(String? path) {}
 
 /// Extension that provides suitable stubs for [Lz4Codec]s in non-IO
 /// environments.

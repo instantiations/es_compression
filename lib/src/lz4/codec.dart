@@ -70,7 +70,7 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
   final int outputBufferLength;
 
   /// Return the base binding version this binding code was developed for.
-  Lz4Version get bindingVersion => Lz4Version(10902);
+  Lz4Version get bindingVersion => const Lz4Version(10902);
 
   /// Return the actual library version of the shared library.
   Lz4Version get libraryVersion => Lz4Version(libraryVersionNumber);
@@ -106,11 +106,11 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
         inputBufferLength = CodecBufferHolder.autoLength,
         outputBufferLength = CodecBufferHolder.autoLength;
 
-  /// Return the [Lz4Encoder] configured implementation.
+  /// Return the lz4 encoder configured implementation.
   @override
   Converter<List<int>, List<int>> get encoder => encoderImpl;
 
-  /// Return the [Lz4Decoder] configured implementation.
+  /// Return the lz4 decoder configured implementation.
   @override
   Converter<List<int>, List<int>> get decoder => decoderImpl;
 }

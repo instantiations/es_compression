@@ -10,8 +10,8 @@ import 'package:test/test.dart';
 
 void main() {
   test('Test Brotli Version Number', () {
-    final codec = brotli;
-    final bindingVersion = '1.0.9';
+    const codec = brotli;
+    const bindingVersion = '1.0.9';
     expect(codec.bindingVersion.toString(), bindingVersion);
     expect(codec.encoderVersion.toString(), bindingVersion);
     expect(codec.decoderVersion.toString(), bindingVersion);
@@ -22,7 +22,7 @@ void main() {
   });
 
   test('Test Empty Brotli Encode/Decode', () {
-    final data = '';
+    const data = '';
     final header = [107, 0, 3];
     final dataBytes = utf8.encode(data);
     final codec = BrotliCodec();
@@ -33,7 +33,7 @@ void main() {
   });
 
   test('Test Simple Brotli Encode/Decode', () {
-    final data = 'MyDart';
+    const data = 'MyDart';
     final expected = [139, 2, 128, 77, 121, 68, 97, 114, 116, 3];
     final dataBytes = utf8.encode(data);
     final codec = BrotliCodec();

@@ -6,8 +6,8 @@ import 'package:benchmark_harness/benchmark_harness.dart';
 /// Constant used for RNG seed
 const tutoneConstant = 8675309;
 
-/// [Emitter] which prints total time in milliseconds, as well as the calculated
-/// MB/sec based on the length of the uncompressed data.
+/// [ScoreEmitter] which prints total time in milliseconds, as well as the
+/// calculated MB/sec based on the length of the uncompressed data.
 class CodecPerformanceEmitter implements ScoreEmitter {
   final int dataLength;
 
@@ -41,6 +41,5 @@ List<int> generateConstantBytes(int length) {
   return list;
 }
 
-String compressionRatio(int uLength, int cLength) {
-  return '${(uLength / cLength).toStringAsFixed(1)}:1';
-}
+String compressionRatio(int uLength, int cLength) =>
+    '${(uLength / cLength).toStringAsFixed(1)}:1';

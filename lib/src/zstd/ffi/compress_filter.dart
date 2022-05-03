@@ -37,8 +37,8 @@ class ZstdCompressFilter extends NativeCodecFilterBase {
   /// Init the filter.
   ///
   /// Provide appropriate buffer lengths to codec builders
-  /// [inputBufferHolder.length] decoding buffer length and
-  /// [outputBufferHolder.length] encoding buffer length.
+  /// [inputBufferHolder] decoding buffer length and
+  /// [outputBufferHolder] encoding buffer length.
   @override
   int doInit(
       CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> inputBufferHolder,
@@ -65,14 +65,13 @@ class ZstdCompressFilter extends NativeCodecFilterBase {
   ///
   /// Return the number of bytes flushed.
   @override
-  int doFlush(NativeCodecBuffer outputBuffer) {
-    return _dispatcher.callZstdFlushStream(
-        _cStream, outputBuffer.writePtr, outputBuffer.unwrittenCount);
-  }
+  int doFlush(NativeCodecBuffer outputBuffer) =>
+      _dispatcher.callZstdFlushStream(
+          _cStream, outputBuffer.writePtr, outputBuffer.unwrittenCount);
 
-  /// Perform an zstd encoding of [inputBuffer.unreadCount] bytes in
+  /// Perform an zstd encoding of `inputBuffer.unreadCount` bytes in
   /// and put the resulting encoded bytes into [outputBuffer] of length
-  /// [outputBuffer.unwrittenCount].
+  /// `outputBuffer.unwrittenCount`.
   ///
   /// Return an [CodecResult] which describes the amount read/write.
   @override

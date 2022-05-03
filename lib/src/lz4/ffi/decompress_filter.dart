@@ -41,10 +41,10 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
   /// Init the filter.
   ///
   /// 1. Provide appropriate buffer lengths to codec builders
-  /// [inputBufferHolder.length] decoding buffer length and
-  /// [outputBufferHolder.length] encoding buffer length.
-  /// Ensure that the [outputBufferHolder.length] is at least as large as the
-  /// maximum size of an lz4 block given the [inputBufferHolder.length].
+  /// [inputBufferHolder] decoding buffer length and
+  /// [outputBufferHolder] encoding buffer length.
+  /// Ensure that the [outputBufferHolder] is at least as large as the
+  /// maximum size of an lz4 block given the [inputBufferHolder].
   ///
   /// 2. Allocate and setup the native lz4 context.
   ///

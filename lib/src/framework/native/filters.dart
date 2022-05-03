@@ -15,12 +15,11 @@ abstract class NativeCodecFilterBase
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength);
 
-  /// Return a [DartCodecBufferHolder] with the intended [length].
+  /// Return a [CodecBufferHolder] with the intended [length].
   @override
   CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> newBufferHolder(
-      int length) {
-    return NativeCodecBufferHolder(length);
-  }
+          int length) =>
+      NativeCodecBufferHolder(length);
 
   /// Init the filter.
   ///
@@ -28,31 +27,28 @@ abstract class NativeCodecFilterBase
   /// the input [bytes].
   @override
   int doInit(
-      CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> inputBufferHolder,
-      CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer> outputBufferHolder,
-      List<int> bytes,
-      int start,
-      int end) {
-    return 0;
-  }
+          CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer>
+              inputBufferHolder,
+          CodecBufferHolder<Pointer<Uint8>, NativeCodecBuffer>
+              outputBufferHolder,
+          List<int> bytes,
+          int start,
+          int end) =>
+      0;
 
   /// Flush the internal-algorithm buffered output data.
   ///
   /// The default behavior is to return 0 for the number of bytes flushed to the
   /// [outputBuffer].
   @override
-  int doFlush(NativeCodecBuffer outputBuffer) {
-    return 0;
-  }
+  int doFlush(NativeCodecBuffer outputBuffer) => 0;
 
   /// Perform algorithm-specific finalization.
   ///
   /// The default behavior is to return 0 for the number of bytes written to
   /// the [outputBuffer].
   @override
-  int doFinalize(NativeCodecBuffer outputBuffer) {
-    return 0;
-  }
+  int doFinalize(NativeCodecBuffer outputBuffer) => 0;
 
   /// Perform tear-down procedures.
   ///

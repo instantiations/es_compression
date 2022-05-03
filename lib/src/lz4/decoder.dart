@@ -5,9 +5,6 @@
 import 'dart:convert';
 
 import '../../framework.dart';
-import '../framework/converters.dart';
-import '../framework/sinks.dart';
-import 'codec.dart';
 import 'stubs/decompress_filter.dart'
     if (dart.library.io) 'ffi/decompress_filter.dart';
 
@@ -17,7 +14,7 @@ const lz4DecoderInputBufferLength = 256 * 1024;
 /// Default output buffer length.
 const lz4DecoderOutputBufferLength = lz4DecoderInputBufferLength * 2;
 
-/// The [Lz4Decoder] decoder is used by [Lz4Codec] to decompress lz4 data.
+/// The [Lz4Decoder] decoder is used to decompress lz4 data.
 class Lz4Decoder extends CodecConverter {
   /// Length in bytes of the buffer used for input data.
   final int inputBufferLength;
@@ -56,6 +53,5 @@ class _Lz4DecoderSink extends CodecSink {
 /// There is a conditional import that determines the implementation of
 /// [Lz4DecompressFilter] based on the environment.
 CodecFilter _makeLz4DecompressFilter(
-    int inputBufferLength, int outputBufferLength) {
-  return Lz4DecompressFilter(inputBufferLength, outputBufferLength);
-}
+        int inputBufferLength, int outputBufferLength) =>
+    Lz4DecompressFilter(inputBufferLength, outputBufferLength);

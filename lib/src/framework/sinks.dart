@@ -25,18 +25,18 @@ class CodecSink extends ByteConversionSink {
   CodecSink(this._sink, this._filter);
 
   @override
-  void add(List<int> data) {
-    addSlice(data, 0, data.length, false);
+  void add(List<int> chunk) {
+    addSlice(chunk, 0, chunk.length, false);
   }
 
   @override
-  void addSlice(List<int> data, int start, int end, bool isLast) {
+  void addSlice(List<int> chunk, int start, int end, bool isLast) {
     if (_closed) return;
-    RangeError.checkValidRange(start, end, data.length);
+    RangeError.checkValidRange(start, end, chunk.length);
     try {
       _empty = false;
-      var bufferAndStart =
-          _PositionableBuffer.serializableByteData(data, start, end);
+      final bufferAndStart =
+          _PositionableBuffer.serializableByteData(chunk, start, end);
       _filter.process(bufferAndStart.buffer, bufferAndStart.start,
           end - (start - bufferAndStart.start));
       while (true) {
@@ -87,8 +87,8 @@ class _PositionableBuffer {
     if (buffer is Uint8List || buffer is Int8List) {
       return _PositionableBuffer(buffer, start);
     }
-    var length = end - start;
-    var newBuffer = Uint8List(length);
+    final length = end - start;
+    final newBuffer = Uint8List(length);
     newBuffer.setRange(0, length, buffer, start);
     return _PositionableBuffer(newBuffer, 0);
   }
@@ -110,7 +110,7 @@ class BufferSink extends ByteConversionSink {
   @override
   void addSlice(List<int> chunk, int start, int end, bool isLast) {
     if (chunk is Uint8List) {
-      var list = chunk;
+      final list = chunk;
       builder.add(Uint8List.view(list.buffer, start, end - start));
     } else {
       builder.add(chunk.sublist(start, end));

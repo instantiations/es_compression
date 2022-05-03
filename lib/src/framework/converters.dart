@@ -15,7 +15,7 @@ class CodecConverter extends Converter<List<int>, List<int>> {
   /// chunked conversion.
   @override
   List<int> convert(List<int> bytes) {
-    var sink = BufferSink();
+    final sink = BufferSink();
     if (performOneShotConversion(sink, bytes) == false) {
       startChunkedConversion(sink)
         ..add(bytes)
@@ -29,9 +29,7 @@ class CodecConverter extends Converter<List<int>, List<int>> {
   ///
   /// Return [:false:] if one-shot is not to be (or could not be) performed,
   /// otherwise answer [:true:]
-  bool performOneShotConversion(Sink<List<int>> sink, List<int> bytes) {
-    return false;
-  }
+  bool performOneShotConversion(Sink<List<int>> sink, List<int> bytes) => false;
 
   /// Ensure a conversion to [ByteConversionSink] which provides an interface
   /// for converters to efficiently transmit byte data.
