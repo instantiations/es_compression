@@ -1,10 +1,11 @@
-// ignore_for_file: deprecated_member_use
 import 'dart:cli' as cli;
 import 'dart:ffi';
 import 'dart:isolate' show Isolate;
 
 import 'open_library.dart';
 import 'open_library_strategy.dart';
+
+// ignore_for_file: deprecated_member_use
 
 /// Package name used as the root for package uri resolution.
 const _espackage = 'es_compression';
@@ -51,9 +52,8 @@ class OpenViaPackageRelativeStrategy extends OpenLibraryStrategy {
     const timeoutSeconds = 5;
     final libraryUri = Uri.parse(packagePath);
     final packageUriFuture = Isolate.resolvePackageUri(libraryUri);
-    final packageUri =
-        cli.waitFor(packageUriFuture,
-            timeout: const Duration(seconds: timeoutSeconds));
+    final packageUri = cli.waitFor(packageUriFuture,
+        timeout: const Duration(seconds: timeoutSeconds));
     return packageUri;
   }
 }
