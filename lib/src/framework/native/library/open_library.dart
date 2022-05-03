@@ -15,7 +15,8 @@ import 'stubs/package_relative_strategy.dart'
 /// Its expected that internal libraries are prefixed with es
 /// This is also referenced in CMakeLists.txt file in
 /// [blob_builder tool](tool/blob_builder/CMakeLists.txt)
-const _esprefix = 'es';
+const _esPrefix = 'es';
+var _startPrefix = '';
 
 /// Provides the capability to locate and open native shared libraries.
 ///
@@ -64,6 +65,7 @@ mixin OpenLibrary {
     } else if (Platform.isAndroid) {
       os = 'android';
       extension = 'so';
+      _startPrefix = 'lib';
     } else if (Platform.isIOS) {
       os = 'ios';
       extension = 'dylib';
@@ -72,7 +74,7 @@ mixin OpenLibrary {
     }
 
     final result = os + bitness;
-    return '$_esprefix$moduleId-$result.$extension';
+    return '$_startPrefix$_esPrefix$moduleId-$result.$extension';
   }
 
   /// Add the [strategy] to the list of [_strategies].
