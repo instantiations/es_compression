@@ -17,7 +17,7 @@ endif ()
 #------------------------------------------------------------------
 # 3rd Party Module: ZSTD
 #------------------------------------------------------------------
-project(ZSTD_BLOB C)
+project(ZSTD_BLOB C ASM)
 
 #------------------------------------------------------------------
 # C Source Variables
@@ -48,7 +48,12 @@ set(LIBRARY_DIR ${${lcName}_SOURCE_DIR}/lib)
 
 file(GLOB CommonSources ${LIBRARY_DIR}/common/*.c)
 file(GLOB CompressSources ${LIBRARY_DIR}/compress/*.c)
-file(GLOB DecompressSources ${LIBRARY_DIR}/decompress/*.c)
+if (MSVC)
+    file(GLOB DecompressSources ${LIBRARY_DIR}/decompress/*.c)
+    add_compile_options(-DZSTD_DISABLE_ASM)
+else ()
+    file(GLOB DecompressSources ${LIBRARY_DIR}/decompress/*.c ${LIBRARY_DIR}/decompress/*.S)
+endif ()
 file(GLOB DictBuilderSources ${LIBRARY_DIR}/dictBuilder/*.c)
 file(GLOB DeprecatedSources ${LIBRARY_DIR}/deprecated/*.c)
 set(ZSTD_SOURCES
@@ -104,7 +109,9 @@ endif ()
 
 #-- Build the shared library
 add_library(${ZSTD_LIB_NAME} SHARED ${ZSTD_HEADERS} ${ZSTD_SOURCES})
-set_property(TARGET ${ZSTD_LIB_NAME} APPEND PROPERTY COMPILE_DEFINITIONS "ZSTD_MULTITHREAD")
+if (NOT ANDROID)
+    set_property(TARGET ${ZSTD_LIB_NAME} APPEND PROPERTY COMPILE_DEFINITIONS "ZSTD_MULTITHREAD")
+endif()
 code_sign_target(${ZSTD_LIB_NAME})
 set_target_properties(${ZSTD_LIB_NAME} PROPERTIES PREFIX es)
 set_target_properties(${ZSTD_LIB_NAME} PROPERTIES OUTPUT_NAME "${ZSTD_LIB_NAME}-${ES_COMPRESSION_SUFFIX}")

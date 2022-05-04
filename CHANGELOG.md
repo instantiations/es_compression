@@ -1,3 +1,7 @@
+## 2.0.5
+
+- Updated [prebuilt libraries](lib/src/zstd/blobs) to [ZSTD v1.5.2](https://github.com/facebook/zstd/releases/tag/v1.5.2).
+
 ## 2.0.4
 
 - Enhanced Android library resolution (special thanks to [mejdi14](https://github.com/mejdi14) for providing this).
