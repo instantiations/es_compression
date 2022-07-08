@@ -1,3 +1,7 @@
+## 2.0.6
+
+- Updated ffi package dependency constraints to >=1.0.0 <3.0.0
+
 ## 2.0.5
 
 - Updated [prebuilt libraries](lib/src/zstd/blobs) to [ZSTD v1.5.2](https://github.com/facebook/zstd/releases/tag/v1.5.2).
