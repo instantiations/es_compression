@@ -1,3 +1,7 @@
+## 2.0.7
+
+- Updated [prebuilt libraries](lib/src/lz4/blobs) to [LZ4 v1.9.4](https://github.com/lz4/lz4/releases/tag/v1.9.4).
+
 ## 2.0.6
 
 - Updated ffi package dependency constraints to >=1.0.0 <3.0.0

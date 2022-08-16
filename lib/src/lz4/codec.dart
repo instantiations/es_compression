@@ -70,7 +70,7 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
   final int outputBufferLength;
 
   /// Return the base binding version this binding code was developed for.
-  Lz4Version get bindingVersion => const Lz4Version(10902);
+  Lz4Version get bindingVersion => const Lz4Version(10904);
 
   /// Return the actual library version of the shared library.
   Lz4Version get libraryVersion => Lz4Version(libraryVersionNumber);

@@ -144,10 +144,10 @@ set(BROTLI_VERSION_MOD 9)
 #-- The period-delimited 3 position format (1.0.0)
 set(BROTLI_VERSION "${BROTLI_VERSION_MAJOR}.${BROTLI_VERSION_MINOR}.${BROTLI_VERSION_MOD}")
 
-#-- LZ4 Version: 1.9.3
+#-- LZ4 Version: 1.9.4
 set(LZ4_VERSION_MAJOR 1)
 set(LZ4_VERSION_MINOR 9)
-set(LZ4_VERSION_MOD 3)
+set(LZ4_VERSION_MOD 4)
 #-- The period-delimited 3 position format (1.0.0)
 set(LZ4_VERSION "${LZ4_VERSION_MAJOR}.${LZ4_VERSION_MINOR}.${LZ4_VERSION_MOD}")
 
