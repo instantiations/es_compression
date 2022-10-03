@@ -1,3 +1,7 @@
+## 2.0.8
+
+- Correcting iOS FFI access to native library (special thanks to [srmanc](https://github.com/srmanc) for this fix).
+
 ## 2.0.7
 
 - Updated [prebuilt libraries](lib/src/lz4/blobs) to [LZ4 v1.9.4](https://github.com/lz4/lz4/releases/tag/v1.9.4).
