@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:io';
 
 import 'open_library.dart';
 
@@ -32,7 +33,9 @@ abstract class OpenLibraryStrategy {
   /// Return the opened [DynamicLibrary] on success.
   DynamicLibrary? open(String path) {
     try {
-      return DynamicLibrary.open(path);
+      return Platform.isIOS
+          ? DynamicLibrary.process()
+          : DynamicLibrary.open(path);
     } on Exception {
       return null;
     }
