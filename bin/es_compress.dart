@@ -67,7 +67,7 @@ Future<int> main(List<String> arguments) async {
     var numChunks = 0;
 
     // Print the stats of the encode/decode
-    void _printStats(Stopwatch stopwatch) {
+    void printStats(Stopwatch stopwatch) {
       final inputLength = input.lengthSync();
       final outputLength = output.lengthSync();
       final uncompressedLength = encode ? inputLength : outputLength;
@@ -100,7 +100,7 @@ Future<int> main(List<String> arguments) async {
       outputSink.close().then<dynamic>((dynamic f) {
         stopwatch.stop();
         print('Completed $algorithm ${encode ? 'encoding' : 'decoding'}');
-        _printStats(stopwatch);
+        printStats(stopwatch);
         completer.complete(0);
       });
     }, onError: (Object e) {

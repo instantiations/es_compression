@@ -1,3 +1,8 @@
+## 2.0.9
+
+- Updated [prebuilt libraries](lib/src/zstd/blobs) to [ZSTD v1.5.4](https://github.com/facebook/zstd/releases/tag/v1.5.4).
+- Rebuilt all Windows dlls using Visual Studio 2022. Updated [cmake instructions](tool/blob_builder/CMakeLists.txt)
+
 ## 2.0.8
 
 - Correcting iOS FFI access to native library (special thanks to [srmanc](https://github.com/srmanc) for this fix).

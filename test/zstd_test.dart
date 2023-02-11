@@ -11,13 +11,13 @@ import 'package:test/test.dart';
 void main() {
   test('Test Zstd Version Number', () {
     const codec = zstd;
-    const bindingVersion = '1.5.2';
+    const bindingVersion = '1.5.4';
     expect(codec.bindingVersion.toString(), bindingVersion);
     expect(codec.libraryVersion.toString(), bindingVersion);
   });
 
   test('Test Bad Zstd Decode', () {
-    expect(zstd.decode(<int>[1, 2, 3, -2]), <int>[]);
+    expect(() => zstd.decode(<int>[1, 2, 3, -2]), throwsFormatException);
   });
 
   test('Test Empty Zstd Encode/Decode', () {

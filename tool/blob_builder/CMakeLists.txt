@@ -19,6 +19,16 @@
 #  Build Instructions:
 #
 #  Windows
+#     Visual Studio 22 64-bit
+#     >mkdir build && cd build
+#     >cmake .. -G"Visual Studio 17 2022" -A x64
+#     >msbuild es_compression_blobs.sln /p:Configuration=Release /p:Platform=x64 /m
+#
+#     Visual Studio 22 32-bit
+#     >mkdir build && cd build
+#     >cmake .. -G"Visual Studio 17 2022" -A Win32
+#     >msbuild es_compression_blobs.sln /p:Configuration=Release /p:Platform=Win32 /m
+#
 #     Visual Studio 19 64-bit
 #     >mkdir build && cd build
 #     >cmake .. -G"Visual Studio 16 2019" -A x64
@@ -151,10 +161,10 @@ set(LZ4_VERSION_MOD 4)
 #-- The period-delimited 3 position format (1.0.0)
 set(LZ4_VERSION "${LZ4_VERSION_MAJOR}.${LZ4_VERSION_MINOR}.${LZ4_VERSION_MOD}")
 
-#-- ZSTD Version: 1.5.2
+#-- ZSTD Version: 1.5.4
 set(ZSTD_VERSION_MAJOR 1)
 set(ZSTD_VERSION_MINOR 5)
-set(ZSTD_VERSION_MOD 2)
+set(ZSTD_VERSION_MOD 4)
 #-- The period-delimited 3 position format (1.0.0)
 set(ZSTD_VERSION "${ZSTD_VERSION_MAJOR}.${ZSTD_VERSION_MINOR}.${ZSTD_VERSION_MOD}")
 
