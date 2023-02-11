@@ -12,8 +12,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Test latest stable, beta, dev, and main channels
-        sdk: [stable, beta, dev, main]
+        # Test latest stable, beta, and main channels
+        sdk: [stable, beta, main]
     steps:
       - uses: dart-lang/setup-dart@v1.0
       - uses: actions/checkout@v2
