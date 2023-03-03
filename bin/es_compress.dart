@@ -54,7 +54,7 @@ Future<int> main(List<String> arguments) async {
     // Read/Interpret arguments
     final algorithm =
         argResults[algorithmArg] as String? ?? _guessAlgorithm(argResults);
-    final level = argResults[levelArg] as String;
+    final level = argResults[levelArg] as String?;
     final encode = _shouldEncode(argResults);
     final codec = _selectCodec(algorithm, level);
     final coder = (encode == true) ? codec.encoder : codec.decoder;

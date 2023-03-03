@@ -1,3 +1,7 @@
+## 2.0.10
+
+- Fixed issue [#40](https://github.com/instantiations/es_compression/issues/40)
+
 ## 2.0.9
 
 - Updated [prebuilt libraries](lib/src/zstd/blobs) to [ZSTD v1.5.4](https://github.com/facebook/zstd/releases/tag/v1.5.4).
