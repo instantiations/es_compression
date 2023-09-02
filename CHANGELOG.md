@@ -1,3 +1,8 @@
+## 2.0.11
+
+- Fixed explicit type issues reported by dart analyzer
+- Updated constraints to >=2.16.0 <3.0.0.
+
 ## 2.0.10
 
 - Fixed issue [#40](https://github.com/instantiations/es_compression/issues/40)
