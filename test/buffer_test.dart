@@ -10,8 +10,8 @@ import 'package:test/test.dart';
 late CodecBuffer buffer;
 
 void main() {
-  doTest('DartCodecBuffer', (length) => DartCodecBuffer(length));
-  doTest('NativeCodecBuffer', (length) => NativeCodecBuffer(length));
+  doTest('DartCodecBuffer', DartCodecBuffer.new);
+  doTest('NativeCodecBuffer', NativeCodecBuffer.new);
 }
 
 void doTest(String name, CodecBuffer Function(int length) newBuffer) {
@@ -219,13 +219,13 @@ void doTest(String name, CodecBuffer Function(int length) newBuffer) {
 
   test('Test codec buffer holder', () {
     final bufferHolder = CodecBufferHolder<DartHeapPointer, DartCodecBuffer>(
-        10, (length) => DartCodecBuffer(length));
+        10, DartCodecBuffer.new);
     expect(bufferHolder.length, 10);
     bufferHolder.length = 20;
     expect(bufferHolder.length, 20);
     expect(bufferHolder.isLengthSet(), true);
     expect(bufferHolder.isBufferSet(), false);
-    bufferHolder.bufferBuilderFunc = (length) => DartCodecBuffer(length);
+    bufferHolder.bufferBuilderFunc = DartCodecBuffer.new;
     buffer = bufferHolder.buffer;
     expect(buffer is DartCodecBuffer, true);
     expect(() => bufferHolder.length = 100, throwsStateError);

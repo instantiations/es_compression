@@ -4,9 +4,6 @@
 include: package:lints/recommended.yaml
 
 analyzer:
-  strong-mode:
-    implicit-casts: false
-    implicit-dynamic: false
   errors:
     # treat missing required parameters as a warning (not a hint)
     missing_required_param: warning
@@ -14,6 +11,9 @@ analyzer:
     missing_return: warning
     # allow having TODOs in the code
     todo: ignore
+  language:
+    strict-casts: true
+    strict-raw-types: true
 
 linter:
   rules:
@@ -36,10 +36,9 @@ linter:
     - file_names
     - hash_and_equals
     - implementation_imports
-    - iterable_contains_unrelated_type
+    - collection_methods_unrelated_type
     - join_return_with_assignment
     - lines_longer_than_80_chars
-    - list_remove_unrelated_type
     - missing_whitespace_between_adjacent_strings
     - no_runtimeType_toString
     - non_constant_identifier_names

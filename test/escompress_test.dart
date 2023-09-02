@@ -1,4 +1,4 @@
-// @dart=2.10
+// @dart=2.12
 
 import 'dart:io';
 
@@ -10,8 +10,8 @@ import '../bin/es_compress.dart' as escompress;
 void main() {
   const tempFilename = 'helloDart.dart';
   const tempContents = 'hello dart';
-  Directory tempDir;
-  String inputFile;
+  late Directory tempDir;
+  late String inputFile;
 
   setUpAll(() {
     tempDir = Directory.systemTemp.createTempSync('es_');
