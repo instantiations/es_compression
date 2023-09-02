@@ -112,6 +112,5 @@ class DartHeapPointer {
 class DartCodecBufferHolder
     extends CodecBufferHolder<DartHeapPointer, DartCodecBuffer> {
   /// Construct a [DartCodecBufferHolder] which generates [DartCodecBuffer]s
-  DartCodecBufferHolder(int length)
-      : super(length, DartCodecBuffer.new);
+  DartCodecBufferHolder(int length) : super(length, DartCodecBuffer.new);
 }
