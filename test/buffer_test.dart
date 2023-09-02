@@ -7,14 +7,14 @@ import 'package:es_compression/src/framework/dart/buffers.dart';
 import 'package:es_compression/src/framework/native/buffers.dart';
 import 'package:test/test.dart';
 
-late CodecBuffer buffer;
+late CodecBuffer<dynamic> buffer;
 
 void main() {
   doTest('DartCodecBuffer', DartCodecBuffer.new);
   doTest('NativeCodecBuffer', NativeCodecBuffer.new);
 }
 
-void doTest(String name, CodecBuffer Function(int length) newBuffer) {
+void doTest(String name, CodecBuffer<dynamic> Function(int length) newBuffer) {
   test('Test $name default size', () {
     buffer = newBuffer(16384);
     expect(buffer.length, 16384);

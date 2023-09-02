@@ -53,6 +53,6 @@ class _ZstdDecoderSink extends CodecSink {
 ///
 /// There is a conditional import that determines the implementation of
 /// [ZstdDecompressFilter] based on the environment.
-CodecFilter _makeZstdCompressFilter(
+CodecFilter<dynamic, CodecBuffer<dynamic>> _makeZstdCompressFilter(
         int inputBufferLength, int outputBufferLength) =>
     ZstdDecompressFilter(inputBufferLength, outputBufferLength);

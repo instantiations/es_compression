@@ -163,7 +163,7 @@ class _BrotliEncoderSink extends CodecSink {
 ///
 /// There is a conditional import that determines the implementation of
 /// [BrotliCompressFilter] based on the environment.
-CodecFilter _makeBrotliCompressFilter(
+CodecFilter<dynamic, CodecBuffer<dynamic>> _makeBrotliCompressFilter(
         int level,
         int mode,
         int windowBits,

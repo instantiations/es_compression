@@ -71,7 +71,7 @@ class _BrotliDecoderSink extends CodecSink {
 ///
 /// There is a conditional import that determines the implementation of
 /// [BrotliDecompressFilter] based on the environment.
-CodecFilter _makeBrotliDecompressFilter(
+CodecFilter<dynamic, CodecBuffer<dynamic>> _makeBrotliDecompressFilter(
         bool ringBufferReallocation, bool largeWindow) =>
     BrotliDecompressFilter(
         ringBufferReallocation: ringBufferReallocation,

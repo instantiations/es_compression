@@ -4,9 +4,7 @@
 
 import 'dart:convert';
 
-import '../framework/converters.dart';
-import '../framework/filters.dart';
-import '../framework/sinks.dart';
+import '../../framework.dart';
 import 'options.dart';
 import 'stubs/compress_filter.dart'
     if (dart.library.io) 'ffi/compress_filter.dart';
@@ -133,7 +131,7 @@ class _Lz4EncoderSink extends CodecSink {
 ///
 /// There is a conditional import that determines the implementation of
 /// [Lz4CompressFilter] based on the environment.
-CodecFilter _makeLz4CompressFilter(
+CodecFilter<dynamic, CodecBuffer<dynamic>> _makeLz4CompressFilter(
         int level,
         bool fastAcceleration,
         bool contentChecksum,

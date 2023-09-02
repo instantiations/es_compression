@@ -96,7 +96,7 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
   /// A [FormatException] is thrown if the filter is not in the *finished*
   /// state.
   @override
-  int doFinalize(CodecBuffer outputBuffer) {
+  int doFinalize(CodecBuffer<dynamic> outputBuffer) {
     if (!_dispatcher.callBrotliDecoderIsFinished(_brotliState)) {
       throw const FormatException('Failure to finish decoding');
     }

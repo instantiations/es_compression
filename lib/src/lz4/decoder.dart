@@ -52,6 +52,6 @@ class _Lz4DecoderSink extends CodecSink {
 ///
 /// There is a conditional import that determines the implementation of
 /// [Lz4DecompressFilter] based on the environment.
-CodecFilter _makeLz4DecompressFilter(
+CodecFilter<dynamic, CodecBuffer<dynamic>> _makeLz4DecompressFilter(
         int inputBufferLength, int outputBufferLength) =>
     Lz4DecompressFilter(inputBufferLength, outputBufferLength);

@@ -128,7 +128,7 @@ class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
   int callLz4FFreeDecompressionContext(Pointer<Lz4Dctx> context) =>
       checkError(library.lz4FFreeDecompressionContext(context));
 
-  List callLz4FGetFrameInfo(
+  List<dynamic> callLz4FGetFrameInfo(
       Pointer<Lz4Dctx> context, Pointer<Uint8> srcBuffer, int compressedSize) {
     final frameInfo = library.newFrameInfo();
     final sizePtr = malloc<IntPtr>();

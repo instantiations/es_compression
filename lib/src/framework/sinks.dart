@@ -5,7 +5,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'filters.dart';
+import '../../framework.dart';
 
 /// The [CodecSink] is the base class for encode/decoder sinks.
 ///
@@ -15,7 +15,7 @@ import 'filters.dart';
 /// And additional concept was added to request the filter to close since there
 /// may be potential native resources to cleanup.
 class CodecSink extends ByteConversionSink {
-  final CodecFilter _filter;
+  final CodecFilter<dynamic, CodecBuffer<dynamic>> _filter;
   final ByteConversionSink _sink;
   bool _closed = false;
   bool _empty = true;
