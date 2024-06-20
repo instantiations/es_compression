@@ -1,4 +1,3 @@
-import 'dart:cli' as cli;
 import 'dart:ffi';
 import 'dart:isolate' show Isolate;
 
@@ -49,11 +48,8 @@ class OpenViaPackageRelativeStrategy extends OpenLibraryStrategy {
   /// Resolve package-relative [packagePath] by converting it to a non-package
   /// relative [Uri].
   Uri? _resolvePackagedLibraryLocation(String packagePath) {
-    const timeoutSeconds = 5;
     final libraryUri = Uri.parse(packagePath);
-    final packageUriFuture = Isolate.resolvePackageUri(libraryUri);
-    final packageUri = cli.waitFor(packageUriFuture,
-        timeout: const Duration(seconds: timeoutSeconds));
+    final packageUri = Isolate.resolvePackageUriSync(libraryUri);
     return packageUri;
   }
 }

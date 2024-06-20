@@ -26,11 +26,8 @@ class ZstdCompressFilter extends NativeCodecFilterBase {
   /// Construct the [ZstdCompressFilter] with the optional parameters.
   ZstdCompressFilter(
       {int? level,
-      int inputBufferLength = 16386,
-      int outputBufferLength = 16386})
-      : super(
-            inputBufferLength: inputBufferLength,
-            outputBufferLength: outputBufferLength) {
+      super.inputBufferLength,
+      super.outputBufferLength}) {
     if (level != null) this.level = level;
   }
 
@@ -142,6 +139,5 @@ class _ZstdEncodingResult extends CodecResult {
   final int hint;
 
   /// Return a new instance of [_ZstdEncodingResult].
-  const _ZstdEncodingResult(int bytesRead, int bytesWritten, this.hint)
-      : super(bytesRead, bytesWritten);
+  const _ZstdEncodingResult(super.bytesRead, super.bytesWritten, this.hint);
 }

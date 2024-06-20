@@ -53,7 +53,7 @@ class ZstdLibrary with OpenLibrary, ZstdConstants, ZstdFunctions, ZstdTypes {
   ZstdLibrary._(String? libraryPath) {
     _libraryImpl = openLibrary(path: libraryPath);
     if (_libraryImpl != null) {
-      resolveFunctions(_libraryImpl!);
+      resolveFunctions(_libraryImpl);
       _initialized = true;
     }
   }

@@ -1,3 +1,10 @@
+## 2.0.12
+
+- Removed deprecated `dart:cli.waitFor()` uses. [#50](https://github.com/instantiations/es_compression/issues/50)
+- Migrate `Isolate.resolvePackageUri()` to `Isolate.resolvePackageUriSync()`. [#50](https://github.com/instantiations/es_compression/issues/50)
+- Fixed issues reported by dart analyzer
+- Updated constraints to >=3.2.0 <4.0.0.
+
 ## 2.0.11
 
 - Fixed explicit type issues reported by dart analyzer

@@ -10,17 +10,17 @@ import 'constants.dart';
 
 /// Opaque Struct: *LZ4F_cctx*
 /// File: *lz4frame.h*
-class Lz4Cctx extends Opaque {}
+final class Lz4Cctx extends Opaque {}
 
 /// Opaque Struct: *LZ4F_dctx*
 /// File: *lz4frame.h*
-class Lz4Dctx extends Opaque {}
+final class Lz4Dctx extends Opaque {}
 
 /// Struct: *LZ4F_frameInfo_t*
 /// File: *lz4frame.h*
 ///
 /// Makes it possible to set or read frame parameters.
-class Lz4FrameInfo extends Struct {
+final class Lz4FrameInfo extends Struct {
   /// [Lz4Constants.LZ4F_max64KB],
   /// [Lz4Constants.LZ4F_max256KB],
   /// [Lz4Constants.LZ4F_max1MB],
@@ -87,7 +87,7 @@ class Lz4FrameInfo extends Struct {
 ///
 /// Makes it possible to supply advanced compression instructions to
 /// streaming interface.
-class Lz4Preferences extends Struct {
+final class Lz4Preferences extends Struct {
   // Begin Nested Lz4FrameInfo
 
   /// Nested Struct Field
@@ -167,7 +167,7 @@ class Lz4Preferences extends Struct {
 
 /// Struct: *LZ4F_compressOptions_t*
 /// File: *lz4frame.h*
-class Lz4CompressOptions extends Struct {
+final class Lz4CompressOptions extends Struct {
   /// 1 == src content will remain present on future calls to LZ4F_compress();
   /// skip copying src content within tmp buffer
   @Uint32()
@@ -199,7 +199,7 @@ class Lz4CompressOptions extends Struct {
 
 /// Struct: *LZ4F_decompressOptions_t*
 /// File: *lz4frame.h*
-class Lz4DecompressOptions extends Struct {
+final class Lz4DecompressOptions extends Struct {
   /// 1 == src content will remain present on future calls to LZ4F_compress();
   /// skip copying src content within tmp buffer
   @Uint32()

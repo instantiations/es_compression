@@ -21,9 +21,8 @@ class NativeCodecBuffer extends CodecBuffer<Pointer<Uint8>> {
   bool _released = false;
 
   /// Constructs a buffer that allocates [length] bytes from the native OS-heap.
-  NativeCodecBuffer(int length)
-      : _bytes = malloc<Uint8>(length),
-        super(length);
+  NativeCodecBuffer(super.length)
+      : _bytes = malloc<Uint8>(length);
 
   /// Return the native byte pointer to the [_bytes] base address.
   @override
@@ -32,12 +31,12 @@ class NativeCodecBuffer extends CodecBuffer<Pointer<Uint8>> {
   /// Return the native byte pointer to the memory location at the [writeCount]
   /// offset from the [_bytes] base address.
   @override
-  Pointer<Uint8> get writePtr => _bytes.elementAt(writeCount);
+  Pointer<Uint8> get writePtr => _bytes + writeCount;
 
   /// Return the native byte pointer to the memory location at the [readCount]
   /// offset from the [_bytes] base address.
   @override
-  Pointer<Uint8> get readPtr => _bytes.elementAt(readCount);
+  Pointer<Uint8> get readPtr => _bytes + readCount;
 
   /// Return a subview from 0..[length]
   @override

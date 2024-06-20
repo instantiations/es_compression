@@ -23,11 +23,8 @@ class BrotliCompressFilter extends DartCodecFilterBase {
       int? sizeHint,
       bool? largeWindow,
       int? directDistanceCodeCount,
-      int inputBufferLength = 16386,
-      int outputBufferLength = 16386})
-      : super(
-            inputBufferLength: inputBufferLength,
-            outputBufferLength: outputBufferLength) {
+      super.inputBufferLength,
+      super.outputBufferLength}) {
     throw UnsupportedError('No CodecFilter Implementation');
   }
 

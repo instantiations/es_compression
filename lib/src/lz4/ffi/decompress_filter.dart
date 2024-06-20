@@ -162,6 +162,5 @@ class _Lz4DecodingResult extends CodecResult {
   final int hint;
 
   /// Return a new instance of [_Lz4DecodingResult].
-  const _Lz4DecodingResult(int bytesRead, int bytesWritten, this.hint)
-      : super(bytesRead, bytesWritten);
+  const _Lz4DecodingResult(super.bytesRead, super.bytesWritten, this.hint);
 }

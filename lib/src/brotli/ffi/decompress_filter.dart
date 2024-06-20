@@ -28,11 +28,8 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
   BrotliDecompressFilter(
       {bool ringBufferReallocation = true,
       bool largeWindow = false,
-      int inputBufferLength = 16386,
-      int outputBufferLength = 16386})
-      : super(
-            inputBufferLength: inputBufferLength,
-            outputBufferLength: outputBufferLength) {
+      super.inputBufferLength,
+      super.outputBufferLength}) {
     parameters[BrotliConstants
             .BROTLI_DECODER_PARAM_DISABLE_RING_BUFFER_REALLOCATION] =
         ringBufferReallocation == false
@@ -148,6 +145,5 @@ class _BrotliDecodingResult extends CodecResult {
 
   /// Return a new instance of [_BrotliDecodingResult].
   const _BrotliDecodingResult(
-      int bytesRead, int bytesWritten, this.nextReadState)
-      : super(bytesRead, bytesWritten);
+      super.bytesRead, super.bytesWritten, this.nextReadState);
 }

@@ -53,7 +53,7 @@ class Lz4Library with OpenLibrary, Lz4Constants, Lz4Functions, Lz4Types {
   Lz4Library._(String? libraryPath) {
     _libraryImpl = openLibrary(path: libraryPath);
     if (_libraryImpl != null) {
-      resolveFunctions(_libraryImpl!);
+      resolveFunctions(_libraryImpl);
       _initialized = true;
     }
   }

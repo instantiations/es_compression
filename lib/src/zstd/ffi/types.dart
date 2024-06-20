@@ -6,15 +6,15 @@ import 'dart:ffi';
 
 /// Opaque Struct: *ZSTD_CStream*
 /// File: *zstd.h*
-class ZstdCStream extends Opaque {}
+final class ZstdCStream extends Opaque {}
 
 /// Opaque Struct: *ZSTD_DStream*
 /// File: *zstd.h*
-class ZstdDStream extends Opaque {}
+final class ZstdDStream extends Opaque {}
 
 /// Struct: *ZSTD_inBuffer_s
 /// File: *zstd.h*
-class ZstdInBuffer extends Struct {
+final class ZstdInBuffer extends Struct {
   /// Start of input buffer.
   external Pointer<Void> src;
 
@@ -31,7 +31,7 @@ class ZstdInBuffer extends Struct {
 
 /// Struct: *ZSTD_outBuffer_s
 /// File: *zstd.h*
-class ZstdOutBuffer extends Struct {
+final class ZstdOutBuffer extends Struct {
   /// Start of output buffer.
   external Pointer<Void> dst;
 

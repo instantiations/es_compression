@@ -10,10 +10,7 @@ abstract class NativeCodecFilterBase
     extends CodecFilter<Pointer<Uint8>, NativeCodecBuffer> {
   /// Constructor which allows the user to set the input/output buffer lengths.
   NativeCodecFilterBase(
-      {int inputBufferLength = 16386, int outputBufferLength = 16386})
-      : super(
-            inputBufferLength: inputBufferLength,
-            outputBufferLength: outputBufferLength);
+      {super.inputBufferLength = 16386, super.outputBufferLength = 16386});
 
   /// Return a [CodecBufferHolder] with the intended [length].
   @override

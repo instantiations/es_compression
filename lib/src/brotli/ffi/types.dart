@@ -6,11 +6,11 @@ import 'dart:ffi';
 
 /// Opaque Struct: *BrotliDecoderState*
 /// File: *decode.h*
-class BrotliDecoderState extends Opaque {}
+final class BrotliDecoderState extends Opaque {}
 
 /// Opaque Struct: *BrotliEncoderState*
 /// File: *encode.h*
-class BrotliEncoderState extends Opaque {}
+final class BrotliEncoderState extends Opaque {}
 
 /// Contains refs to required types (structs...) referenced by the
 /// following header files:

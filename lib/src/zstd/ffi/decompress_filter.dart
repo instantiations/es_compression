@@ -111,6 +111,5 @@ class _ZstdDecodingResult extends CodecResult {
   final int hint;
 
   /// Return a new instance of [_ZstdDecodingResult].
-  const _ZstdDecodingResult(int bytesRead, int bytesWritten, this.hint)
-      : super(bytesRead, bytesWritten);
+  const _ZstdDecodingResult(super.bytesRead, super.bytesWritten, this.hint);
 }

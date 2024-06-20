@@ -39,11 +39,8 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
       bool? blockLinked,
       int? blockSize,
       bool? optimizeForCompression,
-      int inputBufferLength = 16386,
-      int outputBufferLength = 16386})
-      : super(
-            inputBufferLength: inputBufferLength,
-            outputBufferLength: outputBufferLength) {
+      super.inputBufferLength,
+      super.outputBufferLength}) {
     _options = _dispatcher.library.newCompressOptions();
     _preferences = _dispatcher.library.newPreferences(
         level: level,

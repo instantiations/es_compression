@@ -15,11 +15,8 @@ class ZstdCompressFilter extends DartCodecFilterBase {
   /// Construct the [ZstdCompressFilter] with the optional parameters.
   ZstdCompressFilter(
       {int? level,
-      int inputBufferLength = 16386,
-      int outputBufferLength = 16386})
-      : super(
-            inputBufferLength: inputBufferLength,
-            outputBufferLength: outputBufferLength);
+      super.inputBufferLength,
+      super.outputBufferLength});
 
   /// Raise an [UnsupportedError] for missing codec filter.
   @override

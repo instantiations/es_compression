@@ -32,9 +32,8 @@ class DartCodecBuffer extends CodecBuffer<DartHeapPointer> {
 
   /// Constructs a [DartCodecBuffer] that is backed by a [Uint8List] with the
   /// provided [length].
-  DartCodecBuffer(int length)
-      : _list = Uint8List(length),
-        super(length);
+  DartCodecBuffer(super.length)
+      : _list = Uint8List(length);
 
   /// Updates the read offset of the wrapped pointer and returns it.
   @override

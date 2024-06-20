@@ -55,7 +55,7 @@ class BrotliLibrary
   BrotliLibrary._(String? libraryPath) {
     _libraryImpl = openLibrary(path: libraryPath);
     if (_libraryImpl != null) {
-      resolveFunctions(_libraryImpl!);
+      resolveFunctions(_libraryImpl);
       _initialized = true;
     }
   }

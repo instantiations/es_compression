@@ -36,11 +36,8 @@ class BrotliCompressFilter extends NativeCodecFilterBase {
       int? sizeHint,
       bool? largeWindow,
       int? directDistanceCodeCount,
-      int inputBufferLength = 16386,
-      int outputBufferLength = 16386})
-      : super(
-            inputBufferLength: inputBufferLength,
-            outputBufferLength: outputBufferLength) {
+      super.inputBufferLength,
+      super.outputBufferLength}) {
     parameters[BrotliConstants.BROTLI_PARAM_MODE] = mode;
     parameters[BrotliConstants.BROTLI_PARAM_QUALITY] = level;
     parameters[BrotliConstants.BROTLI_PARAM_LGWIN] = windowBits;

@@ -8,10 +8,7 @@ abstract class DartCodecFilterBase
     extends CodecFilter<DartHeapPointer, DartCodecBuffer> {
   /// Constructor which allows the user to set the input/output buffer lengths.
   DartCodecFilterBase(
-      {int inputBufferLength = 16386, int outputBufferLength = 16386})
-      : super(
-            inputBufferLength: inputBufferLength,
-            outputBufferLength: outputBufferLength);
+      {super.inputBufferLength = 16386, super.outputBufferLength = 16386});
 
   /// Return a [DartCodecBufferHolder] with the intended [length].
   @override

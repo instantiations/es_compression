@@ -21,11 +21,8 @@ class Lz4CompressFilter extends DartCodecFilterBase {
       bool? blockLinked,
       int? blockSize,
       bool? optimizeForCompression,
-      int inputBufferLength = 16386,
-      int outputBufferLength = 16386})
-      : super(
-            inputBufferLength: inputBufferLength,
-            outputBufferLength: outputBufferLength);
+      super.inputBufferLength,
+      super.outputBufferLength});
 
   /// Raise an [UnsupportedError] for missing codec filter.
   @override
