@@ -25,9 +25,7 @@ class ZstdCompressFilter extends NativeCodecFilterBase {
 
   /// Construct the [ZstdCompressFilter] with the optional parameters.
   ZstdCompressFilter(
-      {int? level,
-      super.inputBufferLength,
-      super.outputBufferLength}) {
+      {int? level, super.inputBufferLength, super.outputBufferLength}) {
     if (level != null) this.level = level;
   }
 

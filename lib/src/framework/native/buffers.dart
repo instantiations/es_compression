@@ -21,8 +21,7 @@ class NativeCodecBuffer extends CodecBuffer<Pointer<Uint8>> {
   bool _released = false;
 
   /// Constructs a buffer that allocates [length] bytes from the native OS-heap.
-  NativeCodecBuffer(super.length)
-      : _bytes = malloc<Uint8>(length);
+  NativeCodecBuffer(super.length) : _bytes = malloc<Uint8>(length);
 
   /// Return the native byte pointer to the [_bytes] base address.
   @override
