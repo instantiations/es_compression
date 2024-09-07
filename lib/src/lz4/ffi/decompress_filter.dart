@@ -65,8 +65,10 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
     final numBytes = inputBufferHolder.buffer.nextPutAll(bytes, start, end);
     if (numBytes > 0) _readFrameInfo(inputBufferHolder.buffer);
 
+    const defaultBlockSize = 65536;
+
     outputBufferHolder.length = max(
-        _frameInfo!.ref.blockSize,
+        _frameInfo?.ref.blockSize ?? defaultBlockSize,
         outputBufferHolder.isLengthSet()
             ? outputBufferHolder.length
             : max(lz4DecoderOutputBufferLength, inputBufferHolder.length));

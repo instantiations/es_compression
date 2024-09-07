@@ -1,3 +1,7 @@
+## 2.0.13
+
+- Fixed issue [#52](https://github.com/instantiations/es_compression/issues/52) (special thanks to [Abitofevrything](https://github.com/abitofevrything) for a helpful issue report)
+
 ## 2.0.12
 
 - Removed deprecated `dart:cli.waitFor()` uses. [#50](https://github.com/instantiations/es_compression/issues/50)

@@ -21,6 +21,13 @@ void main() {
     expect(() => brotli.decode(<int>[1, 2, 3]), throwsFormatException);
   });
 
+  test('Test Brotli Decode Empty Stream Produces No Chunks', () async {
+    final result =
+        await const Stream<List<int>>.empty().transform(brotli.decoder).isEmpty;
+    expect(result, isTrue,
+        reason: "Stream should be empty and emit no chunks.");
+  });
+
   test('Test Empty Brotli Encode/Decode', () {
     const data = '';
     final header = [107, 0, 3];

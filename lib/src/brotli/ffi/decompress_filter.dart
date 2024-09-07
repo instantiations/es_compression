@@ -24,6 +24,9 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
   /// Native brotli state object.
   late final Pointer<BrotliDecoderState> _brotliState;
 
+  /// Special Case: Empty input
+  late bool _emptyInput = false;
+
   /// Construct an [BrotliDecompressFilter] with the supplied options.
   BrotliDecompressFilter(
       {bool ringBufferReallocation = true,
@@ -66,6 +69,7 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
     if (!outputBufferHolder.isLengthSet()) {
       outputBufferHolder.length = brotliDecoderOutputBufferLength;
     }
+    _emptyInput = end - start <= 0;
     return 0;
   }
 
@@ -94,7 +98,8 @@ class BrotliDecompressFilter extends NativeCodecFilterBase {
   /// state.
   @override
   int doFinalize(CodecBuffer<dynamic> outputBuffer) {
-    if (!_dispatcher.callBrotliDecoderIsFinished(_brotliState)) {
+    if (!_dispatcher.callBrotliDecoderIsFinished(_brotliState) &&
+        !_emptyInput) {
       throw const FormatException('Failure to finish decoding');
     }
     return 0;

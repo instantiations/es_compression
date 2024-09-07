@@ -32,6 +32,13 @@ void main() {
     expect(const ListEquality<int>().equals(dataBytes, decoded), true);
   });
 
+  test('Test Lz4 Decode Empty Stream Produces No Chunks', () async {
+    final result =
+        await const Stream<List<int>>.empty().transform(lz4.decoder).isEmpty;
+    expect(result, isTrue,
+        reason: "Stream should be empty and emit no chunks.");
+  });
+
   test('Test Simple Lz4 Encode/Decode', () {
     const data = 'MyDart';
     final expected = [
