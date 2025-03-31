@@ -8,7 +8,7 @@
 /// ```
 /// import 'package:es_compression/brotli.dart';
 /// ```
-library brotli;
+library;
 
 export 'src/brotli/codec.dart';
 export 'src/brotli/decoder.dart';

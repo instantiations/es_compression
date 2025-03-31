@@ -8,7 +8,7 @@
 /// ```
 /// import 'package:es_compression/lz4.dart';
 /// ```
-library lz4;
+library;
 
 export 'src/lz4/codec.dart';
 export 'src/lz4/decoder.dart';

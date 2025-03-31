@@ -9,7 +9,7 @@
 /// ```
 /// import 'package:es_compression/framework_io.dart';
 /// ```
-library framework_io;
+library;
 
 export 'framework.dart';
 export 'src/framework/dart/buffers.dart'

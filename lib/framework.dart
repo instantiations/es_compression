@@ -8,7 +8,7 @@
 /// ```
 /// import 'package:es_compression/framework.dart';
 /// ```
-library framework;
+library;
 
 export 'src/framework/buffers.dart';
 export 'src/framework/converters.dart';

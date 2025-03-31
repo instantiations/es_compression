@@ -8,7 +8,7 @@
 /// ```
 /// import 'package:es_compression/zstd.dart';
 /// ```
-library zstd;
+library;
 
 export 'src/zstd/codec.dart';
 export 'src/zstd/decoder.dart';
