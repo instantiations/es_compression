@@ -151,6 +151,68 @@ By default, the resolution order is:
 User Provided Resolution: The user can override the above resolution with a user provided library path. The different
 strategies for locating shared libraries are described below.
 
+### Android Deployment Instructions
+
+To use the `es_compression` package on Android, you must ensure that your Android project includes native `.so` libraries for Brotli, Lz4, and Zstd.
+
+#### Steps
+
+1. **Download Prebuilt Android Native Libraries**
+
+   Download the precompiled `.so` files from:  
+   [android_lib_es_compression0_9_9 Releases](https://github.com/isong0623/android_lib_es_compression0_9_9/releases)
+
+2. **Rename Library Files**
+
+   Rename each file by adding the `lib` prefix. For example:
+
+   ```
+   esbrotli-android64.so → libesbrotli-android64.so
+   ```
+
+3. **Place `.so` Files in jniLibs**
+
+   Extract and organize them under `android/app/src/main/jniLibs`:
+
+   ```
+   android/app/src/main/jniLibs/
+   ├── arm64-v8a/
+   │   ├── libesbrotli-android64.so
+   │   ├── libeslz4-android64.so
+   │   └── libeszstd-android64.so
+   ├── armeabi-v7a/
+   │   ├── libesbrotli-android32.so
+   │   ├── libeslz4-android32.so
+   │   └── libeszstd-android32.so
+   ├── x86/
+   │   ├── libesbrotli-android32.so
+   │   ├── libeslz4-android32.so
+   │   └── libeszstd-android32.so
+   └── x86_64/
+       ├── libesbrotli-android64.so
+       ├── libeslz4-android64.so
+       └── libeszstd-android64.so
+   ```
+
+4. **Update `android/app/build.gradle`**
+
+   Open your `android/app/build.gradle` file and add the following inside the `android` block:
+
+   ```gradle
+   android {
+       sourceSets {
+           main.jniLibs.srcDirs += 'src/main/jniLibs'
+       }
+       defaultConfig {
+           ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+       }
+   }
+   ```
+
+Once completed, the `es_compression` package will be fully functional on Android with no manual native compilation required.
+
+These steps have been tested by multiple contributors. Please let us know via [Issues](https://github.com/instantiations/es_compression/issues) if they work for your setup or need adjustment.
+
 ### Environment Variable Resolution
 An environment variable can be defined that provides the path to the shared library. This is either the path to the shared
 library file or the directory which should contain the filename of the form *es{algo}_{os}{bitness}.{ext}*. For example,
