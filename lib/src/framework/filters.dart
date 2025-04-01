@@ -141,7 +141,7 @@ abstract class CodecFilter<P, CB extends CodecBuffer<P>> {
     }
 
     // Return null if no bytes were added to the builder
-    if (builder.isEmpty) {
+    if (builder.isEmpty && !hasMoreToProcess()) {
       return null;
     }
 

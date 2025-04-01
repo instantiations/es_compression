@@ -3,6 +3,7 @@
 // a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:es_compression/zstd.dart';
@@ -64,6 +65,17 @@ void main() {
     final codec = ZstdCodec();
     final encoded = codec.encode(dataBytes);
     expect(const ListEquality<int>().equals(encoded, expected), true);
+    final decoded = codec.decode(encoded);
+    expect(const ListEquality<int>().equals(dataBytes, decoded), true);
+  });
+
+  test('Test Large Zstd Encode/Decode', () async {
+    const filePath = 'test/data/256KB.json';
+    final file = File(filePath);
+    final data = await file.readAsString();
+    final dataBytes = utf8.encode(data);
+    final codec = ZstdCodec();
+    final encoded = codec.encode(dataBytes);
     final decoded = codec.decode(encoded);
     expect(const ListEquality<int>().equals(dataBytes, decoded), true);
   });

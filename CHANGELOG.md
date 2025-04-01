@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Added Android deployment instructions to the [README](README.md) based on great contribution from [nightmarefsm](https://github.com/nightmarefsm). [#54](https://github.com/instantiations/es_compression/issues/54)
+- Fixed brotli encoder truncation on data larger than buffer. [#53](https://github.com/instantiations/es_compression/issues/53)
 
 ## 2.0.13
 

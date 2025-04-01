@@ -153,6 +153,9 @@ class BrotliDispatcher with BrotliDispatchErrorCheckerMixin {
   bool callBrotliDecoderHasMoreOutput(Pointer<BrotliDecoderState> state) =>
       library.brotliDecoderHasMoreOutput(state) == BrotliConstants.BROTLI_TRUE;
 
+  bool callBrotliEncoderHasMoreOutput(Pointer<BrotliEncoderState> state) =>
+      library.brotliEncoderHasMoreOutput(state) == BrotliConstants.BROTLI_TRUE;
+
   List<int> callBrotliDecoderDecompressStream(
       Pointer<BrotliDecoderState> state,
       int availableIn,

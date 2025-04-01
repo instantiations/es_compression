@@ -54,6 +54,12 @@ class BrotliCompressFilter extends NativeCodecFilterBase {
     parameters[BrotliConstants.BROTLI_PARAM_NDIRECT] = directDistanceCodeCount;
   }
 
+  /// Return [:true:] if there is more data to process, [:false:] otherwise.
+  @override
+  bool hasMoreToProcess() =>
+      super.hasMoreToProcess() ||
+      _dispatcher.callBrotliEncoderHasMoreOutput(_brotliState);
+
   /// Init the filter.
   ///
   /// Provide appropriate buffer lengths to codec builders

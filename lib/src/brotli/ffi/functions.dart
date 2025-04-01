@@ -162,8 +162,13 @@ typedef BrotliEncoderDestroyInstanceNative = Void Function(
 typedef BrotliEncoderDestroyInstanceDart = void Function(
     Pointer<BrotliEncoderState>);
 
-typedef BrotliEncoderHasMoreOutputNative = Int32 Function(Pointer<Void>);
-typedef BrotliEncoderHasMoreOutputDart = int Function(Pointer<Void>);
+/// File: *encode.h*
+/// BROTLI_ENC_API BROTLI_BOOL
+/// BrotliEncoderHasMoreOutput(BrotliEncoderState* state);
+typedef BrotliEncoderHasMoreOutputNative = Int32 Function(
+    Pointer<BrotliEncoderState>);
+typedef BrotliEncoderHasMoreOutputDart = int Function(
+    Pointer<BrotliEncoderState>);
 
 /// File: *encode.h*
 /// BROTLI_ENC_API BROTLI_BOOL
