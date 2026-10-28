@@ -12,7 +12,7 @@ import 'package:test/test.dart';
 void main() {
   test('Test Brotli Version Number', () {
     const codec = brotli;
-    const bindingVersion = '1.0.9';
+    const bindingVersion = '1.0.10';
     expect(codec.bindingVersion.toString(), bindingVersion);
     expect(codec.encoderVersion.toString(), bindingVersion);
     expect(codec.decoderVersion.toString(), bindingVersion);

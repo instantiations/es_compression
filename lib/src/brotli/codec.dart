@@ -93,7 +93,7 @@ class BrotliCodec extends Codec<List<int>, List<int>> {
   final int outputBufferLength;
 
   /// Return the base binding version this binding code was developed for.
-  BrotliVersion get bindingVersion => const BrotliVersion(0x1000009);
+  BrotliVersion get bindingVersion => const BrotliVersion(0x100000A);
 
   /// Return the encoder library version.
   BrotliVersion get encoderVersion => BrotliVersion(encoderVersionNumber);

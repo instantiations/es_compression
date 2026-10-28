@@ -1,3 +1,7 @@
+## 2.0.16
+
+- Fixed issue [#57](https://github.com/instantiations/es_compression/issues/57) dealing with Brotli CVE-2026-111497
+
 ## 2.0.15
 
 - Add android 16kb page size compile flags, android build instructions contributed by [ice-orion](https://github.com/ice-orion). [#55](https://github.com/instantiations/es_compression/issues/55)

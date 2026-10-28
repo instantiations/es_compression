@@ -171,10 +171,10 @@ endif ()
 string(TIMESTAMP ES_COMPRESSION_DATE "%m/%d/%y")
 string(TIMESTAMP ES_COMPRESSION_YEAR "%Y")
 
-#-- Brotli Version: 1.0.9
+#-- Brotli Version: 1.0.10
 set(BROTLI_VERSION_MAJOR 1)
 set(BROTLI_VERSION_MINOR 0)
-set(BROTLI_VERSION_MOD 9)
+set(BROTLI_VERSION_MOD 10)
 #-- The period-delimited 3 position format (1.0.0)
 set(BROTLI_VERSION "${BROTLI_VERSION_MAJOR}.${BROTLI_VERSION_MINOR}.${BROTLI_VERSION_MOD}")
 
