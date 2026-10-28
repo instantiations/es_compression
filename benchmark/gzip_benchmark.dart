@@ -20,9 +20,9 @@ class GZipEncodeBenchmark extends BenchmarkBase {
   final GZipCodec codec;
   late List<int> encoded;
 
-  GZipEncodeBenchmark(this.data, {ScoreEmitter emitter = const PrintEmitter()})
+  GZipEncodeBenchmark(this.data, {super.emitter})
       : codec = GZipCodec(level: -1),
-        super('gzip encode()', emitter: emitter);
+        super('gzip encode()');
 
   @override
   void warmup() {
@@ -51,9 +51,9 @@ class GZipDecodeBenchmark extends BenchmarkBase {
   final GZipCodec codec;
   late List<int> decoded;
 
-  GZipDecodeBenchmark(this.data, {ScoreEmitter emitter = const PrintEmitter()})
+  GZipDecodeBenchmark(this.data, {super.emitter})
       : codec = GZipCodec(level: -1),
-        super('gzip decode()', emitter: emitter);
+        super('gzip decode()');
 
   @override
   void warmup() {

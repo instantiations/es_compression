@@ -21,14 +21,14 @@ class BrotliEncodeBenchmark extends BenchmarkBase {
   late List<int> encoded;
 
   BrotliEncodeBenchmark(this.data,
-      {ScoreEmitter emitter = const PrintEmitter(),
+      {super.emitter,
       int inputBufferLength = CodecBufferHolder.autoLength,
       int outputBufferLength = CodecBufferHolder.autoLength})
       : codec = BrotliCodec(
             level: 0,
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength),
-        super('brotli encode()', emitter: emitter);
+        super('brotli encode()');
 
   @override
   void warmup() {
@@ -58,14 +58,14 @@ class BrotliDecodeBenchmark extends BenchmarkBase {
   late List<int> decoded;
 
   BrotliDecodeBenchmark(this.data,
-      {ScoreEmitter emitter = const PrintEmitter(),
+      {super.emitter,
       int inputBufferLength = CodecBufferHolder.autoLength,
       int outputBufferLength = CodecBufferHolder.autoLength})
       : codec = BrotliCodec(
             level: 0,
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength),
-        super('brotli decode()', emitter: emitter);
+        super('brotli decode()');
 
   @override
   void warmup() {

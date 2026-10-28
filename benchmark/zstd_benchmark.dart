@@ -21,14 +21,14 @@ class ZstdEncodeBenchmark extends BenchmarkBase {
   late List<int> encoded;
 
   ZstdEncodeBenchmark(this.data,
-      {ScoreEmitter emitter = const PrintEmitter(),
+      {super.emitter,
       int inputBufferLength = CodecBufferHolder.autoLength,
       int outputBufferLength = CodecBufferHolder.autoLength})
       : codec = ZstdCodec(
             level: -1,
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength),
-        super('zstd encode()', emitter: emitter);
+        super('zstd encode()');
 
   @override
   void warmup() {
@@ -58,14 +58,14 @@ class ZstdDecodeBenchmark extends BenchmarkBase {
   late List<int> decoded;
 
   ZstdDecodeBenchmark(this.data,
-      {ScoreEmitter emitter = const PrintEmitter(),
+      {super.emitter,
       int inputBufferLength = CodecBufferHolder.autoLength,
       int outputBufferLength = CodecBufferHolder.autoLength})
       : codec = ZstdCodec(
             level: -1,
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength),
-        super('zstd decode()', emitter: emitter);
+        super('zstd decode()');
 
   @override
   void warmup() {

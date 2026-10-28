@@ -21,14 +21,14 @@ class Lz4EncodeBenchmark extends BenchmarkBase {
   late List<int> encoded;
 
   Lz4EncodeBenchmark(this.data,
-      {ScoreEmitter emitter = const PrintEmitter(),
+      {super.emitter,
       int inputBufferLength = CodecBufferHolder.autoLength,
       int outputBufferLength = CodecBufferHolder.autoLength})
       : codec = Lz4Codec(
             level: -1,
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength),
-        super('lz4 encode()', emitter: emitter);
+        super('lz4 encode()');
 
   @override
   void warmup() {
@@ -58,14 +58,14 @@ class Lz4DecodeBenchmark extends BenchmarkBase {
   late List<int> decoded;
 
   Lz4DecodeBenchmark(this.data,
-      {ScoreEmitter emitter = const PrintEmitter(),
+      {super.emitter,
       int inputBufferLength = CodecBufferHolder.autoLength,
       int outputBufferLength = CodecBufferHolder.autoLength})
       : codec = Lz4Codec(
             level: -1,
             inputBufferLength: inputBufferLength,
             outputBufferLength: outputBufferLength),
-        super('lz4 decode()', emitter: emitter);
+        super('lz4 decode()');
 
   @override
   void warmup() {
